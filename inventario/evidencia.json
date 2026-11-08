@@ -1,0 +1,85 @@
+{
+  "estado": "REVISION",
+  "no_es_partida_web": true,
+  "medios": [
+    {
+      "archivo": "evidencia/cara_blender.mp4",
+      "sha256": "7b1e6d27012252d2e226ef6735f2569704c96afe62a572f92b1110e07464cbd5",
+      "bytes": 210862,
+      "origen": "Blender: prueba dedicada del modulo de autoria correspondiente",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/colocacion_blender.png",
+      "sha256": "ae3ee41f1e6cdd6af4cfc1fbb676faa99d0e953625ce4e83204053e1dc105686",
+      "bytes": 688237,
+      "origen": "Blender: NLA nativo, vista Workbench",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/cuerpo_blender.mp4",
+      "sha256": "44bb44fd35ed05ab454b27a725203e37e9a6cf439c9396faa7ff7e153e049635",
+      "bytes": 657150,
+      "origen": "Blender: prueba dedicada del modulo de autoria correspondiente",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/jugada_general_blender.png",
+      "sha256": "ed58bd9a0f4c5262c0b501a382a02191b57e7b95ab95d412f7b64d94c021fe80",
+      "bytes": 603324,
+      "origen": "Blender: NLA nativo, vista Workbench",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/jugadas_blender_nla.mp4",
+      "sha256": "82e21c7caaa3e057f02d3b2ca9d263029d94f2e4965071919e56db70a43f81ba",
+      "bytes": 354492,
+      "origen": "Blender: NLA nativo, vista Workbench",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/manos_blender.mp4",
+      "sha256": "eb9ea7753beec24e08bc6e08dcca05535ad6bb0a245827b64e2ef2a2507cec8e",
+      "bytes": 1851352,
+      "origen": "Blender: prueba dedicada del modulo de autoria correspondiente",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/pulgar_derecho.png",
+      "sha256": "1b5ee023ed5c4c7762f9c0285f730ae00ce30fb58974cc8e34fd22f8aab2f2d4",
+      "bytes": 381870,
+      "origen": "Blender: prueba dedicada del modulo de autoria correspondiente",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/pulgar_izquierdo.png",
+      "sha256": "5504ca72c0fa908bb545b4b25c56a3969fe30908adb6fbc4b3689ba3c4692306",
+      "bytes": 401595,
+      "origen": "Blender: prueba dedicada del modulo de autoria correspondiente",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/puno_derecho.png",
+      "sha256": "a3be3ab24a4d786f93819436136b7cec28879fd96c1fcc662a527c7115d52a4a",
+      "bytes": 290591,
+      "origen": "Blender: prueba dedicada del modulo de autoria correspondiente",
+      "no_es_partida": true
+    },
+    {
+      "archivo": "evidencia/puno_izquierdo.png",
+      "sha256": "f35d19aae5cb3c72a49cb36385bb2e3c0e161c6b28231ac15a1d62231b66e1d1",
+      "bytes": 311766,
+      "origen": "Blender: prueba dedicada del modulo de autoria correspondiente",
+      "no_es_partida": true
+    }
+  ],
+  "procedencia": {
+    "jugadas_blend_sha256": "874b020c42d0b195966543784770772e2894ad5d8a21ca381ca4aab56c0669f0",
+    "jugadas_velocidad": 0.5,
+    "jugadas_fotogramas": 147,
+    "cuerpo_fotogramas": 350,
+    "cuerpo_modulo_sha256": "417b207c474bc47679b05443deafd4b52c6e44933feb40f661e33e358dc8edde",
+    "cara_modulo_sha256": "26f97c4a0932d8854f1c7be43521c1088eaad2e037f2e3f612fa561bfe445648",
+    "manos_modulo_sha256": "87273ce05406cf6e48c43f4831c9268d9d2fd67da4484afa02fbbefbc7cc0993"
+  }
+}

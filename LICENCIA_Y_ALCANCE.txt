@@ -1,0 +1,24 @@
+VECINOCOLMADO CC0 — VERSIÓN DE REVISIÓN piel-clara-animaciones-v2
+Destino previsto: rama review/piel-clara-animaciones-v2. No es release final.
+Estado actual de este directorio: staging local, sin commit ni publicación.
+
+Licencia de los componentes gráficos de origen: CC0 1.0 Universal.
+Texto oficial: https://creativecommons.org/publicdomain/zero/1.0/legalcode.en
+Resumen: https://creativecommons.org/publicdomain/zero/1.0/
+
+El alcance de la revisión es el personaje editable, sus
+texturas empaquetadas, las animaciones nuevas propias, los inventarios y
+las fotografías/vídeos propios de Blender que figuren expresamente en el
+manifiesto final. El paquete se prepara para una rama de revisión bajo CC0; no se crea una
+release final ni se declara terminada la integración o la adaptación de ropa.
+
+La procedencia de la base, ropa, accesorios y targets está en
+procedencia/PROCEDENCIA_COMPONENTES.json. Se conservan los avisos originales.
+No se distribuyen MakeHuman, MPFB, sus addons ni código de terceros.
+La licencia del código de esos programas es diferente de la licencia de
+los assets; este documento no cambia ni extiende dichas licencias.
+
+No se incluye código, datos, recursos ni imágenes de aplicaciones o juegos.
+Los archivos de control y preparación locales no forman parte de la entrega.
+No debe atribuirse a MakeHuman, MPFB ni Creative Commons una aprobación del
+personaje o de su funcionamiento.

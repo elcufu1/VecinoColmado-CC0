@@ -1,0 +1,22 @@
+PROCEDENCIA DE LOS ASSETS GRÁFICOS
+Los assets núcleo de MakeHuman/MPFB se publican bajo CC0 1.0 Universal.
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+Licencia oficial: https://static.makehumancommunity.org/about/license.html
+Permiso para creador de personajes:
+https://static.makehumancommunity.org/mpfb/faq/build_other_chargen.html
+Inventario de componentes del sistema:
+https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html
+Faceunits 01 figura expresamente como CC0:
+https://static.makehumancommunity.org/assets/assetpacks.html
+
+Componentes: basemesh y rig GameEngine MPFB, targets oficiales de cintura y
+volumen facial; piel middleage_caucasian_male con textura
+middleage_lightskinned_male_diffuse.png; ojos low-poly, cejas eyebrow002,
+pestañas eyelashes01, ropa male_casualsuit01, calzado shoes01, dientes
+teeth_base, lengua tongue01. SIN malla de cabello.
+Faceunits 01: contribución de Mika Suominen, CC0 según catálogo oficial.
+
+Se puede modificar y usar comercialmente los assets CC0, incluido un creador
+de personajes. Esto no garantiza que exista ya la implementación runtime.
+La licencia del código de MPFB (GPL) y MakeHuman (AGPL) es distinta;
+no se incluye ese código. Véanse los avisos originales por componente.

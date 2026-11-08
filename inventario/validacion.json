@@ -1,0 +1,81 @@
+{
+  "estado_entrega": "REVISION_NO_INTEGRADA_FINAL",
+  "ambito_pruebas_actuales": "Autoría y reproducción Blender, estructura y preservación del GLB exacto; no aprobación de partida con esta revisión",
+  "manos": {
+    "poses_densas": 252,
+    "muestras_fotograma_lado": 622,
+    "acciones_revisadas": 15,
+    "autocruces_en_muestras": 0,
+    "pinza_estatica_ambas_manos": "SAT y BVH sin penetraciones en las muestras comprobadas",
+    "correcciones_pesos_vertices": 788,
+    "geometria_reposo_morphs_bind_uv_texturas": "conservados en las pruebas de autoría"
+  },
+  "video_manos_blender": {
+    "sha256": "eb9ea7753beec24e08bc6e08dcca05535ad6bb0a245827b64e2ef2a2507cec8e",
+    "bytes": 1851352,
+    "dimensiones": [
+      960,
+      540
+    ],
+    "fps": 12,
+    "fotogramas": 336,
+    "duracion_s": 28,
+    "original_pesos_fuente_frames": [
+      1,
+      32
+    ],
+    "corregido_frames": [
+      33,
+      336
+    ],
+    "estado_archivo": "incluido en evidencia/manos_blender.mp4; SHA verificado"
+  },
+  "pendiente": [
+    "Ajustes de ropa pospuestos por el usuario; defectos visibles documentados",
+    "Alcance lejano y objetivos fuera del dominio nominal",
+    "Partida real y vídeo del nuevo GLB, documentados por separado del paquete CC0",
+    "Personalización corporal con adaptación de ropa y rig"
+  ],
+  "ropa": "aplazada; defectos visibles pendientes",
+  "alcance_lejano": "pendiente",
+  "demo_nla": {
+    "native": true,
+    "key_sample_rate_hz": 120,
+    "scene_fps": 24,
+    "not_a_web_game": true
+  },
+  "archivos": {
+    "blend": {
+      "sha256": "874b020c42d0b195966543784770772e2894ad5d8a21ca381ca4aab56c0669f0",
+      "bytes": 20777563
+    },
+    "glb": {
+      "sha256": "1490123ee619525bdfa6522a63699b8a9cb813920bca8e127229f97b48c66d7e",
+      "bytes": 30670528
+    }
+  },
+  "exportacion": {
+    "passed": true,
+    "clips": 60,
+    "bones": 53,
+    "body_morphs": 56,
+    "source_textures_byte_identical": 10,
+    "max_skin_influences": 6,
+    "skin_slots": 8,
+    "source_bind_geometry_uv_morphs_preserved": true
+  },
+  "movimientos_cercanos": {
+    "poses": 479,
+    "hands_checked": 958,
+    "hand_self_intersections": 0,
+    "tile_table_penetrations": 0,
+    "scope": "Objetivos nominales cercanos; no ropa ni alcance universal"
+  },
+  "cara": {
+    "logical_clips": 8,
+    "sampled_frames_per_clip": 49,
+    "coordinated_morph_meshes": 6,
+    "body_morphs_preserved": 56,
+    "same_face_authoring_module_sha256": "26f97c4a0932d8854f1c7be43521c1088eaad2e037f2e3f612fa561bfe445648"
+  }
+}

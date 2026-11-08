@@ -1,0 +1,288 @@
+[
+  {
+    "componente": "Piel",
+    "seleccion": "skins/middleage_caucasian_male",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+    "archivos_fuente": [
+      {
+        "file": "middleage_caucasian_male.mhmat",
+        "bytes": 1469,
+        "sha256": "113326b7670cb273610314b91e2597b228711adf5f0666660b16fef269bfbe72"
+      },
+      {
+        "file": "middleage_lightskinned_male_diffuse.png",
+        "bytes": 3668589,
+        "sha256": "3f94f3f6a5cab92dedf5cce392a87332312fc435f1cb44c6e7b897daef9a5fbb"
+      },
+      {
+        "file": "middleage_caucasian_male.thumb",
+        "bytes": 81315,
+        "sha256": "0edd08641ae1bc1f832fe17a54d519445c73b8ba1024606e4c25ccaaca6d2279"
+      }
+    ],
+    "encabezado": "# This is a material file for MakeHuman\n#\n# This asset was explicitly released as CC0 in september 2020. The license\n# text for CC0 can be found in the root of this repository.\n#\n# The copyright holders at the point of the release to CC0 were:\n#\n# Copyright (C) 2020 Data Collection AB, https://www.datacollection.se\n# Copyright (C) 2020 Joel Palmius\n# Copyright (C) 2020 Jonas Hauquier\n#\n# The primary legal contact for MakeHuman is Data Collection AB.\n#\n# For more information, see homepage at http://www.makehumancommunity.org\nname middleage_cauasian_male\ntag MakeHuman™",
+    "nota": "Solo cambio de textura de color, misma geometría, rasgos y UV"
+  },
+  {
+    "componente": "Ropa camisa y pantalón",
+    "seleccion": "clothes/male_casualsuit01",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+    "archivos_fuente": [
+      {
+        "file": "male_casualsuit01.mhclo",
+        "bytes": 570419,
+        "sha256": "78503ed7f56c149843d85e06e1164bc6871ce7319b2ef689237046352cc90de4"
+      },
+      {
+        "file": "male_casualsuit01.mhmat",
+        "bytes": 1345,
+        "sha256": "043b25cefd398261b893d3dae58c81fc3e9633a25a01eafe66963591f5ad6eb6"
+      },
+      {
+        "file": "male_casualsuit01.obj",
+        "bytes": 699545,
+        "sha256": "001921d237e408c35103720d046aa37f9c5512db1a179a5ede6a065cd504ba89"
+      },
+      {
+        "file": "male_casualsuit01.thumb",
+        "bytes": 39401,
+        "sha256": "cd8a8c9461b164542d8660b9beaae17636040c9199020b65755a03559809cfc1"
+      },
+      {
+        "file": "male_casualsuit01_ao.png",
+        "bytes": 785596,
+        "sha256": "9402d75d71318ef3ad90ee59f8b8688effefd13b3ec56423330e005bed5cd6c0"
+      },
+      {
+        "file": "male_casualsuit01_diffuse.png",
+        "bytes": 5531728,
+        "sha256": "3fd0bba5dcbdea0ac427f644a6c7c298938f7369b8f96626621ce1e88989394e"
+      },
+      {
+        "file": "male_casualsuit01_normal.png",
+        "bytes": 1738660,
+        "sha256": "ff029fc5a3350ebc72813cdf050afcffd23064c7701d99e664572713cfa98a5f"
+      }
+    ],
+    "encabezado": "# This is a clothes file for MakeHuman\n#\n# This asset was explicitly released as CC0 in september 2020. The license\n# text for CC0 can be found in the root of this repository.\n#\n# The copyright holders at the point of the release to CC0 were:\n#\n# Copyright (C) 2020 Data Collection AB, https://www.datacollection.se\n# Copyright (C) 2020 Joel Palmius\n# Copyright (C) 2020 Jonas Hauquier\n#\n# The primary legal contact for MakeHuman is Data Collection AB.\n#\n# For more information, see homepage at http://www.makehumancommunity.org\n\nuuid 79ced554-1d8a-4c14-a6a8-e1de90b09c32"
+  },
+  {
+    "componente": "Calzado",
+    "seleccion": "clothes/shoes01",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+    "archivos_fuente": [
+      {
+        "file": "shoes01.mhclo",
+        "bytes": 119049,
+        "sha256": "7994e38f7cdcee0bd5f55101660badcce0162fcdfc7f432218dd1eb301626252"
+      },
+      {
+        "file": "shoes01.mhmat",
+        "bytes": 1161,
+        "sha256": "db1711e2dfea4dd8c24459643603a190d9a9da603fd26da5542002a73d740be8"
+      },
+      {
+        "file": "shoes01.mhw",
+        "bytes": 324727,
+        "sha256": "b377d91e6d0264521f672c3990c366b2631103accba4921fc3965c2ed5ce395b"
+      },
+      {
+        "file": "shoes01.obj",
+        "bytes": 136910,
+        "sha256": "eac355a842a8eb8ae2f09fac8dd18a877a24ef2521ed2d6bf38559b42ce4b49a"
+      },
+      {
+        "file": "shoes01.thumb",
+        "bytes": 40319,
+        "sha256": "a118291fe3e83e3c616febf52fdb480186c816e7cd4d77d331adffd457421cbb"
+      },
+      {
+        "file": "shoes01_diffuse.png",
+        "bytes": 1335772,
+        "sha256": "50c9a406a7f1cb6aa7b42912348e78f09d0252aa3963c8229cf18dfe8353cdbf"
+      },
+      {
+        "file": "shoes01_normal.png",
+        "bytes": 875473,
+        "sha256": "a9bfd7223e98b8f93100e89596135e3a94e6044f9db11b4d23cec625c37a4599"
+      }
+    ],
+    "encabezado": "# This is a clothes file for MakeHuman\n#\n# This asset was explicitly released as CC0 in september 2020. The license\n# text for CC0 can be found in the root of this repository.\n#\n# The copyright holders at the point of the release to CC0 were:\n#\n# Copyright (C) 2020 Data Collection AB, https://www.datacollection.se\n# Copyright (C) 2020 Joel Palmius\n# Copyright (C) 2020 Jonas Hauquier\n#\n# The primary legal contact for MakeHuman is Data Collection AB.\n#\n# For more information, see homepage at http://www.makehumancommunity.org\n\nuuid 6e0c552e-e207-44df-8f70-c9bfdeddd8c6"
+  },
+  {
+    "componente": "Ojos",
+    "seleccion": "eyes/low-poly",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+    "archivos_fuente": [
+      {
+        "file": "low-poly.mhclo",
+        "bytes": 1344,
+        "sha256": "68582e28e9176cba7cfcf35208f671b6201b8d1bc95c32decff61a3160ec34d8"
+      },
+      {
+        "file": "low-poly.obj",
+        "bytes": 6604,
+        "sha256": "783fe1e6331162c876520b4c2bed7a8ca06354ca15497e8ebd68bb1b59f4d3de"
+      },
+      {
+        "file": "low-poly.thumb",
+        "bytes": 15938,
+        "sha256": "27b09c5a2bd792671c99a00016ec836855278f199bc4753c3018f1ac73068c72"
+      }
+    ],
+    "encabezado": "# This is a clothes file for MakeHuman\n#\n# This asset was explicitly released as CC0 in september 2020. The license\n# text for CC0 can be found in the root of this repository.\n#\n# The copyright holders at the point of the release to CC0 were:\n#\n# Copyright (C) 2020 Data Collection AB, https://www.datacollection.se\n# Copyright (C) 2020 Joel Palmius\n# Copyright (C) 2020 Jonas Hauquier\n#\n# The primary legal contact for MakeHuman is Data Collection AB.\n#\n# For more information, see homepage at http://www.makehumancommunity.org\n\nuuid 1cc97a30-85a1-42e6-a9f7-b3e753732baa"
+  },
+  {
+    "componente": "Cejas",
+    "seleccion": "eyebrows/eyebrow002",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+    "archivos_fuente": [
+      {
+        "file": "eyebrow002.mhclo",
+        "bytes": 9132,
+        "sha256": "550781113f5c3971e7e200450d7d94e2290d43e9449a42667d2bf972c1eb0593"
+      },
+      {
+        "file": "eyebrow002.mhmat",
+        "bytes": 1098,
+        "sha256": "57fc4d1f089be90b2ab4774bdc7c077b5a519f33a293e57ee74762c7714a3b34"
+      },
+      {
+        "file": "eyebrow002.obj",
+        "bytes": 8227,
+        "sha256": "7fe4e036311c41802bd6889acb02d1b06184a0dd759ac72e1d9fba1037243667"
+      },
+      {
+        "file": "eyebrow002.png",
+        "bytes": 96277,
+        "sha256": "1de4e4cb69b3f4324390219ffbeb17a0b2555104d3211d1ac667655b69b64038"
+      },
+      {
+        "file": "eyebrow002.thumb",
+        "bytes": 137855,
+        "sha256": "4acd972e24cb3dec29a72391d08fb0a88afc1b8ad7ec1dd903e017558c9a1e20"
+      }
+    ],
+    "encabezado": "# This is a clothes file for MakeHuman\n#\n# This asset was explicitly released as CC0 in september 2020. The license\n# text for CC0 can be found in the root of this repository.\n#\n# The copyright holders at the point of the release to CC0 were:\n#\n# Copyright (C) 2020 Data Collection AB, https://www.datacollection.se\n# Copyright (C) 2020 Joel Palmius\n# Copyright (C) 2020 Jonas Hauquier\n#\n# The primary legal contact for MakeHuman is Data Collection AB.\n#\n# For more information, see homepage at http://www.makehumancommunity.org\n\nuuid a4e73c2f-3a12-47c8-b706-31a68cac6907"
+  },
+  {
+    "componente": "Pestañas",
+    "seleccion": "eyelashes/eyelashes01",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+    "archivos_fuente": [
+      {
+        "file": "eyelashes01.mhclo",
+        "bytes": 2265,
+        "sha256": "5a86b29c15649273d723084954b7fa7bf199112571d4f58539b46734d397ee6b"
+      },
+      {
+        "file": "eyelashes01.mhmat",
+        "bytes": 1074,
+        "sha256": "8029c99d94f3d87a1e81825fad6b90eec773ae6955a5b2592222ef237377e190"
+      },
+      {
+        "file": "eyelashes01.obj",
+        "bytes": 18832,
+        "sha256": "f78f5b93fea1946fcae103d32c4f082dd9612a1ec2e7e2f90b03ebe59b0baf20"
+      },
+      {
+        "file": "eyelashes01.png",
+        "bytes": 91600,
+        "sha256": "4b69c0fff2648874460e9caf80c31413c444218a5c50afebc425aeaa65484a35"
+      },
+      {
+        "file": "eyelashes01.thumb",
+        "bytes": 140641,
+        "sha256": "34ab06601745c2b74fcfa6f63a374fcea58cb4501e728a3c6935a3a1ed794aa3"
+      }
+    ],
+    "encabezado": "# This is a clothes file for MakeHuman\n#\n# This asset was explicitly released as CC0 in september 2020. The license\n# text for CC0 can be found in the root of this repository.\n#\n# The copyright holders at the point of the release to CC0 were:\n#\n# Copyright (C) 2020 Data Collection AB, https://www.datacollection.se\n# Copyright (C) 2020 Joel Palmius\n# Copyright (C) 2020 Jonas Hauquier\n#\n# The primary legal contact for MakeHuman is Data Collection AB.\n#\n# For more information, see homepage at http://www.makehumancommunity.org\n\nuuid d533836f-13ad-4836-8b65-051108253cd2"
+  },
+  {
+    "componente": "Dientes",
+    "seleccion": "teeth/teeth_base",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+    "archivos_fuente": [
+      {
+        "file": "teeth.mhmat",
+        "bytes": 1086,
+        "sha256": "3baeff72d9eb06ca16c3cff7ca2ab304216717dee247e0d88f1dc33037c8320e"
+      },
+      {
+        "file": "teeth.png",
+        "bytes": 1799930,
+        "sha256": "d0afb57869c6fbb56b98f5efc4aec629ee7593e70d8dd2bfb9de923acfb65f43"
+      },
+      {
+        "file": "teeth_base.mhclo",
+        "bytes": 263220,
+        "sha256": "9edc3deff3bb97a95c791878064dd069a74a38f95ea6d9707a9ba68d888b3b5c"
+      },
+      {
+        "file": "teeth_base.obj",
+        "bytes": 313110,
+        "sha256": "f55198069e55d360c4b4cc7ecb1cc292b2c7665753ab8b65eabf46a8783f2875"
+      },
+      {
+        "file": "teeth_base.thumb",
+        "bytes": 50147,
+        "sha256": "04b97c4fa15c3ba0786e552a4bf5474d47efc1162d9f7f4dbdc2f06d1ae43004"
+      }
+    ],
+    "encabezado": "# This is a clothes file for MakeHuman\n#\n# This asset was explicitly released as CC0 in september 2020. The license\n# text for CC0 can be found in the root of this repository.\n#\n# The copyright holders at the point of the release to CC0 were:\n#\n# Copyright (C) 2020 Data Collection AB, https://www.datacollection.se\n# Copyright (C) 2020 Joel Palmius\n# Copyright (C) 2020 Jonas Hauquier\n#\n# The primary legal contact for MakeHuman is Data Collection AB.\n#\n# For more information, see homepage at http://www.makehumancommunity.org\n\nuuid 0a5ec82a-0d5f-43ce-a765-8f076f95692d"
+  },
+  {
+    "componente": "Lengua",
+    "seleccion": "tongue/tongue01",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+    "archivos_fuente": [
+      {
+        "file": "tongue01.mhclo",
+        "bytes": 2113,
+        "sha256": "61d825899cd78ff3146fa1324118060cb44b095fae1427d408c199ade74e3c9e"
+      },
+      {
+        "file": "tongue01.mhmat",
+        "bytes": 1261,
+        "sha256": "7769df66c69b8c09a0ec713d70d8381abbb08ac82207369f5413970495cd4340"
+      },
+      {
+        "file": "tongue01.obj",
+        "bytes": 17155,
+        "sha256": "12f4a6a9f85abae2ce3b4aa42d8119e1f679a437e0e89cb928ec68b29a7a1587"
+      },
+      {
+        "file": "tongue01.thumb",
+        "bytes": 49815,
+        "sha256": "5c995b9b94fa73a080aa24e398cafb971a4e3667e028c33d8857a15dcc35a770"
+      },
+      {
+        "file": "tongue01_diffuse.png",
+        "bytes": 625419,
+        "sha256": "3150be398e48e8ba1feac164c3143c16c0b2e959d9ffb6155f0171f59cfb4ea9"
+      }
+    ],
+    "encabezado": "# This is a clothes file for MakeHuman\n#\n# This asset was explicitly released as CC0 in september 2020. The license\n# text for CC0 can be found in the root of this repository.\n#\n# The copyright holders at the point of the release to CC0 were:\n#\n# Copyright (C) 2020 Data Collection AB, https://www.datacollection.se\n# Copyright (C) 2020 Joel Palmius\n# Copyright (C) 2020 Jonas Hauquier\n#\n# The primary legal contact for MakeHuman is Data Collection AB.\n#\n# For more information, see homepage at http://www.makehumancommunity.org\n\nuuid 52ad91a3-caad-4e50-8c38-67634e5e789c"
+  },
+  {
+    "componente": "Malla base, rig GameEngine y targets de cara/cintura",
+    "licencia": "CC0 assets; código MPFB GPL, no incluido en entrega",
+    "fuente_oficial": "https://static.makehumancommunity.org/about/license.html"
+  },
+  {
+    "componente": "Faceunits01",
+    "autor": "Mika Suominen",
+    "licencia": "CC0",
+    "fuente_oficial": "https://static.makehumancommunity.org/assets/assetpacks.html",
+    "sha256": "fd647a088691ddd9193ce9600df3377bb9ccf69c2904f0a7773a3c246d234c18",
+    "archivo_pack": "faceunits01.json"
+  }
+]

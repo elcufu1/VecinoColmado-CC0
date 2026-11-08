@@ -1,0 +1,7 @@
+DEMOSTRACIÓN BLENDER, NO PARTIDA WEB
+
+El archivo abre con DEMO_Juego_cercano en NLA. Reproduce la línea de tiempo: una ficha se agarra, se sostiene, golpea con el extremo inclinado, vuelve al rack y después se coloca plana. Cuerpo, ficha y correctivos de ropa están horneados; no necesita ejecutar Python.
+
+BIBLIOTECA: silencia DEMO_Juego_cercano en el esqueleto, la ficha de prueba y las Shape Keys de la ropa. Activa solamente el clip deseado y la pista de ropa con el mismo nombre. Las expresiones se coordinan en las mallas faciales. Los ejercicios de diagnóstico se conservan aparte y no se disparan en la partida.
+
+El GLB del personaje excluye ficha, mesa, silla y pistas DEMO; este archivo Blender incluye esos elementos sólo para revisar contactos. Las partidas web requieren su comprobación independiente. La adaptación de ropa/esqueleto a cambios corporales sigue pendiente.

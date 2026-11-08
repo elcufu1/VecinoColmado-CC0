@@ -1,0 +1,110 @@
+{
+  "version": "v2-review",
+  "archivos": [
+    {
+      "archivo": "LEEME_DEMO_Y_BIBLIOTECA.txt",
+      "bytes": 893,
+      "sha256": "7bc8c02395d643cb14b1eaff5d2db17b1170f21f2a7c1672c62f11a5fb49b462"
+    },
+    {
+      "archivo": "LICENCIA_Y_ALCANCE.txt",
+      "bytes": 1430,
+      "sha256": "05199cdeba26f888daafcf747dfbc80550e68df43c2281ffc25b521b4204eae3"
+    },
+    {
+      "archivo": "README.md",
+      "bytes": 9358,
+      "sha256": "b8b27ba2482f7ce3b3985d58bce6f45e2f4103b2fd1d9c6620f706e7e21b7386"
+    },
+    {
+      "archivo": "VecinoColmado_CC0_PielClara_Animaciones_v2.blend",
+      "bytes": 20777563,
+      "sha256": "874b020c42d0b195966543784770772e2894ad5d8a21ca381ca4aab56c0669f0"
+    },
+    {
+      "archivo": "VecinoColmado_CC0_PielClara_Animaciones_v2.glb",
+      "bytes": 30670528,
+      "sha256": "1490123ee619525bdfa6522a63699b8a9cb813920bca8e127229f97b48c66d7e"
+    },
+    {
+      "archivo": "evidencia/cara_blender.mp4",
+      "bytes": 210862,
+      "sha256": "7b1e6d27012252d2e226ef6735f2569704c96afe62a572f92b1110e07464cbd5"
+    },
+    {
+      "archivo": "evidencia/colocacion_blender.png",
+      "bytes": 688237,
+      "sha256": "ae3ee41f1e6cdd6af4cfc1fbb676faa99d0e953625ce4e83204053e1dc105686"
+    },
+    {
+      "archivo": "evidencia/cuerpo_blender.mp4",
+      "bytes": 657150,
+      "sha256": "44bb44fd35ed05ab454b27a725203e37e9a6cf439c9396faa7ff7e153e049635"
+    },
+    {
+      "archivo": "evidencia/jugada_general_blender.png",
+      "bytes": 603324,
+      "sha256": "ed58bd9a0f4c5262c0b501a382a02191b57e7b95ab95d412f7b64d94c021fe80"
+    },
+    {
+      "archivo": "evidencia/jugadas_blender_nla.mp4",
+      "bytes": 354492,
+      "sha256": "82e21c7caaa3e057f02d3b2ca9d263029d94f2e4965071919e56db70a43f81ba"
+    },
+    {
+      "archivo": "evidencia/manos_blender.mp4",
+      "bytes": 1851352,
+      "sha256": "eb9ea7753beec24e08bc6e08dcca05535ad6bb0a245827b64e2ef2a2507cec8e"
+    },
+    {
+      "archivo": "evidencia/pulgar_derecho.png",
+      "bytes": 381870,
+      "sha256": "1b5ee023ed5c4c7762f9c0285f730ae00ce30fb58974cc8e34fd22f8aab2f2d4"
+    },
+    {
+      "archivo": "evidencia/pulgar_izquierdo.png",
+      "bytes": 401595,
+      "sha256": "5504ca72c0fa908bb545b4b25c56a3969fe30908adb6fbc4b3689ba3c4692306"
+    },
+    {
+      "archivo": "evidencia/puno_derecho.png",
+      "bytes": 290591,
+      "sha256": "a3be3ab24a4d786f93819436136b7cec28879fd96c1fcc662a527c7115d52a4a"
+    },
+    {
+      "archivo": "evidencia/puno_izquierdo.png",
+      "bytes": 311766,
+      "sha256": "f35d19aae5cb3c72a49cb36385bb2e3c0e161c6b28231ac15a1d62231b66e1d1"
+    },
+    {
+      "archivo": "inventario/acciones.json",
+      "bytes": 2660,
+      "sha256": "2ff43da2f133ef0f672458e0d5bd1199aefabc1d6daae0e178bb25a599aac740"
+    },
+    {
+      "archivo": "inventario/evidencia.json",
+      "bytes": 3296,
+      "sha256": "c27a63001b0ac88dc4fe5bab576c73c93a9cd1b63e3bc11fd4b486c6ee10ee6e"
+    },
+    {
+      "archivo": "inventario/validacion.json",
+      "bytes": 2524,
+      "sha256": "82e97560ebd111bb67327644b4705fd48a0f76b0da9eef5883cfc4388a0088b9"
+    },
+    {
+      "archivo": "procedencia/LICENCIAS_Y_PROCEDENCIA_ORIGEN.txt",
+      "bytes": 1280,
+      "sha256": "c8adcd4cfe942fee58a2c86323eaf9281bcfe8ff0f851460040d84c23767ba04"
+    },
+    {
+      "archivo": "procedencia/PROCEDENCIA_COMPONENTES.json",
+      "bytes": 13979,
+      "sha256": "9c797606dfa42574a3b132ed578bbb9cd1f986226113c933f34273f5b87d3387"
+    },
+    {
+      "archivo": "procedencia/avisos_originales_componentes.txt",
+      "bytes": 4429,
+      "sha256": "606fc11586c5c98ff0eae2850a32edbdcb2776feb7a5ba8e2537094171a24950"
+    }
+  ]
+}
