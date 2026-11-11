@@ -135,7 +135,7 @@ class Ctx:
     def seat_hands(self, dy):
         y = S.SEAT_CY + dy - S.SEAT_D / 2 + 0.05
         z = S.SEAT_Z + 0.03
-        x = S.SEAT_W / 2 + 0.078
+        x = S.SEAT_W / 2 + 0.081
         fg = VP.finger_mix(('flat', 0.6), ('relax', 0.4))
         return (dict(armR=(-x, y, z), hdirR=(0.05, -0.30, -1), hpalmR=(0.95, 0, 0.0), fingR=fg,
                      elbowR=(-0.29, y + 0.10, z + 0.25), tableR=0.0),
@@ -149,11 +149,14 @@ class Ctx:
         A.key(0, ST, chair=dyo, **VP.neutral_face(), eyes=(0, 0))
         A.key(8, head=(14, 18, 0), neck=(4, 8, 0), eyes=(15, 12))
         A.key(16, head=(4, 0, 0), neck=(0, 0, 0), eyes=(0, 6), hips=(0, 0.01, -0.01), spine=(4, 0, 0))
+        A.key(12, **{k: ST[k] for k in ('armR', 'armL')})
         A.key(26, hips=(0, 0.10, -0.17), hips_rot=(18, 0, 0), spine=(30, 0, 0), head=(-14, 0, 0), neck=(-8, 0, 0),
               armR=(-0.21, -0.33, 0.84), armL=(0.21, -0.33, 0.84),
               elbowR=(-0.29, -0.08, 0.96), elbowL=(0.29, -0.08, 0.96),
               hdirR=(0.1, -1, -0.3), hdirL=(-0.1, -1, -0.3),
               hpalmR=(0.5, 0, -1), hpalmL=(-0.5, 0, -1), fingR=F['relax'], fingL=F['relax'])
+        # las manos se retiran del borde de la mesa antes de bajar (no atraviesan el tablero)
+        A.key(31, armR=(-0.25, -0.13, 0.86), armL=(0.25, -0.13, 0.86))
         A.key(34, hips=(0, hy_out - 0.02, -0.37), hips_rot=(14, 0, 0), spine=(30, 0, 0))
         A.key(38, armR=(-0.31, 0.02, 0.62), armL=(0.31, 0.02, 0.62), elbowR=(-0.30, 0.15, 0.85),
               elbowL=(0.30, 0.15, 0.85), hdirR=(0.0, -0.3, -1), hdirL=(0.0, -0.3, -1), hpalmR=(0.95, 0, 0),
@@ -215,11 +218,39 @@ class Ctx:
               hdirR=(0.05, -1, -0.5), hdirL=(-0.05, -1, -0.5),
               hpalmR=(0.2, 0, -1), hpalmL=(-0.2, 0, -1), fingR=F['relax'], fingL=F['relax'])
         A.key(62, hips=(0, 0.10, -0.17), hips_rot=(16, 0, 0), spine=(24, 0, 0), head=(-4, 0, 0), neck=(-4, 0, 0))
+        A.key(67, armR=(-0.29, -0.03, 0.84), armL=(0.29, -0.03, 0.84), hdirR=(-0.1, -0.3, -1), hdirL=(0.1, -0.3, -1),
+              hpalmR=(1, 0, 0), hpalmL=(-1, 0, 0))
         A.key(72, hips=(0, 0.01, -0.012), hips_rot=(2, 0, 0), spine=(3, 0, 0), head=(2, 0, 0), neck=(0, 0, 0))
         A.key(80, ST, chair=dyo)
         A.key(90, ST, chair=dyo, eyes=(0, 0))
         A.proc(VP.blink_proc([60]))
+        A.proc(self.hands_on_thighs(49, 52, 55, 61, t=0.42))
         A.props['cam'] = 'lado'
+
+    def hands_on_thighs(self, f0, f1, f2, f3, t=0.5, r=0.088):
+        """Las muñecas siguen la parte de arriba del muslo (ya resuelto) mientras se empuja para pararse."""
+        rig = self.rig
+
+        def fn(f, P, ev):
+            if f <= f0 or f >= f3:
+                return
+            w = C.smooth((f - f0) / (f1 - f0)) if f < f1 else (1.0 if f <= f2 else 1.0 - C.smooth((f - f2) / (f3 - f2)))
+            pb = P['_pb']
+            for s in 'LR':
+                n = 'thigh_' + s.lower()
+                M = pb.pose[n]
+                a = M.translation
+                b = M @ Vector((0, rig.length[n], 0))
+                ax = (b - a).normalized()
+                up = Vector((0, 0, 1))
+                up = (up - ax * up.dot(ax)).normalized()
+                tgt = a + (b - a) * t + up * r
+                P['arm' + s] = np.array(P['arm' + s][:3]) * (1 - w) + np.array(tgt[:]) * w
+                inward = np.array((0.85 if s == "R" else -0.85, -0.2, -0.48))
+                hd = np.array(P['hdir' + s][:3]) * (1 - w) + inward * w
+                P['hdir' + s] = hd / np.linalg.norm(hd)
+        fn.stage = 'arms'
+        return fn
 
     # ------------------------------------------------------------------ sostener fichas (mano izquierda)
     def stack_hold(self, tb):
@@ -447,7 +478,8 @@ class Ctx:
         K(24, hips=(0, 0, -0.005), hips_rot=(0, 0, 0), spine=(0, 0, 0), head=(0, 0, 0), **neutral_arms)
         fl, fr = Vector(ST['footL']), Vector(ST['footR'])
         K(10, footL=tuple(fl[:]), footR=tuple(fr[:]), hips=(0, 0, -0.005))
-        K(16, hips=(-0.035, 0, -0.01), hips_rot=(0, 0, 4))
+        # brazos al frente para equilibrar: el muslo levantado no choca con la mano colgando
+        K(16, hips=(-0.035, 0, -0.01), hips_rot=(0, 0, 4), **squat_arms)
         K(20, footL=tuple((fl + Vector((0, -0.22, 0.34)))[:]), frotL=(20, 0, 0), kneeL=(0.05, -1, 0.2))
         K(14)
         K(20, footL=tuple(fl[:]), frotL=(0, 0, 0))
@@ -455,7 +487,7 @@ class Ctx:
         K(20, footR=tuple((fr + Vector((0, -0.22, 0.34)))[:]), frotR=(20, 0, 0), kneeR=(-0.05, -1, 0.2))
         K(14)
         K(20, footR=tuple(fr[:]), frotR=(0, 0, 0))
-        K(10, hips=(-0.035, 0, -0.01), hips_rot=(0, 0, 4))
+        K(10, hips=(-0.035, 0, -0.01), hips_rot=(0, 0, 4), **neutral_arms)
         # --- tobillos / dedos del pie (pie izquierdo levantado al frente)
         M('Tobillos_DedosPie', t[0])
         fup = fl + Vector((0, -0.12, 0.10))

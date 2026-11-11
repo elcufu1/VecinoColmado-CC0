@@ -19,6 +19,8 @@ THUMB = dict(
     count=((40, 0, 40), (35, 0, 0), (40, 0, 0)),
 )
 
+PINCH_V = (45.0, 20.0, 15.7, 0.5, -14.9, 64.1, -20.8, 4.6, -0.1)
+
 SEATED = {}
 STAND = {}
 
@@ -36,6 +38,20 @@ def setup(rig, ev):
     F['pinch_open'] = VP.finger_mix(('pinch', 0.55), ('open', 0.45))
     F['pinch_open'][3:6] = F['pinch'][3:6] * 0.5
     F['tap_up'] = VP.fingers(THUMB['relax'], (-8, 4, 2), (12, 16, 10), (14, 18, 10), (16, 20, 12))
+    # pinza fina para la ficha parada (yemas a 14.5 mm, enfrentadas; optimizado dentro de los límites)
+    pv = VP.fingers(THUMB['pinch'], (39.6, 17.5, 11.1), (34, 38, 22), (40, 44, 26), (46, 48, 30),
+                    spread=(-6, 0, -4, -8))
+    x = PINCH_V
+    pv[0] = (x[0], x[1], x[2])
+    pv[1] = (x[3], 0, 0)
+    pv[2] = (x[4], 0, 0)
+    pv[3] = (x[5], 0, x[6])
+    pv[4] = (x[7], 0, 0)
+    pv[5] = (x[8], 0, 0)
+    F['pinch_v'] = pv
+    F['pinch_v_open'] = VP.finger_mix(('pinch_v', 0.6), ('relax', 0.4))
+    F['pinch_v_open'][0] = pv[0] + np.array((-12.0, 0, -10.0))
+    F['pinch_v_open'][3] = pv[3] + np.array((-14.0, 0, 0))
     VP.F.update(F)
     ev.defaults = VP.defaults(rig)
     ev.defaults['fingL'] = F['relax'].copy()
@@ -50,8 +66,11 @@ def setup(rig, ev):
     WL, EL = VP.arm_from_dirs(pb, 'L', C.mirror_v(C.vec(ud)), C.mirror_v(C.vec(fd)), space='world')
     SEATED.clear()
     SEATED.update(base)
-    SEATED.update(armR=WR, elbowR=ER, armL=WL, elbowL=EL, hdirR=(0.5, -1, 0.3), hpalmR=(0.3, 0, -1),
-                  hdirL=(-0.5, -1, 0.3), hpalmL=(-0.3, 0, -1), autoR=3.0, autoL=3.0, tableR=1.0, tableL=1.0,
+    # manos apoyadas a los lados de la fila de fichas paradas
+    WR, ER = (-0.255, -0.415, 0.85), (-0.345, -0.15, 0.88)
+    WL, EL = tuple(C.mirror_v(C.vec(WR))[:]), tuple(C.mirror_v(C.vec(ER))[:])
+    SEATED.update(armR=WR, elbowR=ER, armL=WL, elbowL=EL, hdirR=(0.38, -1, 0.1), hpalmR=(0.25, 0, -1),
+                  hdirL=(-0.38, -1, 0.1), hpalmL=(-0.25, 0, -1), autoR=3.0, autoL=3.0, tableR=1.0, tableL=1.0,
                   fingL=F['table_rest'], fingR=F['table_rest'])
     # ---------------- de pie ----------------
     STAND.clear()

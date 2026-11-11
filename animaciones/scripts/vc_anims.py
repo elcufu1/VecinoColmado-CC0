@@ -103,141 +103,206 @@ def build(ctx):
     A.proc(VP.blink_proc([12, 70, 122]))
     A.props['cam'] = 'mesa'
 
-    # ---------------------------------------------------------------- 6/7. Agarrar
+    # ---------------------------------------------------------------- 6/7. Agarrar (fichas paradas)
     NH = lambda base, side, **kw: VP.natural_hand(ev, base, side, **kw)  # noqa: E731
-    th = L.seated(spine=(22, -2, 0), clavR=(4, 9), **look(-4, 6))
-    HOLD = NH(th, 'r', arm=(-0.16, -0.37, 0.935), elbow=(-0.33, -0.17, 0.89), palm=(0.35, 0.15, -1), flex=10)
-    HOLD['fingR'] = F['pinch']
-    ctx.HOLD, ctx.HOLD_T = HOLD, th
+    I_CERCA, I_LEJOS = 2, 6
+    TOP_Z = S.TABLE_TOP + S.TILE[1] / 2
+    T_cerca = VP.stand_matrix(VP.ROW_X[I_CERCA], VP.ROW_Y)
+    T_lejos = VP.stand_matrix(VP.ROW_X[I_LEJOS], VP.ROW_Y)
+    th = L.seated(spine=(20, -2, 0), clavR=(4, 8), **look(-6, 10))
+    T_hold = VP.stand_matrix(-0.10, -0.31, TOP_Z + 0.085, tip=-14, yaw=-10)
+    tb_c = L.seated(spine=(24, -5, 0), clavR=(4, 10), **look(-8, 14))
+    tb_l = L.seated(hips=(0, 0.125, -0.405), spine=(28, 4, 0), clavR=(4, 14), clavL=(2, 2), **look(12, 16))
+    for d_ in (tb_c, tb_l, th):
+        d_['poleR'] = (-0.7, 0.4, -0.6)
+        d_['autoR'] = 0.6
+    obst_c = VP.row_obstacles((I_CERCA,))
+    obst_l = VP.row_obstacles((I_LEJOS,))
+    _, ALPHA, OFF, ginfo = VP.best_vgrip(ev, 'r', [(tb_c, T_cerca, obst_c), (tb_l, T_lejos, obst_l)])
+    ctx.log('Agarrar_Ficha_Cerca', 'agarre', dict(ginfo[0], alpha=ALPHA))
+    ctx.log('Agarrar_Ficha_Lejos', 'agarre', dict(ginfo[1], alpha=ALPHA))
+    HT = lambda T, fk='pinch_v': VP.hand_for_tile(rig, 'r', T, OFF, fk)  # noqa: E731
 
-    def agarrar(name, x, y, frames, f_hover, f_grab, far=False, offset=None):
+    def moved(T, dx=0.0, dy=0.0, dz=0.0):
+        M = T.copy()
+        M.translation += Vector((dx, dy, dz))
+        return M
+
+    hbest = None
+    for tip_h in (-20, -10, 0, 10):
+        for yaw_h in (-30, -15, 0, 15):
+            Th_ = VP.stand_matrix(-0.10, -0.31, TOP_Z + 0.085, tip=tip_h, yaw=yaw_h)
+            c_, info_, _ = VP.grip_cost(ev, th, 'r', HT(Th_), obst_c)
+            if hbest is None or c_ < hbest[0]:
+                hbest = (c_, Th_, info_, tip_h, yaw_h)
+    T_hold = hbest[1]
+    ctx.log('Agarrar_Ficha_Cerca', 'sostener', dict(hbest[2], tip=hbest[3], yaw=hbest[4]))
+    HOLD = HT(T_hold)
+    HOLD, _ = with_elbow(ev, th, HOLD, 'r')
+    ctx.HOLD, ctx.HOLD_T, ctx.OFF = HOLD, th, OFF
+
+    def add_row(A, skip=()):
+        for i, M in VP.row_tiles(skip):
+            A.tiles.append(dict(name=f'Fila{i + 1}', side='r', start=('table', M)))
+        o = VP.row_obstacles(skip)
+        A.obstacles = lambda f, o=o: o
+
+    def agarrar(name, idx, T, tb, frames, f_hover, f_grab, far=False):
         A = new(name, frames, False,
-                f'Agarra una ficha {"lejana" if far else "cercana"} con pinza pulgar-índice y la levanta.',
-                'Tomar ficha de la mesa (pozo o propias).')
-        if far:
-            tb = L.seated(hips=(0, 0.11, -0.405), spine=(36, -4, 0), clavR=(2, 14), clavL=(4, 6), **look(-6, 12))
-        else:
-            tb = L.seated(spine=(25, -5, 0), clavR=(4, 11), **look(-10, 10))
-        tb['poleR'] = (-0.7, 0.4, -0.6)
-        tb['autoR'] = 0.6
-        ch, T, off, info = VP.best_grip(ev, tb, 'r', x, y, offset=offset)
-        ch['fingR'] = F['pinch']
-        ctx.log(name, 'agarre', info)
+                f'Agarra una ficha parada {"del otro extremo de su fila" if far else "de su fila"} con pinza '
+                'limpia pulgar-índice (pulgar en la cara, índice detrás) y la levanta mirándola.',
+                'Tomar una ficha propia para jugarla.')
+        ch = HT(T)
         ch, _ = with_elbow(ev, tb, ch, 'r')
-        chh = dict(ch, armR=tuple((Vector(ch['armR']) + Vector((0.01, 0.02, 0.05)))[:]), fingR=F['pinch_open'])
-        chh, _ = with_elbow(ev, tb, chh, 'r')
+        chh = HT(moved(T, dz=0.035), 'pinch_v_open')
+        chh['elbowR'] = tuple((Vector(ch['elbowR']) + Vector((0, 0, 0.03)))[:])
+        lift = HT(moved(T, dy=0.01, dz=0.05))
+        lift['elbowR'] = tuple((Vector(ch['elbowR']) + Vector((0, 0.01, 0.04)))[:])
         A.key(0, SB, **look(0, 4), eyes=(0, 10), **NEUT())
-        A.key(3, eyes=(-8, 16))
+        A.key(3, eyes=(-8 if not far else 8, 16))
         if far:
-            mid = (Vector(SB['armR']) + Vector(chh['armR'])) / 2 + Vector((0, 0, 0.06))
-            A.key(f_hover // 2 + 1, armR=tuple(mid[:]), tableR=0.0, fingR=VP.finger_mix(('relax', 0.5), ('pinch_open', 0.5)))
+            mid = (Vector(SB['armR']) + Vector(chh['armR'])) / 2 + Vector((0, 0, 0.10))
+            A.key(3, armR=tuple((Vector(SB['armR']) + Vector((0.02, 0.0, 0.07)))[:]), tableR=0.0)
+            A.key(f_hover // 2 + 1, armR=tuple(mid[:]), tableR=0.0, fingR=F['pinch_v_open'])
+            # la mano izquierda se aparta hacia fuera para dejar pasar el brazo derecho
+            A.key(f_hover - 2, armL=(0.33, -0.40, 0.85), elbowL=(0.42, -0.16, 0.88), hdirL=(-0.2, -1, 0.1),
+                  hpalmL=(-0.2, 0, -1), fingL=F['table_rest'], tableL=1.0)
+            A.key(frames - 4, armL=(0.33, -0.40, 0.85), elbowL=(0.42, -0.16, 0.88))
+            A.key(frames, armL=SB['armL'], elbowL=SB['elbowL'], hdirL=SB['hdirL'], hpalmL=SB['hpalmL'])
         A.key(f_hover, torso(tb), **chh)
         A.key(f_grab, torso(tb), **ch, **VP.face(('focus', 1.0)))
         A.key(f_grab + 1, **ch)
-        A.key(frames, torso(th), **HOLD, **look(-4, 6), eyes=(-3, 10), **NEUT())
-        if far:
-            # la mano izquierda se adelanta y se apoya (soporte)
-            A.key(f_hover - 2, armL=(0.13, -0.50, 0.84), elbowL=(0.24, -0.29, 0.86), hdirL=(-0.45, -1, 0.15),
-                  hpalmL=(-0.25, 0, -1), fingL=F['table_rest'], tableL=1.0)
-            A.key(f_grab + 3, armL=(0.13, -0.50, 0.84), elbowL=(0.24, -0.29, 0.86))
-            A.key(frames, armL=SB['armL'], elbowL=SB['elbowL'], hdirL=SB['hdirL'], hpalmL=SB['hpalmL'])
+        A.key(f_grab + 4, **lift)
+        A.key(frames, torso(th), **HOLD, **look(-6, 10), eyes=(-3, 12), **NEUT())
         A.tiles.append(dict(name='Ficha', side='r', start=('table', T), grab=f_grab))
+        add_row(A, (idx,))
         A.proc(L.breathe(48, 0.5))
         A.props['cam'] = 'mesa'
-        return A, off
+        return A
 
-    A6, OFF = agarrar('Agarrar_Ficha_Cerca', -0.13, -0.43, 20, 6, 10)
-    A7, _ = agarrar('Agarrar_Ficha_Lejos', -0.07, -0.64, 26, 9, 14, far=True, offset=OFF)
-    ctx.OFF = OFF
+    agarrar('Agarrar_Ficha_Cerca', I_CERCA, T_cerca, tb_c, 22, 7, 11)
+    agarrar('Agarrar_Ficha_Lejos', I_LEJOS, T_lejos, tb_l, 28, 10, 15, far=True)
 
     def held_start(A):
-        A.key(0, ctx.HOLD_T, **ctx.HOLD, eyes=(-3, 10), **NEUT())
+        A.key(0, ctx.HOLD_T, **ctx.HOLD, eyes=(-3, 12), **NEUT())
         A.tiles.append(dict(name='Ficha', side='r', start=('hand', OFF), release=None))
+        add_row(A, (I_CERCA,))
         return ctx.HOLD_T, ctx.HOLD
 
+    def blend_T(Ta, Tb, k, pos):
+        q = Ta.to_quaternion().slerp(Tb.to_quaternion(), k)
+        M = q.to_matrix().to_4x4()
+        M.translation = Vector(pos)
+        return M
+
+    def best_yaw(tb, x, y, tip):
+        best = None
+        for yw in range(-75, 31, 7):
+            c, info, _ = VP.grip_cost(ev, tb, 'r', HT(VP.rest_on_felt(x, y, tip, yw)), VP.row_obstacles((I_CERCA,)))
+            if best is None or c < best[0]:
+                best = (c, yw)
+        return best[1]
+
+    def place_keys(A, tb, x, y, f_mid, f_pre, f_rel, mid_xyz, tip_rel=12, tin=None, fall=5):
+        """Lleva la ficha parada (misma orientación natural del agarre), la apoya de pie en el paño algo inclinada
+        hacia delante, la suelta y la ficha cae cara arriba mientras la mano se retira."""
+        yw = best_yaw(tb, x, y, tip_rel)
+        Tr = VP.rest_on_felt(x, y, tip_rel, yw)
+        Tp = moved(VP.rest_on_felt(x, y, 4, yw), dy=0.01, dz=0.03)
+        Tm = blend_T(T_hold, Tp, 0.5, mid_xyz)
+        chm, chp, chr_ = HT(Tm), HT(Tp), HT(Tr)
+        chr_, _ = with_elbow(ev, tb, chr_, 'r')
+        c, info, _ = VP.grip_cost(ev, tb, 'r', chr_, VP.row_obstacles((I_CERCA,)))
+        ctx.log(A.name, 'suelta', dict(info, yaw=yw))
+        chp['elbowR'] = tuple((Vector(chr_['elbowR']) + Vector((0, 0.01, 0.02)))[:])
+        chm['elbowR'] = tuple((Vector(chr_['elbowR']) + Vector((0, 0.05, 0.05)))[:])
+        A.key(f_mid, torso(tb), **chm)
+        A.key(f_pre, **chp)
+        kw = dict(tin=tin) if tin else {}
+        A.key(f_rel, torso(tb), **chr_, **kw)
+        A.key(f_rel + 1, armR=Vector(chr_['armR']) + Vector((0, 0.008, 0.03)), fingR=F['pinch_v_open'])
+        A.tiles[-1 - 6]['release'] = f_rel
+        A.tiles[-1 - 6]['fall'] = fall
+        return chr_
+
     # ---------------------------------------------------------------- 8. Colocar cerca
-    A = new('Colocar_Ficha_Cerca', 20, False,
-            'Lleva la ficha rápido y decidido a la mesa, la suelta y vuelve a la pose sentada.',
+    A = new('Colocar_Ficha_Cerca', 22, False,
+            'Lleva la ficha parada, la gira cara arriba mientras avanza y la deja en la mesa; vuelve a la pose sentada.',
             'Jugar una ficha cerca del jugador.')
-    th, chH = held_start(A)
-    tb = L.seated(spine=(26, -4, 0), clavR=(4, 12), **look(-6, 12))
+    held_start(A)
+    tb = L.seated(spine=(27, -4, 0), clavR=(4, 12), **look(-6, 16))
     tb['poleR'] = (-0.7, 0.4, -0.6)
     tb['autoR'] = 0.6
-    ch, T, _, info = VP.best_grip(ev, tb, 'r', -0.09, -0.52, offset=OFF)
-    ctx.log(A.name, 'suelta', info)
-    ch, _ = with_elbow(ev, tb, ch, 'r')
-    chv = dict(ch, armR=tuple((Vector(ch['armR']) + Vector((0.0, 0.015, 0.03)))[:]))
-    chv, _ = with_elbow(ev, tb, chv, 'r')
-    A.key(5, torso(tb), **chv, eyes=(-6, 16), **VP.face(('determined', 0.7)))
-    A.key(7, torso(tb), **ch)
-    A.key(9, fingR=F['pinch_open'], armR=Vector(ch['armR']) + Vector((0, 0, 0.004)))
-    A.key(12, armR=Vector(ch['armR']) + Vector((0.01, 0.03, 0.045)), fingR=VP.finger_mix(('pinch_open', 0.5), ('relax', 0.5)))
-    A.key(20, SB, **look(0, 4), eyes=(0, 10), **NEUT())
-    A.tiles[-1]['release'] = 7
+    chr_ = place_keys(A, tb, -0.235, -0.62, 4, 7, 9, (-0.21, -0.47, TOP_Z + 0.08))
+    A.key(13, armR=Vector(chr_['armR']) + Vector((0.01, 0.05, 0.06)),
+          fingR=VP.finger_mix(('pinch_v_open', 0.5), ('relax', 0.5)), **VP.face(('determined', 0.6)))
+    A.key(22, SB, **look(0, 4), eyes=(0, 10), **NEUT())
     A.proc(L.breathe(48, 0.5))
     A.props['cam'] = 'mesa'
 
     # ---------------------------------------------------------------- 9. Colocar lejos
     A = new('Colocar_Ficha_Lejos', 30, False,
-            'Coloca la ficha lejos: la otra mano se apoya firme, el cuerpo se levanta un poco y todo se mueve a la vez.',
+            'Coloca la ficha lejos: la otra mano se apoya firme al lado de su fila, el cuerpo se estira y '
+            'la ficha llega cara arriba.',
             'Jugar una ficha en el extremo lejano de la mesa.')
-    th, chH = held_start(A)
+    held_start(A)
     tb = L.seated(hips=(0, 0.11, -0.31), hips_rot=(8, 0, 0), spine=(44, -5, 0), clavR=(3, 18), clavL=(8, 4),
                   **look(-4, 0))
     tb['poleR'] = (-0.8, 0.3, -0.5)
     tb['autoR'] = 0.6
-    ch, T, _, info = VP.best_grip(ev, tb, 'r', -0.04, -0.74, offset=OFF)
-    ctx.log(A.name, 'suelta', info)
-    ch, _ = with_elbow(ev, tb, ch, 'r')
-    chv = dict(ch, armR=tuple((Vector(ch['armR']) + Vector((0.0, 0.02, 0.035)))[:]))
-    chv, _ = with_elbow(ev, tb, chv, 'r')
     tmid = L.seated(hips=(0, 0.12, -0.38), hips_rot=(4, 0, 0), spine=(36, -3, 0), clavR=(3, 14), **look(-4, 8))
-    supL = dict(armL=(0.17, -0.47, 0.835), elbowL=(0.27, -0.25, 0.92), hdirL=(-0.35, -1, 0.1), hpalmL=(-0.1, 0, -1),
+    supL = dict(armL=(0.27, -0.56, 0.85), elbowL=(0.38, -0.30, 0.90), hdirL=(-0.25, -1, 0.1), hpalmL=(-0.1, 0, -1),
                 fingL=F['flat'], tableL=1.0)
     A.key(5, torso(tmid), **supL, eyes=(-4, 6))
-    A.key(9, torso(tb), **chv, **VP.face(('determined', 0.8)))
-    A.key(11, torso(tb), **ch, **supL)
-    A.key(13, fingR=F['pinch_open'], armR=Vector(ch['armR']) + Vector((0, 0, 0.004)))
-    A.key(16, torso(tmid), armR=Vector(ch['armR']) + Vector((0.0, 0.12, 0.06)),
-          fingR=VP.finger_mix(('pinch_open', 0.5), ('relax', 0.5)), elbowR=Vector(ch['elbowR']) + Vector((0, 0.08, 0.02)))
-    A.key(19, **supL)
-    A.key(24, torso(SB), armL=SB['armL'], elbowL=SB['elbowL'], hdirL=SB['hdirL'], hpalmL=SB['hpalmL'],
+    chr_ = place_keys(A, tb, -0.22, -0.80, 7, 10, 12, (-0.20, -0.56, TOP_Z + 0.10))
+    A.key(12, **supL, **VP.face(('determined', 0.8)))
+    A.key(17, torso(tmid), armR=Vector(chr_['armR']) + Vector((0.0, 0.12, 0.07)),
+          fingR=VP.finger_mix(('pinch_v_open', 0.5), ('relax', 0.5)),
+          elbowR=Vector(chr_['elbowR']) + Vector((0, 0.08, 0.03)))
+    A.key(20, **supL)
+    A.key(25, torso(SB), armL=SB['armL'], elbowL=SB['elbowL'], hdirL=SB['hdirL'], hpalmL=SB['hpalmL'],
           fingL=SB['fingL'], **NEUT())
     A.key(30, SB, **look(0, 4), eyes=(0, 10))
-    A.tiles[-1]['release'] = 11
     A.props['cam'] = 'mesa_lejos'
 
     # ---------------------------------------------------------------- 10. Golpe
     A = new('Golpe_Ficha', 34, False,
-            'Tranque/capicúa: levanta la ficha y la golpea fuerte contra la mesa.',
+            'Tranque/capicúa: levanta la ficha, la gira cara arriba en el aire y la planta fuerte en la mesa.',
             'Jugada final (tranque o capicúa).')
-    th, chH = held_start(A)
+    held_start(A)
     tb = L.seated(spine=(32, -4, 0), clavR=(2, 12), **look(-6, 14))
     tb['poleR'] = (-0.7, 0.4, -0.6)
     tb['autoR'] = 0.6
-    ch, T, _, info = VP.best_grip(ev, tb, 'r', -0.09, -0.53, offset=OFF)
-    ctx.log(A.name, 'golpe', info)
-    ch, _ = with_elbow(ev, tb, ch, 'r')
-    tup = L.seated(spine=(8, -8, 0), clavR=(10, 4), **look(-4, -6))
-    chU = NH(tup, 'r', arm=(-0.21, -0.30, 1.17), elbow=(-0.37, -0.12, 0.99), palm=(0.3, 0.3, -1), flex=-5)
-    chU['fingR'] = F['pinch']
+    tup = L.seated(spine=(10, -8, 0), clavR=(10, 4), **look(-4, -4))
+    tup['poleR'] = (-0.7, 0.4, -0.6)
+    Tr = VP.rest_on_felt(-0.235, -0.62, 10, best_yaw(tb, -0.235, -0.62, 10))
+    Tu = blend_T(T_hold, Tr, 0.6, (-0.22, -0.46, 1.12))
+    chU = HT(Tu)
+    chU['elbowR'] = (-0.36, -0.10, 1.00)
     A.key(9, torso(tup), **chU, **VP.face(('determined', 1.0)), eyes=(-4, 12))
     A.key(11, armR=Vector(chU['armR']) + Vector((0, -0.01, 0.02)))
-    A.key(15, torso(tb), **ch, tin=1.6)
+    chr_ = HT(Tr)
+    chr_, _ = with_elbow(ev, tb, chr_, 'r')
+    ctx.log(A.name, 'golpe', VP.grip_cost(ev, tb, 'r', chr_, VP.row_obstacles((I_CERCA,)))[1])
+    A.key(15, torso(tb), **chr_, tin=1.6)
     A.key(16, **VP.face(('shout', 1.0)), spine=(34, -4, 0))
-    A.key(22, **ch)
-    A.key(25, fingR=F['pinch_open'], armR=Vector(ch['armR']) + Vector((0.01, 0.02, 0.03)), **VP.face(('determined', 0.6)))
+    A.key(17, armR=Vector(chr_['armR']) + Vector((0, 0.004, 0.016)), fingR=F['pinch_v_open'])
+    A.key(22, armR=Vector(chr_['armR']) + Vector((0, 0.006, 0.02)))
+    A.key(26, armR=Vector(chr_['armR']) + Vector((0.01, 0.03, 0.05)), **VP.face(('determined', 0.6)),
+          fingR=VP.finger_mix(('pinch_v_open', 0.5), ('relax', 0.5)))
     A.key(34, SB, **look(0, 4), eyes=(0, 10), **NEUT())
-    A.tiles[-1]['release'] = 15
+    A.tiles[-7]['release'] = 15
+    A.tiles[-7]['fall'] = 4
     A.props['cam'] = 'mesa'
 
     # ---------------------------------------------------------------- 11. Pasar
-    A = new('Pasar', 26, False, 'Toca la mesa dos veces con los nudillos ("paso").', 'Pasar turno.')
-    pos = Vector((-0.11, -0.45, 0.0))
+    A = new('Pasar', 26, False, 'Toca la mesa dos veces con los nudillos al lado de sus fichas ("paso").',
+            'Pasar turno.')
+    pos = Vector((-0.245, -0.50, 0.0))
     kb = L.seated(spine=(23, -3, 0), **look(-4, 10))
 
     def knock(z, tab):
-        d = NH(kb, 'r', arm=tuple((pos + Vector((0, 0, z)))[:]), elbow=(-0.29, -0.24, 0.90), palm=(0.25, 0.7, -0.6),
+        d = NH(kb, 'r', arm=tuple((pos + Vector((0, 0, z)))[:]), elbow=(-0.36, -0.26, 0.90), palm=(0.25, 0.7, -0.6),
                flex=28)
         d['fingR'] = F['knock']
         d['tableR'] = tab
@@ -251,10 +316,12 @@ def build(ctx):
     A.key(18, **up2, **look(-3, 6))
     A.key(26, SB, **look(0, 4), **NEUT())
     A.proc(VP.blink_proc([20]))
+    add_row(A)
     A.props['cam'] = 'mesa'
 
     # ---------------------------------------------------------------- 12. Barajar
-    A = new('Barajar_Fichas', 48, True, 'Ambas manos revuelven fichas boca abajo en círculos sobre la mesa.',
+    A = new('Barajar_Fichas', 48, True, 'Ambas manos revuelven fichas boca abajo en círculos sobre la mesa '
+            '(antes de repartir: todavía no hay fichas paradas).',
             'Revolver fichas al inicio de la mano (bucle).')
     tb = L.seated(hips=(0, 0.11, -0.40), spine=(28, 0, 0), clavL=(5, 14), clavR=(5, 14), **look(0, 16))
     lift = S.TILE[2]
@@ -277,22 +344,22 @@ def build(ctx):
 
     # ---------------------------------------------------------------- 13. Sostener
     A = new('Sostener_Fichas', 72, True,
-            'Sostiene un grupo de fichas en la mano izquierda, las mira y mueve los dedos (bucle).',
+            'Cuida sus fichas paradas: las dos manos las encierran por los extremos, las mira y mueve los dedos '
+            '(bucle).',
             'Mirar las fichas propias (bucle).')
-    tb = L.seated(spine=(18, 4, 0), **look(6, 18))
-    hold = ctx.stack_hold(tb)
-    A.key(0, tb, **hold['ch'], eyes=(6, 14), **NEUT())
-    rR = dict(armR=(-0.16, -0.42, 0.845), elbowR=(-0.30, -0.20, 0.88), hdirR=(0.45, -1, 0.15),
-              hpalmR=(0.3, 0, -1), fingR=F['table_rest'], tableR=1.0)
-    A.key(0, **rR)
-    A.key(24, **look(2, 20), eyes=(2, 16))
-    A.key(36, armR=(-0.15, -0.43, 0.845), fingR=VP.finger_mix(('table_rest', 0.5), ('claw', 0.5)))
-    A.key(52, **look(8, 16), eyes=(6, 14), **rR)
+    tb = L.seated(spine=(24, 0, 0), **look(4, 20))
+    xe = VP.ROW_X[-1] + S.TILE[0] / 2
+    cupL = dict(armL=(xe + 0.034, -0.285, 0.885), elbowL=(0.34, -0.08, 0.86), hdirL=(-0.12, -1, -0.12),
+                hpalmL=(-1, 0, 0.05), fingL=VP.finger_mix(('flat', 0.3), ('relax', 0.7)), tableL=0.0)
+    cupR = dict(armR=(-xe - 0.034, -0.285, 0.885), elbowR=(-0.34, -0.08, 0.86), hdirR=(0.12, -1, -0.12),
+                hpalmR=(1, 0, 0.05), fingR=VP.finger_mix(('flat', 0.3), ('relax', 0.7)), tableR=0.0)
+    A.key(0, tb, **cupL, **cupR, eyes=(4, 16), **NEUT())
+    A.key(24, **look(-4, 22), eyes=(-6, 18))
+    A.key(48, **look(8, 18), eyes=(8, 14))
     A.proc(L.breathe(36, 0.7))
-    A.proc(drum_proc('R', [40], period=12, amp=22))
-    A.proc(ctx.stack_fidget(72))
+    A.proc(L.finger_fidget(72, 3.0))
     A.proc(VP.blink_proc([8, 50]))
-    A.tiles.extend(hold['tiles'])
+    add_row(A)
     A.props['cam'] = 'mesa'
 
     def lift_off(A, f, sides='R', dz=0.08, dy=0.02):
@@ -311,7 +378,6 @@ def build(ctx):
             d['arm' + S_] = tuple((Vector(SB['arm' + S_]) + Vector((0, dy, 0)))[:])
             d['elbow' + S_] = tuple((Vector(SB['elbow' + S_]) + Vector((0, dy, 0)))[:])
         return d
-
     # ---------------------------------------------------------------- 14. Celebrar
     A = new('Celebrar_Ganar', 72, False, 'Celebra: puño arriba dos veces y aplaude.', 'Ganar la mano/partida.')
     A.key(0, SB, **NEUT(), **look(0, 4))
@@ -356,10 +422,11 @@ def build(ctx):
     A.key(0, SB, **NEUT(), **look(0, 4))
     back = L.seated(hips=(0, 0.15, -0.413), hips_rot=(-10, 0, 0), spine=(-2, 0, 0), clavL=(6, -4), clavR=(6, -4),
                     **look(0, -14))
-    handsR = NH(back, 'r', arm=('head', (-0.10, 0.005, 1.775)), elbow=('chest', (-0.36, -0.10, 1.60)),
-                palm=('head', (0.6, 0, -0.8)), exact_palm=True)
-    handsL = NH(back, 'l', arm=('head', (0.10, 0.005, 1.775)), elbow=('chest', (0.36, -0.10, 1.60)),
-                palm=('head', (-0.6, 0, -0.8)), exact_palm=True)
+    # muñecas a la altura de las sienes, dedos hacia arriba y atrás sobre el cráneo (sin cruzar la línea media)
+    handsR = NH(back, 'r', arm=('head', (-0.128, 0.03, 1.69)), elbow=('chest', (-0.33, -0.04, 1.47)),
+                palm=('head', (1, 0, -0.25)), exact_palm=True)
+    handsL = NH(back, 'l', arm=('head', (0.128, 0.03, 1.69)), elbow=('chest', (0.33, -0.04, 1.47)),
+                palm=('head', (-1, 0, -0.25)), exact_palm=True)
     handsR['fingR'] = handsL['fingL'] = VP.finger_mix(('flat', 0.5), ('relax', 0.5))
     A.key(8, **VP.face(('surprise', 0.8)))
     A.key(16, torso(back), **handsR, **handsL, **FACE(('dismay', 1.0)))
@@ -376,7 +443,7 @@ def build(ctx):
     A = new('Pensar', 96, True, 'Piensa: mano en la barbilla, tamborilea con la otra mano (bucle).',
             'Pensar la jugada (bucle).')
     tb = L.seated(spine=(30, -3, 0), clavR=(8, 6), **look(4, 0, 4))
-    chin = NH(tb, 'r', arm=('head', (-0.03, -0.125, 1.50)), elbow=(-0.15, -0.37, 0.885),
+    chin = NH(tb, 'r', arm=('head', (-0.03, -0.135, 1.50)), elbow=(-0.20, -0.45, 0.885),
               palm=('head', (0.5, 0.85, 0.2)), flex=-25)
     chin.update(fingR=VP.finger_mix(('fist', 0.6), ('relax', 0.4)), autoR=3.0)
     A.key(0, tb, **chin, **FACE(('think', 1.0)), eyes=(10, -10),
@@ -412,11 +479,15 @@ def build(ctx):
     A = new('Senalar', 40, False, 'Señala con el índice hacia el centro/otro jugador.', 'Indicar jugada o jugador.')
     A.key(0, SB, **NEUT(), **look(0, 4))
     tp = L.seated(spine=(20, 8, 0), clavR=(6, 12), **look(14, 0))
-    point = NH(tp, 'r', arm=(-0.04, -0.47, 1.02), elbow=(-0.24, -0.27, 0.95), palm=(0.25, 0.1, -1), flex=-8)
+    point = NH(tp, 'r', arm=(-0.04, -0.48, 1.06), elbow=(-0.25, -0.28, 1.01), palm=(0.25, 0.1, -1), flex=-8)
     point['fingR'] = F['point']
     A.key(9, torso(tp), **point, **FACE(('determined', 0.6)), eyes=(10, 0))
-    A.key(13, armR=(-0.035, -0.49, 1.025))
+    A.key(13, armR=(-0.035, -0.50, 1.065))
+    # la mano sube antes de cruzar por encima de la fila de fichas paradas (ida y vuelta)
+    lift = dict(armR=(-0.22, -0.43, 1.00), elbowR=(-0.34, -0.17, 0.98))
+    A.key(4, **lift)
     A.key(26, **point, **VP.face(mouthSmileLeft=0.3))
+    A.key(32, armR=(-0.20, -0.44, 1.04), elbowR=(-0.33, -0.18, 1.00))
     A.key(40, SB, **NEUT(), **look(0, 4), eyes=(0, 0))
     A.proc(VP.blink_proc([30]))
     A.props['cam'] = 'mesa_frente'
@@ -477,10 +548,10 @@ def build(ctx):
             'Perder una jugada clave / protestar.')
     A.key(0, SB, **NEUT(), **look(0, 4))
     ta = L.seated(spine=(14, -6, 0), clavR=(8, 4), **look(-4, -6))
-    slap_up = NH(ta, 'r', arm=(-0.12, -0.40, 1.04), elbow=(-0.30, -0.18, 1.0), palm=(0.15, 0, -1), exact_palm=True)
+    slap_up = NH(ta, 'r', arm=(-0.24, -0.44, 1.04), elbow=(-0.38, -0.20, 1.0), palm=(0.15, 0, -1), exact_palm=True)
     slap_up['fingR'] = F['flat']
     ts = L.seated(spine=(30, -3, 0), **look(-4, 10))
-    slap = NH(ts, 'r', arm=(-0.12, -0.45, 0.84), elbow=(-0.27, -0.24, 0.88), palm=(0.1, 0, -1), exact_palm=True)
+    slap = NH(ts, 'r', arm=(-0.25, -0.47, 0.84), elbow=(-0.36, -0.24, 0.88), palm=(0.1, 0, -1), exact_palm=True)
     slap.update(fingR=F['flat'], tableR=1.0)
     A.key(9, torso(ta), **slap_up, **FACE(('angry', 1.0)), **rest_back(0.03, 'L'))
     A.key(13, torso(ts), **slap, tin=1.7, **rest_back(0.0, 'L'))
@@ -522,4 +593,8 @@ def build(ctx):
     ctx.range_test(new('Prueba_Rango_Completo', 1680, False,
                        'Demostración: mueve cada parte una por una y luego todo junto.',
                        'Solo pruebas de rig (no usar en juego).'), ST)
+    for A in anims:
+        if A.name in ('Idle_Sentado', 'Celebrar_Ganar', 'Perder', 'Pensar', 'Saludar', 'Senalar', 'Pulgar_Arriba',
+                      'Aplaudir', 'Reir', 'Enojado'):
+            add_row(A)
     return anims
