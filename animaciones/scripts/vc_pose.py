@@ -183,14 +183,14 @@ def blink_proc(frames_list, dur=5):
 _TS = np.linspace(0.0, 1.0, 7)
 
 
-def seg_cost(S_, E, W):
-    """Costo de que el brazo (cilindro) quede por debajo del paño/riel."""
+def seg_cost(S_, E, W, obst=()):
+    """Costo de que el brazo (cilindro) quede por debajo del paño/riel/fichas paradas."""
     E = np.array(E[:])
     W = np.array(W[:])
     S0 = np.array(S_[:])
     pts = np.concatenate([E + (W - E) * _TS[:, None], S0 + (E - S0) * _TS[3:, None]])
     rad = np.concatenate([0.040 * (1 - _TS) + 0.030 * _TS, np.full(4, 0.052)])
-    sup = support_height(pts)
+    sup = support_height(pts, obst)
     ok = np.isfinite(sup)
     if not ok.any():
         return 0.0
@@ -198,8 +198,9 @@ def seg_cost(S_, E, W):
     return float((pen ** 2).sum() * 4e6)
 
 
-def support_height(P):
-    """Altura del soporte (paño o riel) bajo cada punto; -inf fuera de la mesa."""
+def support_height(P, obst=()):
+    """Altura del soporte (paño, riel o ficha parada) bajo cada punto; -inf fuera de la mesa.
+    obst: fichas paradas (cx, cy, cos, sin, medio_ancho, medio_grosor, z_arriba)."""
     x, y = P[:, 0], P[:, 1]
     h = np.full(len(P), -np.inf)
     half = S.TABLE_SIZE / 2
@@ -208,23 +209,56 @@ def support_height(P):
     rail = inside & ((y > S.TABLE_NEAR_Y - S.RAIL_W) | (y < S.TABLE_NEAR_Y - S.TABLE_SIZE + S.RAIL_W) |
                      (np.abs(x) > half - S.RAIL_W))
     h[rail] = S.RAIL_TOP
+    for cx, cy, c, s_, hw, ht, top in obst:
+        dx, dy = x - cx, y - cy
+        u = dx * c + dy * s_
+        v = -dx * s_ + dy * c
+        m = (np.abs(u) < hw + 0.003) & (np.abs(v) < ht + 0.003)
+        h[m] = np.maximum(h[m], top)
     return h
 
 
+def full_pose(pb):
+    """Pose completa (huesos aún no resueltos en reposo relativo a su padre) sin modificar pb."""
+    rig = pb.rig
+    out = dict(pb.pose)
+    for n in rig.names:
+        if n not in out:
+            p = rig.par[n]
+            out[n] = (out[p] if p else Matrix.Identity(4)) @ rig.rest_rel[n]
+    return out
+
+
 class Evaluator:
-    def __init__(self, rig, skin=None):
+    def __init__(self, rig, skin=None, ck=None):
         self.rig = rig
         self.defaults = defaults(rig)
         self.prev_theta = {}
         self.skin = skin
+        self.ck = ck
         self.hand_sel = {}
+        self.fore_sel = {}
+        self.upper_sel = {}
+        self.foot_sel = {}
+        self.contacts = True
+        self.stats = {}
         if skin is not None:
             for s in 'lr':
                 bones = [n for n in rig.names if n.endswith('_' + s) and n.split('_')[0] in
                          ('hand', 'thumb', 'index', 'middle', 'ring', 'pinky')]
                 self.hand_sel[s] = np.where(skin.bone_weight(bones) > 0.35)[0]
-                self.fore_sel = getattr(self, 'fore_sel', {})
                 self.fore_sel[s] = np.where(skin.bone_weight(['lowerarm_' + s]) > 0.35)[0]
+                self.upper_sel[s] = np.where(skin.bone_weight(['upperarm_' + s]) > 0.5)[0]
+                self.foot_sel[s] = np.where(skin.bone_weight(['foot_' + s, 'ball_' + s]) > 0.3)[0]
+        if ck is not None:
+            reg = ck.region
+            self.seat_sel = np.where(np.isin(reg, ('muslo', 'tronco')))[0]
+            self.foot_bx = {}
+            for s in 'lr':
+                self.foot_bx[s] = None
+
+    def _bump(self, k, v=1):
+        self.stats[k] = self.stats.get(k, 0) + v
 
     def channels_at(self, anim, f, pb):
         """Devuelve dict de canales numéricos en el cuadro f. Necesita pb para resolver espacios."""
@@ -260,11 +294,40 @@ class Evaluator:
             return np.atleast_1d(np.asarray(v, dtype=np.float64))
         return res
 
+    # ------------------------------------------------------------------ contacto con el asiento
+    def seat_pen(self, anim, pb):
+        if self.ck is None or anim.props.get('nochair'):
+            return 0.0
+        dy = float(pb.P['chair'][0])
+        full = full_pose(pb)
+        pts = [self.ck.body.deform(full, self.seat_sel), self.ck.boxer.deform(full)]
+        pen = 0.0
+        for Q in pts:
+            m = (np.abs(Q[:, 0]) < S.SEAT_W / 2) & (np.abs(Q[:, 1] - S.SEAT_CY - dy) < S.SEAT_D / 2) & \
+                (Q[:, 2] > S.SEAT_Z - 0.06) & (Q[:, 2] < S.SEAT_Z + 0.002)
+            if m.any():
+                pen = max(pen, float(S.SEAT_Z + 0.002 - Q[m, 2].min()))
+        return pen
+
     def evaluate(self, anim, f):
         """Construye la pose del cuadro f. Devuelve (PoseBuilder, face_dict)."""
+        saved = dict(self.prev_theta)
+        pb, fd = self._evaluate(anim, f, 0.0)
+        if self.contacts:
+            dz = 0.0
+            for _ in range(3):
+                pen = self.seat_pen(anim, pb)
+                if pen <= 0.0003:
+                    break
+                dz += pen
+                self.prev_theta = dict(saved)
+                pb, fd = self._evaluate(anim, f, dz)
+                self._bump('asiento')
+        return pb, fd
+
+    def _evaluate(self, anim, f, hip_dz):
         rig = self.rig
         pb = C.PoseBuilder(rig)
-        # Canales escalares/vectoriales simples primero (permite procs que los modifiquen)
         P = {}
         simple = ['hips', 'hips_rot', 'spine', 'chest', 'neck', 'head', 'clavL', 'clavR', 'poleL', 'poleR',
                   'autoL', 'autoR', 'splitL', 'splitR', 'fingL', 'fingR', 'footL', 'footR', 'frotL', 'frotR',
@@ -279,6 +342,10 @@ class Evaluator:
         for fn in anim.procs:
             if getattr(fn, 'stage', 'pre') == 'pre':
                 fn(f, P, self)
+        if hip_dz:
+            P['hips'] = np.array(P['hips'], dtype=float) + np.array([0, 0, hip_dz])
+        obst = anim.obstacles(f) if hasattr(anim, 'obstacles') else ()
+        self.obst = obst
         # Cadera / columna
         pb.set_local('Root', Matrix.Identity(4))
         hp = P['hips_rot']
@@ -294,12 +361,26 @@ class Evaluator:
             pb.set_delta(b, rot_pyr(*(sp * w + extra)))
         pb.set_delta('neck_01', rot_pyr(*P['neck']))
         pb.set_delta('head', rot_pyr(*P['head']))
-        # Clavículas
         for s, sg in (('L', 1), ('R', -1)):
             up, fw = P['clav' + s]
-            # + up eleva el hombro, + fw lo lleva adelante
             D = R('Y', -sg * up) @ R('Z', -sg * fw)
             pb.set_delta('clavicle_' + s.lower(), D)
+        # Piernas (antes que los brazos: los muslos cuentan para la auto-colisión)
+        for s in ('L', 'R'):
+            sl = s.lower()
+            fr = P['frot' + s]
+            A_ = Vector(P['foot' + s][:3])
+            for it in range(3):
+                pb.solve_leg(sl, A_, Vector(P['knee' + s][:3]), rot_pyr(*fr),
+                             toe_pitch=float(P['toe' + s][0]), toe_yaw=float(fr[1]))
+                if not self.contacts or self.skin is None:
+                    break
+                Qf = self.skin.deform(full_pose(pb), self.foot_sel[sl])
+                mz = float(Qf[:, 2].min())
+                if mz >= -0.0002:
+                    break
+                A_ = A_ + Vector((0, 0, -mz + 0.0003))
+                self._bump('suelo')
         # Brazos (pueden referirse a espacios de pecho/cabeza)
         for s in ('R', 'L'):
             if 'elbow' + s in anim.tracks:
@@ -313,53 +394,114 @@ class Evaluator:
         for fn in anim.procs:
             if getattr(fn, 'stage', 'pre') == 'arms':
                 fn(f, P, self)
+        sc = seg_cost if not obst else (lambda a, b, c: seg_cost(a, b, c, obst))
+        # pasada previa sin contactos (completa la pose para la BVH del cuerpo)
+        for s in ('R', 'L'):
+            sl = s.lower()
+            pb.solve_arm(sl, Vector(P['arm' + s][:3]), Vector(P['pole' + s][:3]), Vector(P['hdir' + s][:3]),
+                         Vector(P['hpalm' + s][:3]), auto=float(P['auto' + s][0]),
+                         twist_split=float(P['split' + s][0]), prev_theta=self.prev_theta.get((anim.name, s)),
+                         seg_cost=sc)
+            pb.set_fingers(sl, P['fing' + s].reshape(15, 3))
+        tree = None
+        use_contacts = self.contacts and self.skin is not None
+        if use_contacts and self.ck is not None:
+            tree, _ = self.ck.selfcol.tree(full_pose(pb))
         for s in ('R', 'L'):
             sl = s.lower()
             key = (anim.name, s)
             W = Vector(P['arm' + s][:3])
             wt = float(P['table' + s][0])
             prev = self.prev_theta.get(key)
-            for it in range(4):
-                th = pb.solve_arm(sl, W, Vector(P['pole' + s][:3]), Vector(P['hdir' + s][:3]),
-                                  Vector(P['hpalm' + s][:3]), auto=float(P['auto' + s][0]),
-                                  twist_split=float(P['split' + s][0]), prev_theta=prev, seg_cost=seg_cost)
+            args = (Vector(P['pole' + s][:3]), Vector(P['hdir' + s][:3]), Vector(P['hpalm' + s][:3]))
+            kw = dict(auto=float(P['auto' + s][0]), twist_split=float(P['split' + s][0]), prev_theta=prev,
+                      seg_cost=sc)
+            th_fix = None
+
+            def solve(Wv, thv):
+                th_ = pb.solve_arm(sl, Wv, *args, theta_override=thv, **kw)
                 pb.set_fingers(sl, P['fing' + s].reshape(15, 3))
-                if self.skin is None:
-                    break
-                full = dict(pb.pose)
-                for n in self.rig.names:
-                    if n not in full:
-                        full[n] = Matrix.Identity(4)
-                Q = self.skin.deform(full, self.hand_sel[sl])
-                Qf = self.skin.deform(full, self.fore_sel[sl])
-                sup = support_height(Q) + float(P['lift' + s][0])
-                supf = support_height(Qf)
-                ok = np.isfinite(sup)
-                okf = np.isfinite(supf)
-                if not ok.any() and not okf.any():
-                    break
-                margin = 0.0015
-                gh = float((Q[ok, 2] - sup[ok]).min()) if ok.any() else 1.0
-                gf = float((Qf[okf, 2] - supf[okf]).min()) if okf.any() else 1.0
-                pen = gh
-                if getattr(self, "debug", False): print("CONTACT", s, it, round(gh,4), round(gf,4), tuple(round(v,3) for v in W))
-                dz = 0.0
-                if pen < margin:
-                    dz = margin - pen
-                elif wt > 0 and gh < 1.0:
-                    dz = -wt * min(gh - margin, pen - margin)
-                if abs(dz) < 2e-4:
-                    break
-                W = W + Vector((0, 0, dz))
+                return th_
+
+            def hand_loop(Wv, thv, iters=6):
+                th_ = solve(Wv, thv)
+                for it in range(iters):
+                    if not use_contacts:
+                        break
+                    full = full_pose(pb)
+                    Q = self.skin.deform(full, self.hand_sel[sl])
+                    sup = support_height(Q, obst) + float(P['lift' + s][0])
+                    fin = np.isfinite(sup)
+                    under = Wv.z < S.TABLE_TOP - 0.005
+                    edge = Q[:, 1] > S.TABLE_NEAR_Y - 0.04
+                    ok = fin & ((Q[:, 2] > sup - 0.02) | ~edge) & (not under)
+                    dz = 0.0
+                    margin = 0.0015
+                    if ok.any():
+                        gh = float((Q[ok, 2] - sup[ok]).min())
+                        if gh < margin:
+                            dz = margin - gh
+                        elif wt > 0 and gh < 1.0:
+                            dz = -wt * (gh - margin)
+                    push = Vector()
+                    slab = fin & ~ok & edge & (Q[:, 2] > S.TABLE_TOP - S.TABLE_THICK - 0.004)
+                    if slab.any():
+                        push.y = S.TABLE_NEAR_Y + 0.002 - float(Q[slab, 1].min())
+                        self._bump('borde')
+                    if tree is not None:
+                        Qf = self.skin.deform(full, self.fore_sel[sl])
+                        QQ = np.concatenate([Q, Qf])
+                        d, nrm, i, fi = self.ck.selfcol.depth(tree, QQ)
+                        if d > 0.0004:
+                            dirn = self.ck.selfcol.push_dir(full, QQ[i], fi) or nrm
+                            push = dirn * (d + 0.0015)
+                            self._bump('cuerpo')
+                            if getattr(self, 'debug', False):
+                                print('PUSH', s, it, round(d * 1000, 1), i < len(Q),
+                                      str(self.ck.selfcol.tgt_region[self.ck.selfcol.tgt_p[fi][0]]),
+                                      tuple(round(v, 3) for v in QQ[i]), tuple(round(v, 2) for v in dirn),
+                                      tuple(round(v, 3) for v in Wv))
+                    if getattr(self, 'debug', False):
+                        print('DZ', s, it, round(dz, 4), round(float(P['lift' + s][0]), 3), wt,
+                              int(ok.sum()), tuple(round(v, 3) for v in Wv))
+                    if abs(dz) < 2e-4 and push.length == 0:
+                        break
+                    Wv = Wv + Vector((0, 0, dz)) + push
+                    th_ = solve(Wv, thv)
+                return Wv, th_
+
+            W, th = hand_loop(W, None)
+            # brazo/antebrazo por encima del riel, paño y fichas paradas: girar el codo (mano fija)
+            if use_contacts:
+                def arm_clear():
+                    full = full_pose(pb)
+                    Qa = np.concatenate([self.skin.deform(full, self.fore_sel[sl]),
+                                         self.skin.deform(full, self.upper_sel[sl])])
+                    sup = support_height(Qa, obst)
+                    ok = np.isfinite(sup) & ((Qa[:, 2] > sup - 0.02) | (Qa[:, 1] < S.TABLE_NEAR_Y - 0.04))
+                    g = float((Qa[ok, 2] - sup[ok]).min()) if ok.any() else 1.0
+                    if tree is not None:
+                        d, _, _, _ = self.ck.selfcol.depth(tree, self.skin.deform(full, self.fore_sel[sl]))
+                        g = min(g, -d)
+                    return g
+                g0 = arm_clear()
+                if g0 < -0.0004:
+                    self._bump('codo')
+                    best = (g0, 0.0)
+                    for k in (1, -1, 2, -2, 3, -3, 4, -4, 6, -6, 8, -8, 10, -10):
+                        cand = th + math.radians(5 * k)
+                        solve(W, cand)
+                        g = arm_clear()
+                        if g >= -0.0004:
+                            best = (g, cand)
+                            break
+                        if g > best[0]:
+                            best = (g, cand)
+                    th_fix = best[1] if best[1] != 0.0 else th
+                    W, th = hand_loop(W, th_fix, iters=3)
             self.prev_theta[key] = th
             pb.diag['arm_' + sl]['contact_dz'] = float((W - Vector(P['arm' + s][:3])).z)
             P['arm' + s] = np.array(W[:])
-        # Piernas
-        for s in ('L', 'R'):
-            sl = s.lower()
-            fr = P['frot' + s]
-            pb.solve_leg(sl, Vector(P['foot' + s][:3]), Vector(P['knee' + s][:3]), rot_pyr(*fr),
-                         toe_pitch=float(P['toe' + s][0]), toe_yaw=float(fr[1]))
         pb.finish()
         # Cara
         fd = {}
@@ -390,8 +532,9 @@ def frame_list(anim):
     return list(range(0, anim.frames + 1))
 
 
-def bake(anim, rig, ev, start=1):
-    """Evalúa todos los cuadros; crea la Action. Devuelve (action, poses, faces)."""
+def bake(anim, rig, ev, start=1, post=None):
+    """Evalúa todos los cuadros; crea la Action. Devuelve (action, poses, faces).
+    post(poses): corrección posterior (p. ej. dedos contra fichas) antes de escribir la Action."""
     frames = frame_list(anim)
     poses, faces = [], []
     ev.prev_theta = {}
@@ -403,6 +546,8 @@ def bake(anim, rig, ev, start=1):
         # cierre exacto del bucle
         poses[-1] = poses[0]
         faces[-1] = faces[0]
+    if post is not None:
+        post(poses)
     act = bpy.data.actions.get(anim.name)
     if act:
         bpy.data.actions.remove(act)
@@ -580,13 +725,53 @@ def compute_tiles(anim, poses):
                 mats.append(Mf)
             else:
                 if rel is not None and f == rel and offset is not None:
-                    M = flat_tile(hp @ offset)
-                mats.append(M.copy())
+                    Mrel = hp @ offset
+                    M = flat_tile(Mrel)
+                    if t.get('fall'):
+                        seq = fall_seq(Mrel, t['fall'])
+                        M = seq[-1]
+                if rel is not None and t.get('fall') and rel <= f < rel + t['fall']:
+                    mats.append(seq[f - rel].copy())
+                    continue
+                ns = t.get('settle', 0)
+                if rel is not None and ns and rel <= f < rel + ns:
+                    k = ((f - rel) / ns) ** 2
+                    q = Mrel.to_quaternion().slerp(M.to_quaternion(), k)
+                    Mb = q.to_matrix().to_4x4()
+                    Mb.translation = Mrel.translation.lerp(M.translation, k)
+                    mats.append(Mb)
+                else:
+                    mats.append(M.copy())
         out[t['name']] = mats
     return out
 
 
 GRIP_CANON = {}
+
+
+def fall_seq(Mrel, n):
+    """La ficha soltada de pie (algo inclinada hacia delante) cae cara arriba girando sobre su arista inferior
+    lejana; n cuadros con aceleración (k^2). Devuelve n+1 matrices (la última, acostada en el paño)."""
+    hx, hy, hz = (v / 2 for v in S.TILE)
+    R3 = Mrel.to_3x3()
+    xa = R3.col[0].normalized()
+    piv = Mrel @ Vector((0, -hy, -hz))
+    z0 = R3.col[2]
+    zp = (z0 - xa * z0.dot(xa)).normalized()
+    up = Vector((0, 0, 1))
+    up = (up - xa * up.dot(xa)).normalized()
+    ang = math.atan2(zp.cross(up).dot(xa), zp.dot(up))
+    out = []
+    for k in range(n + 1):
+        a = ang * (k / n) ** 2
+        Rm = Matrix.Translation(piv) @ Matrix.Rotation(a, 4, xa) @ Matrix.Translation(-piv)
+        out.append(Rm @ Mrel)
+    last = out[-1]
+    zs = [(last @ Vector((sx * hx, sy * hy, sz * hz))).z for sx in (-1, 1) for sy in (-1, 1) for sz in (-1, 1)]
+    dz = S.TABLE_TOP + 0.0003 - min(zs)
+    for k in range(1, n + 1):
+        out[k].translation.z += dz * (k / n) ** 2
+    return out
 
 
 def compute_grip(rig, skin, side='r', fdir=(0.30, -0.90, -0.30), palm_hint=(0.2, 0.2, -1.0)):
@@ -774,3 +959,125 @@ def best_grip(ev, base, side, x, y, z=None, lift=0.0, fingers_key='pinch', pitch
                 best = (cost, ch, T, off, dict(wrist=dg['wrist'], reach=dg['reach'], dz=dg['contact_dz'],
                                                twist=dg['twist'], elbow=dg['elbow']))
     return best[1], best[2], best[3], best[4]
+
+
+# --------------------------------------------------------------------------------------
+# Fichas paradas (de canto, cara hacia el jugador)
+# --------------------------------------------------------------------------------------
+ROW_Y = -0.38
+ROW_X = tuple(round(-0.156 + 0.052 * i, 3) for i in range(7))
+STAND_E = 0.013            # yemas a 13 mm del borde superior de la ficha
+
+
+def stand_rot(tip=0.0, yaw=0.0):
+    """Rotación de una ficha parada (Y local arriba, cara +Z hacia +Y del mundo = hacia el jugador).
+    tip: grados que se inclina hacia delante (90 = acostada boca arriba, punta lejos del jugador)."""
+    base = Matrix(((-1, 0, 0), (0, 0, 1), (0, 1, 0))).transposed()
+    return R('Z', yaw) @ R('X', -tip) @ base
+
+
+def stand_matrix(x, y, z=None, tip=0.0, yaw=0.0):
+    M = stand_rot(tip, yaw).to_4x4()
+    M.translation = Vector((x, y, S.TABLE_TOP + S.TILE[1] / 2 if z is None else z))
+    return M
+
+
+def rest_on_felt(x, y, tip, yaw=0.0, clear=0.0005):
+    """Ficha inclinada 'tip' grados apoyando su arista más baja en el paño, centrada en (x,y)."""
+    M = stand_matrix(x, y, 0.0, tip, yaw)
+    hx, hy, hz = (v / 2 for v in S.TILE)
+    zs = [(M @ Vector((sx * hx, sy * hy, sz * hz))).z for sx in (-1, 1) for sy in (-1, 1) for sz in (-1, 1)]
+    M.translation.z = S.TABLE_TOP + clear - min(zs)
+    return M
+
+
+def row_tiles(skip=()):
+    return [(i, stand_matrix(x, ROW_Y)) for i, x in enumerate(ROW_X) if i not in skip]
+
+
+def row_obstacles(skip=()):
+    hw, ht = S.TILE[0] / 2, S.TILE[2] / 2
+    top = S.TABLE_TOP + S.TILE[1]
+    return [(x, ROW_Y, 1.0, 0.0, hw, ht, top) for i, x in enumerate(ROW_X) if i not in skip]
+
+
+_VGRIP = {}
+
+
+def vgrip_offset(rig, skin, side, alpha, key='pinch_v'):
+    """Offset mano->ficha para la pinza fina: pulgar sobre la cara, índice detrás, cerca del borde superior.
+    alpha: giro (grados) de la ficha alrededor del eje de la pinza."""
+    import vc_hand as H
+    s = side
+    hb = 'hand_' + s
+    if (s, key) not in _VGRIP:
+        center, axis, pt, pi = H.grip_local(rig, skin, F[key], s)
+        c_h = rig.rest[hb].inverted() @ center
+        a_h = (rig.rest3[hb].inverted() @ axis).normalized()
+        F0, P0 = rig.hand_ref[s]
+        p_h = rig.rest3[hb].inverted() @ P0
+        _VGRIP[(s, key)] = (c_h, a_h, p_h)
+    c_h, a_h, p_h = _VGRIP[(s, key)]
+    z = -a_h
+    y0 = -(p_h - a_h * p_h.dot(a_h)).normalized()
+    y = (Matrix.Rotation(math.radians(alpha), 3, z) @ y0).normalized()
+    x = y.cross(z).normalized()
+    T = Matrix((x, y, z)).transposed().to_4x4()
+    T.translation = c_h - y * (S.TILE[1] / 2 - STAND_E)
+    return T
+
+
+def hand_for_tile(rig, side, T, off, fingers_key='pinch_v'):
+    s = side
+    S_ = s.upper()
+    HW = T @ off.inverted()
+    Rh = HW.to_3x3() @ rig.rest3['hand_' + s].inverted()
+    F0, P0 = rig.hand_ref[s]
+    return {'arm' + S_: tuple(HW.translation[:]), 'hdir' + S_: tuple((Rh @ F0)[:]),
+            'hpalm' + S_: tuple((Rh @ P0)[:]), 'fing' + S_: F[fingers_key], 'table' + S_: 0.0}
+
+
+def grip_cost(ev, base, side, ch, obst=()):
+    S_ = side.upper()
+    d = dict(base)
+    d.update(ch)
+    A = C.Anim('_g', 1)
+    A.key(0, d)
+    if obst:
+        A.obstacles = lambda f: obst
+    ev.prev_theta = {}
+    pb, _ = ev.evaluate(A, 0)
+    dg = pb.diag['arm_' + side]
+    cost = (dg['wrist'] / 10) ** 2 + (max(0, dg['reach'] - 0.95) / 0.02) ** 2 + \
+        (dg['contact_dz'] / 0.002) ** 2 + (abs(dg['twist']) / 40) ** 2
+    info = dict(wrist=round(dg['wrist'], 1), reach=round(dg['reach'], 3), dz=round(dg['contact_dz'], 4),
+                twist=round(dg['twist'], 1), elbow=round(dg['elbow'], 1))
+    return cost, info, pb
+
+
+def best_vgrip(ev, side, targets, alphas=range(-20, 61, 5)):
+    """targets: lista de (base, T, obst). Elige un único alpha (la ficha no gira en la mano entre animaciones)."""
+    best = None
+    for a in alphas:
+        off = vgrip_offset(ev.rig, ev.skin, side, a)
+        tot, infos = 0.0, []
+        for base, T, obst in targets:
+            c, info, _ = grip_cost(ev, base, side, hand_for_tile(ev.rig, side, T, off), obst)
+            tot += c
+            infos.append(info)
+        if best is None or tot < best[0]:
+            best = (tot, a, off, infos)
+    return best
+
+
+def best_place(ev, base, side, x, y, off, tip=78, obst=(), yaws=range(-180, 180, 15)):
+    """Orientación final (cara arriba) de la ficha que deja la mano más natural; el extremo sujetado
+    queda levantado (tip < 90) y el otro apoyado en el paño."""
+    best = None
+    for yw in yaws:
+        T = rest_on_felt(x, y, tip, yw)
+        ch = hand_for_tile(ev.rig, side, T, off)
+        c, info, _ = grip_cost(ev, base, side, ch, obst)
+        if best is None or c < best[0]:
+            best = (c, yw, T, ch, info)
+    return best

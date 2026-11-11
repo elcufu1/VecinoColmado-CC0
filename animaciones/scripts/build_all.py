@@ -12,7 +12,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy  # noqa: E402
 import numpy as np  # noqa: E402
-from mathutils import Vector, Matrix  # noqa: E402
+from mathutils import Vector, Matrix, Quaternion  # noqa: E402
 
 import vc_tools as T  # noqa: E402
 import vc_core as C  # noqa: E402
@@ -35,8 +35,10 @@ CAMS = {
 class Pipeline:
     def __init__(self, engine='WORKBENCH', res=(1280, 720)):
         self.scene, self.rig = T.init(engine, res)
+        import vc_limits
+        self.rig.limits = vc_limits.Limits(self.rig)
         self.ck = K.Checker(self.rig)
-        self.ev = VP.Evaluator(self.rig, self.ck.body)
+        self.ev = VP.Evaluator(self.rig, self.ck.body, self.ck)
         L.setup(self.rig, self.ev)
         VP.compute_grip(self.rig, self.ck.body, 'r')
         VP.compute_grip(self.rig, self.ck.body, 'l')
@@ -74,10 +76,15 @@ class Pipeline:
             for t in A.tiles:
                 if t['start'][0] == 'hand' and t['start'][1] is self.ctx.OFF:
                     t['start'] = ('hand', real)
-        act, poses, faces = VP.bake(A, self.rig, self.ev)
-        if A.props.get('shuffle'):
-            self.shuffle_tiles(A, poses)
-        tiles = VP.compute_tiles(A, poses)
+        box = {}
+
+        def post(poses):
+            if A.props.get('shuffle'):
+                self.shuffle_tiles(A, poses)
+            box['tiles'] = VP.compute_tiles(A, poses)
+            box['fing'] = self.fix_fingers(A, poses, box['tiles'])
+        act, poses, faces = VP.bake(A, self.rig, self.ev, post=post)
+        tiles = box['tiles']
         if A.name == 'Agarrar_Ficha_Cerca':
             t = A.tiles[0]
             self.real_off = poses[t['grab']].pose['hand_r'].inverted() @ t['start'][1]
@@ -95,9 +102,106 @@ class Pipeline:
                 r['_reach_' + s] = dg['reach']
                 r['_twist_' + s] = dg['twist']
             per.append(r)
-        self.baked[A.name] = dict(act=act, poses=poses, faces=faces, tiles=tiles, per=per)
+        self.baked[A.name] = dict(act=act, poses=poses, faces=faces, tiles=tiles, per=per, dedos=box.get('fing', {}))
         print(f'BAKE {A.name}: {A.frames + 1} cuadros en {time.time() - t0:.1f}s')
         return self.baked[A.name]
+
+    # ------------------------------------------------------------------ dedos contra fichas
+    FINGERS = ('thumb', 'index', 'middle', 'ring', 'pinky')
+
+    def _finger_sel(self):
+        if not hasattr(self, '_fsel'):
+            self._fsel = {}
+            for s in 'lr':
+                for fn in self.FINGERS:
+                    bones = [f'{fn}_0{k}_{s}' for k in (1, 2, 3)]
+                    self._fsel[(s, fn)] = (bones, np.where(self.ck.body.bone_weight(bones) > 0.3)[0])
+        return self._fsel
+
+    @staticmethod
+    def _tile_depth(Q, mats):
+        hx, hy, hz = (v / 2 for v in S.TILE)
+        best = 0.0
+        for M in mats:
+            Mi = np.array(M.inverted())
+            L_ = Q @ Mi[:3, :3].T + Mi[:3, 3]
+            ins = (np.abs(L_[:, 0]) < hx) & (np.abs(L_[:, 1]) < hy) & (np.abs(L_[:, 2]) < hz)
+            if ins.any():
+                d = np.minimum(np.minimum(hx - np.abs(L_[ins, 0]), hy - np.abs(L_[ins, 1])), hz - np.abs(L_[ins, 2]))
+                best = max(best, float(d.max()))
+        return best
+
+    @staticmethod
+    def _scaled(q, k):
+        if k <= 1.0:
+            return Quaternion().slerp(q, k)
+        ax, ang = q.to_axis_angle()
+        return Quaternion(ax, ang * k)
+
+    def _apply_finger(self, pb, bones, base, k):
+        for n, q in zip(bones, base):
+            M = self._scaled(q, k).to_matrix().to_4x4()
+            M.translation = pb.local[n].translation
+            pb.set_local(n, M)
+
+    def fix_fingers(self, A, poses, tiles, tol=0.0002):
+        """Dedos que entran en una ficha: mínimo cambio de flexión (abrir o cerrar ese dedo) que lo saca."""
+        if not tiles:
+            return {}
+        sel = self._finger_sel()
+        names = list(tiles.keys())
+        nf = len(poses)
+        steps = [1 - 0.04 * i for i in range(1, 16)] + [1 + 0.04 * i for i in range(1, 9)]
+        need = {}
+        for f, pb in enumerate(poses):
+            mats = [tiles[n][f] for n in names]
+            for (s, fn), (bones, vi) in sel.items():
+                hand = pb.pose['hand_' + s].translation
+                if min((M.translation - hand).length for M in mats) > 0.25:
+                    continue
+                d0 = self._tile_depth(self.ck.body.deform(pb.pose, vi), mats)
+                if d0 <= tol:
+                    continue
+                base = [pb.local[n].to_quaternion() for n in bones]
+                best = None
+                for k in sorted(steps, key=lambda k: abs(k - 1)):
+                    self._apply_finger(pb, bones, base, k)
+                    d = self._tile_depth(self.ck.body.deform(pb.pose, vi), mats)
+                    if best is None or d < best[1]:
+                        best = (k, d)
+                    if d <= tol:
+                        break
+                self._apply_finger(pb, bones, base, 1.0)
+                need[(f, s, fn)] = (best[0], d0, best[1])
+        # suavizado temporal: el cambio se mantiene ±2 cuadros y entra/sale gradualmente
+        out = {}
+        for (s, fn) in sel:
+            ks = np.ones(nf)
+            for f in range(nf):
+                if (f, s, fn) in need:
+                    ks[f] = need[(f, s, fn)][0]
+            dev = ks - 1.0
+            sm = dev.copy()
+            for f in range(nf):
+                win = dev[max(0, f - 2):f + 3]
+                j = int(np.argmax(np.abs(win)))
+                w = 1.0 if dev[f] != 0 else 0.6
+                sm[f] = win[j] * w if abs(win[j]) > abs(dev[f]) else dev[f]
+            if not np.any(sm):
+                continue
+            bones = sel[(s, fn)][0]
+            for f in range(nf):
+                if sm[f] == 0:
+                    continue
+                pb = poses[f]
+                base = [pb.local[n].to_quaternion() for n in bones]
+                self._apply_finger(pb, bones, base, 1.0 + sm[f])
+            out[f'{fn}_{s}'] = dict(cuadros=int((sm != 0).sum()), cambio_max=round(float(np.abs(sm).max()), 2),
+                                    prof_antes_mm=round(1000 * max(v[1] for k_, v in need.items()
+                                                                  if k_[1] == s and k_[2] == fn), 1))
+        if A.loop and nf > 1:
+            poses[-1] = poses[0]
+        return out
 
     def report(self, A):
         per = self.baked[A.name]['per']
