@@ -10,6 +10,8 @@ import os
 import struct
 import sys
 
+import numpy as np
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy  # noqa: E402
 from mathutils import Vector, Matrix  # noqa: E402
@@ -48,8 +50,17 @@ def build(out_dir):
     # ---------------- escena de previsualización (línea de tiempo con NLA) ----------------
     timeline = build_timeline(P)
 
+    # ---------------- límites de rotación: verificación numérica + constraints en el rig ----------------
+    lim_info = check_limits(P)
+    lim_info['constraints'] = add_constraints(P)
+    lim_info['constraints_verificacion'] = verify_constraints(P, timeline)
+    with open(os.path.join(out_dir, 'limites_rotacion.json'), 'w') as fh:
+        json.dump(lim_info, fh, ensure_ascii=False, indent=1)
+
     # metadatos para render/fotos
-    meta = dict(timeline=timeline, report=rep, log=P.ctx.report, glb=glb_info)
+    meta = dict(timeline=timeline, report=rep, log=P.ctx.report, glb=glb_info,
+                limites=dict(excesos=lim_info['excesos_max_grados'], verificacion=lim_info['constraints_verificacion']),
+                dedos={A.name: P.baked[A.name].get('dedos', {}) for A in P.anims})
     scene['vc_meta'] = json.dumps(meta)
     with open(os.path.join(out_dir, 'reporte_verificacion.json'), 'w') as fh:
         json.dump(meta, fh, ensure_ascii=False, indent=1)
@@ -174,6 +185,95 @@ def reimport_check(glb, anims_names):
     return res
 
 
+# ---------------------------------------------------------------------------------------------- límites
+def check_limits(P):
+    """Recorre todos los cuadros horneados de todas las Actions y mide cuánto excede cada hueso su rango."""
+    lim = P.rig.limits
+    worst = {}
+    total = 0
+    per_anim = {}
+    for A in P.anims:
+        mx = 0.0
+        for pb in P.baked[A.name]['poses']:
+            for n in P.rig.names:
+                e = lim.excess(n, pb.local[n].to_quaternion())
+                total += 1
+                if e > worst.get(n, (0.0, ''))[0]:
+                    worst[n] = (e, A.name)
+                mx = max(mx, e)
+        per_anim[A.name] = round(mx, 4)
+    import vc_limits
+    rangos = []
+    for k, (mode, order, x, y, z) in vc_limits.BASE.items():
+        if k == 'Root':
+            continue
+        sem = vc_limits.SEMANTIC.get(k, (k, 'X', 'Y', 'Z'))
+        rangos.append(dict(clave=k, nombre=sem[0], modo=mode, orden=order, x=list(x), y=list(y), z=list(z),
+                           eje_x=sem[1], eje_y=sem[2], eje_z=sem[3]))
+    clamps = {n: dict(cuadros=v[0], max_grados=round(v[1], 2)) for n, v in lim.stats.items()}
+    return dict(muestras_hueso_cuadro=total, excesos_max_grados=per_anim, rangos=rangos,
+                recortes_al_hornear=clamps,
+                peores={n: [round(v[0], 4), v[1]] for n, v in worst.items() if v[0] > 0})
+
+
+def add_constraints(P):
+    """Limit Rotation (espacio local) en los 53 huesos. Para los huesos swing/twist la caja Euler cubre la región
+    anatómica y todo lo horneado, de modo que el constraint nunca cambia la animación."""
+    rig, lim = P.rig, P.rig.limits
+    out = {}
+    for n in rig.names:
+        order, lo, hi = lim.constraint_box(n)
+        lo, hi = np.array(lo, float), np.array(hi, float)
+        if lim.spec[n][0] == 'st':
+            E = np.degrees(np.array([pb.local[n].to_quaternion().to_euler(order)[:]
+                                     for A in P.anims for pb in P.baked[A.name]['poses']]))
+            lo = np.minimum(lo, E.min(0) - 0.5)
+            hi = np.maximum(hi, E.max(0) + 0.5)
+        pbn = rig.arm.pose.bones[n]
+        for c in list(pbn.constraints):
+            if c.type == 'LIMIT_ROTATION':
+                pbn.constraints.remove(c)
+        c = pbn.constraints.new('LIMIT_ROTATION')
+        c.name = 'Limite_anatomico'
+        c.owner_space = 'LOCAL'
+        c.euler_order = order
+        c.use_limit_x = c.use_limit_y = c.use_limit_z = True
+        c.min_x, c.max_x = math.radians(lo[0]), math.radians(hi[0])
+        c.min_y, c.max_y = math.radians(lo[1]), math.radians(hi[1])
+        c.min_z, c.max_z = math.radians(lo[2]), math.radians(hi[2])
+        if hasattr(c, 'use_transform_limit'):
+            c.use_transform_limit = True
+        out[n] = dict(orden=order, x=[round(lo[0], 1), round(hi[0], 1)], y=[round(lo[1], 1), round(hi[1], 1)],
+                      z=[round(lo[2], 1), round(hi[2], 1)])
+    return out
+
+
+def verify_constraints(P, timeline):
+    """Compara la pose evaluada con los constraints activos contra la misma pose sin constraints, en TODOS
+    los cuadros de la línea de tiempo: diferencia máxima de rotación (grados)."""
+    sc = bpy.context.scene
+    arm = P.rig.arm
+    cons = [c for pb in arm.pose.bones for c in pb.constraints if c.type == 'LIMIT_ROTATION']
+    worst = (0.0, None, None)
+    nfr = 0
+    for t in timeline:
+        for f in range(t['start'], t['end'] + 1):
+            for c in cons:
+                c.mute = True
+            sc.frame_set(f)
+            a = {pb.name: pb.matrix.to_quaternion() for pb in arm.pose.bones}
+            for c in cons:
+                c.mute = False
+            sc.frame_set(f)
+            for pb in arm.pose.bones:
+                d = math.degrees(a[pb.name].rotation_difference(pb.matrix.to_quaternion()).angle)
+                d = min(d, 360 - d)
+                if d > worst[0]:
+                    worst = (d, t['name'], pb.name)
+            nfr += 1
+    return dict(cuadros=nfr, constraints=len(cons), dif_max_grados=round(worst[0], 5), anim=worst[1], hueso=worst[2])
+
+
 # ---------------------------------------------------------------------------------------------- timeline
 def key_hide(ob, frame, hidden):
     ob.hide_render = hidden
@@ -243,23 +343,26 @@ def build_timeline(P):
             chair.keyframe_insert('location', frame=start + f)
         # fichas
         for n, mats in b['tiles'].items():
-            on = f'{A.name}__{n}'
-            ob = S.make_tile(scene, on)
-            ob.rotation_mode = 'QUATERNION'
+            shared = n.startswith('Fila')
+            on = n if shared else f'{A.name}__{n}'
             face_down = n.startswith(('Ficha_mesa', 'Ficha_l', 'Ficha_r'))
-            for ch in ob.children:
-                ch.hide_render = face_down
-                ch.hide_viewport = face_down
-            key_hide(ob, 1, True)
-            key_hide(ob, start, False)
-            key_hide(ob, end + 1, True)
-            for f, M in enumerate(mats):
+            ob = tile_objs.get(on)
+            if ob is None:
+                ob = S.make_tile(scene, on)
+                ob.rotation_mode = 'QUATERNION'
+                for o in [ob] + list(ob.children):
+                    key_hide(o, 1, True)
+            # las marcas (hijos) se ocultan junto con la ficha: si no, quedan flotando en otras animaciones
+            for o in [ob] + list(ob.children):
+                key_hide(o, start, face_down and o is not ob)
+                key_hide(o, end + 1, True)
+            static = all((M.translation - mats[0].translation).length < 1e-7 for M in mats)
+            for f, M in enumerate(mats[:1] if static else mats):
                 loc, rot, _ = M.decompose()
                 ob.location = loc
                 ob.rotation_quaternion = rot
                 ob.keyframe_insert('location', frame=start + f)
                 ob.keyframe_insert('rotation_quaternion', frame=start + f)
-            set_constant(ob)
             tile_objs[on] = ob
         timeline.append(dict(name=A.name, start=start, end=end, frames=A.frames, loop=A.loop,
                              duracion_s=round(A.frames / 24.0, 3), desc=A.desc, uso=A.props.get('use', ''),
@@ -270,6 +373,20 @@ def build_timeline(P):
         start = end + 1 + GAP
     for ob in props:
         set_constant(ob)
+    for ob in tile_objs.values():
+        for o in [ob] + list(ob.children):
+            set_constant(o)
+        fc_owner = ob.animation_data.action if ob.animation_data else None
+        if fc_owner is not None:
+            try:
+                fcs = [fc for layer in fc_owner.layers for strip in layer.strips for cb in strip.channelbags
+                       for fc in cb.fcurves]
+            except Exception:
+                fcs = list(fc_owner.fcurves)
+            for fc in fcs:
+                if not fc.data_path.startswith('hide'):
+                    for k in fc.keyframe_points:
+                        k.interpolation = 'LINEAR'
     scene.frame_start = 1
     scene.frame_end = start - GAP
     return timeline
@@ -290,9 +407,12 @@ def setup_wb(res=(1280, 720)):
 def hand_cams():
     sc = bpy.context.scene
     return {
-        'mesa_mano': S.add_camera(sc, 'Cam_mesa_mano', (-0.48, -0.92, 1.13), (-0.08, -0.50, 0.86), 42),
-        'mesa_mano_lejos': S.add_camera(sc, 'Cam_mesa_mano_lejos', (-0.55, -1.15, 1.15), (-0.05, -0.68, 0.86), 42),
-        'mano_izq': S.add_camera(sc, 'Cam_mano_izq', (0.45, -0.95, 1.18), (0.07, -0.38, 0.98), 42),
+        # de lado y un poco por delante del hombro: se ven la pinza (pulgar en la cara, índice detrás) y la cara
+        # de las fichas paradas
+        'mesa_mano': S.add_camera(sc, 'Cam_mesa_mano', (0.34, -0.04, 1.16), (-0.13, -0.47, 0.90), 40),
+        'mesa_mano_lejos': S.add_camera(sc, 'Cam_mesa_mano_lejos', (0.60, -0.18, 1.26), (0.10, -0.44, 0.90), 40),
+        'mano_izq': S.add_camera(sc, 'Cam_mano_izq', (-0.55, 0.02, 1.30), (0.0, -0.39, 0.88), 42),
+        'mesa_frente_mano': S.add_camera(sc, 'Cam_mesa_frente_mano', (-0.42, -1.05, 1.12), (-0.12, -0.45, 0.88), 40),
         'barajar': S.add_camera(sc, 'Cam_barajar', (-0.05, -1.05, 1.30), (0.0, -0.48, 0.86), 40),
         'manos_rango': S.add_camera(sc, 'Cam_manos_rango', (-0.12, -1.25, 1.40), (0.0, -0.32, 1.33), 42),
         'cara': S.add_camera(sc, 'Cam_cara', (-0.12, -0.75, 1.68), (0.0, -0.05, 1.66), 45),
@@ -304,6 +424,10 @@ INSET = {
     'Pasar': 'mesa_mano', 'Agarrar_Ficha_Lejos': 'mesa_mano_lejos', 'Colocar_Ficha_Lejos': 'mesa_mano_lejos',
     'Sostener_Fichas': 'mano_izq', 'Barajar_Fichas': 'barajar', 'Idle_Sentado': 'mesa_mano',
 }
+
+# primeros planos grandes de la pinza con la ficha parada (se añaden al final de VIDEO_TODO_EL_CUERPO.mp4)
+CLOSEUPS = ('Agarrar_Ficha_Cerca', 'Colocar_Ficha_Cerca', 'Agarrar_Ficha_Lejos', 'Colocar_Ficha_Lejos',
+            'Golpe_Ficha', 'Sostener_Fichas')
 
 
 def render_seq(cam, f0, f1, out_dir, res):
@@ -338,6 +462,9 @@ def render(frames_dir, names):
         render_seq(cam, t['start'], f1, os.path.join(frames_dir, t['name'], 'main'), (1280, 720))
         if t['name'] in INSET:
             render_seq(hc[INSET[t['name']]], t['start'], f1, os.path.join(frames_dir, t['name'], 'inset'), (480, 270))
+        if t['name'] in CLOSEUPS:
+            render_seq(hc[INSET[t['name']]], t['start'], f1, os.path.join(frames_dir, t['name'], 'primer_plano'),
+                       (1280, 720))
         if t['name'] == 'Prueba_Rango_Completo':
             mk = {n: f for f, n in t['markers']}
             a, b = mk['Dedos'], mk['Columna']
@@ -350,9 +477,9 @@ def render(frames_dir, names):
 # ---------------------------------------------------------------------------------------------- fotos
 KEY_FRAMES = {
     'Idle_De_Pie': [48], 'Caminar': [0, 7], 'Sentarse': [26, 46, 100], 'Levantarse': [52, 72],
-    'Idle_Sentado': [30], 'Agarrar_Ficha_Cerca': [10, 20], 'Agarrar_Ficha_Lejos': [14],
-    'Colocar_Ficha_Cerca': [7], 'Colocar_Ficha_Lejos': [11], 'Golpe_Ficha': [9, 15], 'Pasar': [8],
-    'Barajar_Fichas': [12], 'Sostener_Fichas': [0], 'Celebrar_Ganar': [12, 36], 'Perder': [24],
+    'Idle_Sentado': [30], 'Agarrar_Ficha_Cerca': [11, 18], 'Agarrar_Ficha_Lejos': [15, 24],
+    'Colocar_Ficha_Cerca': [7, 10], 'Colocar_Ficha_Lejos': [10, 13], 'Golpe_Ficha': [9, 15], 'Pasar': [8],
+    'Barajar_Fichas': [12], 'Sostener_Fichas': [0, 30], 'Celebrar_Ganar': [12, 36], 'Perder': [24],
     'Pensar': [30], 'Saludar': [18], 'Senalar': [13], 'Pulgar_Arriba': [14], 'Aplaudir': [12], 'Reir': [20],
     'Enojado': [13, 30], 'Prueba_Rango_Completo': [420, 1160, 1650, 2320],
 }
@@ -368,6 +495,7 @@ def photos(out_dir, names):
     for m in sc.timeline_markers:
         m.camera = None
     os.makedirs(out_dir, exist_ok=True)
+    hc = hand_cams()
     for t in meta['timeline']:
         if names and t['name'] not in names:
             continue
@@ -387,6 +515,10 @@ def photos(out_dir, names):
                 cam = S.add_camera(sc, 'Cam_foto', tgt + dv, tgt, 40 if seated else 38)
                 sc.camera = cam
                 sc.render.filepath = os.path.join(out_dir, f"{t['name']}_f{f:04d}_{vn}.jpg")
+                bpy.ops.render.render(write_still=True)
+            if t['name'] in INSET:
+                sc.camera = hc[INSET[t['name']]]
+                sc.render.filepath = os.path.join(out_dir, f"{t['name']}_f{f:04d}_primer_plano.jpg")
                 bpy.ops.render.render(write_still=True)
         print('FOTOS OK', t['name'])
 

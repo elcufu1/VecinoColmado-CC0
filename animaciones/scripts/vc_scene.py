@@ -130,7 +130,8 @@ def setup_render(scene, engine='WORKBENCH', res=(1280, 720)):
     scene.render.fps = 24
     world = scene.world or bpy.data.worlds.new('Mundo')
     scene.world = world
-    world.color = (0.32, 0.32, 0.33)
+    # mismo tono que el suelo cerca del horizonte: sin franja clara al fondo
+    world.color = (0.058, 0.060, 0.066)
     if engine == 'WORKBENCH':
         scene.render.engine = 'BLENDER_WORKBENCH'
         sh = scene.display.shading
@@ -155,7 +156,27 @@ def setup_render(scene, engine='WORKBENCH', res=(1280, 720)):
     else:
         scene.render.engine = 'BLENDER_EEVEE_NEXT'
         scene.eevee.taa_render_samples = 24
+        # mismo tono que el suelo lejano (sin franja) y luz de relleno baja: más contraste, menos "lavado"
+        world.color = (0.004, 0.004, 0.005)
+        for ln, e in (('Principal', 650.0), ('Relleno', 90.0), ('Borde', 320.0)):
+            lo = bpy.data.objects.get(ln)
+            if lo is not None and lo.type == 'LIGHT':
+                lo.data.energy = e
+        # paño mate: sin brillo especular rasante que lo aclare
+        m = bpy.data.materials.get('Pano_mesa')
+        b = m.node_tree.nodes.get('Principled BSDF') if m and m.use_nodes else None
+        if b is not None:
+            b.inputs['Roughness'].default_value = 1.0
+            if 'Specular IOR Level' in b.inputs:
+                b.inputs['Specular IOR Level'].default_value = 0.1
         scene.view_settings.view_transform = 'AgX'
+        for look in ('AgX - Punchy', 'AgX - Medium High Contrast'):
+            try:
+                scene.view_settings.look = look
+                break
+            except Exception:
+                pass
+        scene.view_settings.exposure = -0.5
     scene.render.image_settings.file_format = 'PNG'
 
 

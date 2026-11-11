@@ -80,6 +80,21 @@ def full_body(t, frames_dir, out):
     run(['ffmpeg', '-y', '-loglevel', 'error', *inp, '-filter_complex', filt, '-map', '[v]', *ENC, out])
 
 
+CLOSEUPS = ('Agarrar_Ficha_Cerca', 'Colocar_Ficha_Cerca', 'Agarrar_Ficha_Lejos', 'Colocar_Ficha_Lejos',
+            'Golpe_Ficha', 'Sostener_Fichas')
+
+
+def closeup_segment(t, frames_dir, out):
+    """Primer plano de la mano (a media velocidad) con la vista completa pequeña en la esquina."""
+    d = os.path.join(frames_dir, t['name'])
+    inp = ['-framerate', '12', '-i', os.path.join(d, 'primer_plano', '%05d.png'),
+           '-framerate', '12', '-i', os.path.join(d, 'main', '%05d.png')]
+    filt = ('[1:v]scale=400:225,pad=iw+6:ih+6:3:3:color=white[m];[0:v][m]overlay=W-w-16:H-h-16,'
+            'tpad=stop_mode=clone:stop_duration=0.6,'
+            + label(f"Primer plano · {t['name'].replace('_', ' ')} · ficha parada · ×0.5", y='24') + '[v]')
+    run(['ffmpeg', '-y', '-loglevel', 'error', *inp, '-filter_complex', filt, '-map', '[v]', *ENC, out])
+
+
 def main(meta, frames_dir, out_dir):
     tl = json.load(open(meta))['timeline']
     os.makedirs(out_dir, exist_ok=True)
@@ -92,7 +107,19 @@ def main(meta, frames_dir, out_dir):
             continue
         anim_video(t, frames_dir, os.path.join(out_dir, f"{t['name']}.mp4"))
         if t['name'] == 'Prueba_Rango_Completo':
-            full_body(t, frames_dir, os.path.join(out_dir, 'VIDEO_TODO_EL_CUERPO.mp4'))
+            rng = os.path.join(frames_dir, '_rango.mp4')
+            full_body(t, frames_dir, rng)
+            parts = [rng]
+            for c in tl:
+                if c['name'] in CLOSEUPS and os.path.isdir(os.path.join(frames_dir, c['name'], 'primer_plano')):
+                    pth = os.path.join(frames_dir, f"_cerca_{c['name']}.mp4")
+                    closeup_segment(c, frames_dir, pth)
+                    parts.append(pth)
+            lst = os.path.join(frames_dir, '_lista.txt')
+            with open(lst, 'w') as fh:
+                fh.write(''.join(f"file '{os.path.abspath(x)}'\n" for x in parts))
+            run(['ffmpeg', '-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', lst, '-c', 'copy',
+                 '-movflags', '+faststart', os.path.join(out_dir, 'VIDEO_TODO_EL_CUERPO.mp4')])
 
 
 if __name__ == '__main__':
