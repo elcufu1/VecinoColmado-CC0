@@ -36,7 +36,6 @@ def main(src, dst, lim_src=None):
     w('- `Vecino_Boxer_Animado.blend` — mismas Actions + escena `Previsualizacion_Animaciones` con mesa, silla, '
       'fichas y cámaras (línea de tiempo con marcadores por animación).')
     w('- `videos/` — un MP4 por animación (H.264, 1280×720, 24 fps) y `VIDEO_TODO_EL_CUERPO.mp4`.')
-    w('- `fotos/` — JPG de frente, 3/4 y perfil en las poses clave.')
     w('- `scripts/` — código que genera todo (`blender -b Vecino_Boxer.blend --python scripts/final.py -- build <dir>`).\n')
     w('| # | Nombre (Action) | Cuadros | Duración | Bucle | Uso en el juego |')
     w('|---|---|---|---|---|---|')
