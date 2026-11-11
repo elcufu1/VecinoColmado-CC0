@@ -50,6 +50,9 @@ def build(out_dir):
     # ---------------- escena de previsualización (línea de tiempo con NLA) ----------------
     timeline = build_timeline(P)
 
+    # ---------------- capicúa: cámara cinemática (Action aparte) + efectos de previsualización ----------------
+    capicua_cine(P, timeline)
+
     # ---------------- límites de rotación: verificación numérica + constraints en el rig ----------------
     lim_info = check_limits(P)
     lim_info['constraints'] = add_constraints(P)
@@ -297,6 +300,23 @@ def set_constant(ob):
                 k.interpolation = 'CONSTANT'
 
 
+def juego_info(A):
+    """Datos para integrar la partida en el juego (hueco, sentido de caída, cuadros de agarre/suelta...)."""
+    out = {}
+    for k in ('jugada', 'slot', 'eventos', 'tranque', 'mesa'):
+        if k in A.props:
+            out[k] = A.props[k]
+    for t in A.tiles:
+        if t['name'] == 'Ficha':
+            out['ficha'] = dict(agarre=t.get('grab'), suelta=t.get('release'), caida=t.get('fall'),
+                                valores=A.props.get('vals', {}).get('Ficha'),
+                                giro=list(t['roll'][:2]) if t.get('roll') else None)
+    fall = [(t['name'], t['release']) for t in A.tiles if t['name'].startswith('Fila') and t.get('release')]
+    if fall:
+        out['acuesta_fila'] = fall
+    return out
+
+
 def build_timeline(P):
     import build_all as BA
     rig = P.rig
@@ -343,12 +363,12 @@ def build_timeline(P):
             chair.keyframe_insert('location', frame=start + f)
         # fichas
         for n, mats in b['tiles'].items():
-            shared = n.startswith('Fila')
+            shared = n.startswith(('Fila', 'Cadena'))
             on = n if shared else f'{A.name}__{n}'
             face_down = n.startswith(('Ficha_mesa', 'Ficha_l', 'Ficha_r'))
             ob = tile_objs.get(on)
             if ob is None:
-                ob = S.make_tile(scene, on)
+                ob = S.make_tile(scene, on, A.props.get('vals', {}).get(n))
                 ob.rotation_mode = 'QUATERNION'
                 for o in [ob] + list(ob.children):
                     key_hide(o, 1, True)
@@ -367,7 +387,7 @@ def build_timeline(P):
         timeline.append(dict(name=A.name, start=start, end=end, frames=A.frames, loop=A.loop,
                              duracion_s=round(A.frames / 24.0, 3), desc=A.desc, uso=A.props.get('use', ''),
                              cam=A.props.get('cam', 'mesa'), mesa=not notable, silla=not nochair,
-                             markers=[(start + t, nm) for t, nm in A.markers]))
+                             markers=[(start + t, nm) for t, nm in A.markers], juego=juego_info(A)))
         for t, nm in A.markers:
             scene.timeline_markers.new(f'{A.name}:{nm}', frame=start + t)
         start = end + 1 + GAP
@@ -390,6 +410,214 @@ def build_timeline(P):
     scene.frame_start = 1
     scene.frame_end = start - GAP
     return timeline
+
+
+# ---------------------------------------------------------------------------------------------- capicúa
+CAPI = 'Capicua_Golpe_Celebrar'
+
+
+def _smooth(k):
+    k = min(1.0, max(0.0, k))
+    return k * k * (3 - 2 * k)
+
+
+def _emit_mat(name, rgb, strength):
+    m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt = m.node_tree
+    nt.nodes.clear()
+    out = nt.nodes.new('ShaderNodeOutputMaterial')
+    em = nt.nodes.new('ShaderNodeEmission')
+    em.inputs['Color'].default_value = (*rgb, 1.0)
+    em.inputs['Strength'].default_value = strength
+    nt.links.new(em.outputs[0], out.inputs[0])
+    m.diffuse_color = (*rgb, 1.0)
+    return m
+
+
+def capicua_camera_path(P, A):
+    """Trayectoria de la cámara cinemática (cuadros de la Action, desde 0): plano general -> se acerca a la ficha
+    mientras la lleva -> temblor en el golpe -> se abre para ver la celebración."""
+    b = P.baked[A.name]
+    ev = A.props['eventos']
+    tiles = b['tiles']['Ficha']
+    imp = ev['impacto']
+    slot = tiles[-1].translation.copy()
+    W0, L0 = Vector((-0.62, -1.55, 1.42)), Vector((0.0, -0.30, 1.05))
+    W1, L1 = Vector((-0.30, -1.32, 1.42)), Vector((0.0, -0.08, 1.30))
+    near = Vector((-0.16, -0.34, 0.12))
+    out = []
+    for f in range(A.frames + 1):
+        tp = tiles[min(f, len(tiles) - 1)].translation
+        if f <= 8:
+            pos, look, lens = W0.copy(), L0.copy(), 32.0
+        elif f <= imp:
+            k = _smooth((f - 8) / float(imp - 8))
+            pos, look, lens = W0.lerp(tp + near, k), L0.lerp(tp, k), 32.0 + 8.0 * k
+        elif f <= imp + 9:
+            pos, look, lens = slot + near, slot.copy(), 40.0
+            a = 0.009 * math.exp(-(f - imp) / 3.0)
+            pos = pos + Vector((math.sin(f * 2.7), math.cos(f * 3.9), math.sin(f * 5.1))) * a
+            look = look + Vector((math.cos(f * 4.3), math.sin(f * 3.1), 0)) * a * 0.6
+        elif f <= ev['celebracion'][0] + 6:
+            k = _smooth((f - imp - 9) / float(ev['celebracion'][0] + 6 - imp - 9))
+            pos, look, lens = (slot + near).lerp(W1, k), slot.lerp(L1, k), 40.0 - 2.0 * k
+        else:
+            d = f - ev['celebracion'][0] - 6
+            pos, look, lens = W1 + Vector((0.0006 * d, -0.0004 * d, 0.0002 * d)), L1.copy(), 38.0
+        out.append((pos, look, lens))
+    return out
+
+
+def capicua_cine(P, timeline):
+    """Cámara 'Camara_Capicua' con su propia Action 'Capicua_Camara' (slots de objeto y de focal),
+    más un ejemplo de los efectos que debe hacer el juego (texto, chispas, destello) en la colección
+    FX_Capicua_Previsualizacion. Nada de esto va en el GLB del personaje."""
+    A = next(a for a in P.anims if a.name == CAPI)
+    t = next(x for x in timeline if x['name'] == CAPI)
+    ev = A.props['eventos']
+    scene = P.scene
+    start = t['start']
+    coll = bpy.data.collections.get('FX_Capicua_Previsualizacion') or bpy.data.collections.new(
+        'FX_Capicua_Previsualizacion')
+    if coll.name not in scene.collection.children:
+        scene.collection.children.link(coll)
+    cd = bpy.data.cameras.new('Camara_Capicua')
+    cd.clip_start = 0.01
+    cam = bpy.data.objects.new('Camara_Capicua', cd)
+    coll.objects.link(cam)
+    cam.rotation_mode = 'QUATERNION'
+    for f, (pos, look, lens) in enumerate(capicua_camera_path(P, A)):
+        cam.location = pos
+        cam.rotation_quaternion = (look - pos).to_track_quat('-Z', 'Y')
+        cam.keyframe_insert('location', frame=f)
+        cam.keyframe_insert('rotation_quaternion', frame=f)
+        cd.lens = lens
+        cd.keyframe_insert('lens', frame=f)
+    # Blender 4.4+: posición/rotación y focal quedan en la MISMA Action, en dos slots (objeto y cámara)
+    act = cam.animation_data.action
+    act.name = 'Capicua_Camara'
+    act.use_fake_user = True
+    lact = cd.animation_data.action
+    if lact is not act:
+        lact.name = 'Capicua_Camara_Lente'
+        lact.use_fake_user = True
+    slot_ob, slot_cd = cam.animation_data.action_slot, cd.animation_data.action_slot
+    # en la línea de tiempo de previsualización: tiras NLA en el inicio de la animación del personaje
+    cam.animation_data.action = None
+    tr = cam.animation_data.nla_tracks.new()
+    tr.name = 'Capicua_Camara'
+    st = tr.strips.new('Capicua_Camara', start, act)
+    st.action_slot = slot_ob
+    cd.animation_data.action = None
+    tr2 = cd.animation_data.nla_tracks.new()
+    tr2.name = 'Capicua_Camara_Lente'
+    st2 = tr2.strips.new(lact.name, start, lact)
+    st2.action_slot = slot_cd
+    for m in scene.timeline_markers:
+        if m.name == CAPI:
+            m.camera = cam
+
+    slot = P.baked[CAPI]['tiles']['Ficha'][-1].translation.copy()
+    capicua_fx(scene, coll, cam, start, ev, slot)
+
+
+# el texto va muy cerca de la cámara (delante de la mano en el primer plano), mismo tamaño en pantalla
+FX_D = 0.30
+
+
+def capicua_fx(scene, coll, cam, start, ev, slot):
+    """Efectos de ejemplo (los hace el juego): texto pegado a la cámara, chispas desde la ficha y destello."""
+    imp = start + ev['impacto']
+    fin = start + ev['celebracion'][1] + 36
+    # texto grande pegado a la cámara (como lo pondría la interfaz del juego)
+    cu = bpy.data.curves.new('Texto_Capicua', 'FONT')
+    cu.body = '¡CAPICÚA!'
+    cu.align_x, cu.align_y = 'CENTER', 'CENTER'
+    cu.size = 0.05 * FX_D
+    cu.extrude = 0.003 * FX_D
+    cu.bevel_depth = 0.0008 * FX_D
+    txt = bpy.data.objects.new('Texto_Capicua', cu)
+    coll.objects.link(txt)
+    txt.data.materials.append(_emit_mat('FX_Oro', (1.0, 0.62, 0.08), 9.0))
+    txt.visible_shadow = False
+    txt.parent = cam
+    txt.location = (0.0, 0.055 * FX_D, -0.42 * FX_D)
+    for f, sc_ in ((ev['texto'] - 1, 0.0), (ev['texto'], 0.05), (ev['texto'] + 3, 1.25), (ev['texto'] + 6, 1.0),
+                   (ev['texto'] + 20, 1.08), (ev['texto'] + 34, 1.0), (ev['celebracion'][1] + 30, 1.0),
+                   (ev['celebracion'][1] + 36, 0.0)):
+        txt.scale = (sc_, sc_, sc_)
+        txt.keyframe_insert('scale', frame=start + f)
+    key_hide(txt, 1, True)
+    key_hide(txt, start + ev['texto'], False)
+    key_hide(txt, fin + 1, True)
+    # chispas: estallido desde el hueco de la ficha + destellos alrededor del texto
+    rnd = np.random.RandomState(7)
+    mats = [_emit_mat('FX_Chispa_Oro', (1.0, 0.70, 0.15), 24.0), _emit_mat('FX_Chispa_Blanca', (1.0, 0.95, 0.8), 30.0)]
+    sparks = []
+    for i in range(46):
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=0.0011 + 0.0009 * rnd.rand(), location=slot)
+        o = bpy.context.active_object
+        o.name = f'Chispa_{i:02d}'
+        for c in list(o.users_collection):
+            c.objects.unlink(o)
+        coll.objects.link(o)
+        o.data.materials.append(mats[i % 2])
+        o.visible_shadow = False
+        az = rnd.rand() * 2 * math.pi
+        el = math.radians(25 + 55 * rnd.rand())
+        sp = 0.45 + 0.75 * rnd.rand()
+        v = Vector((math.cos(az) * math.cos(el), math.sin(az) * math.cos(el), math.sin(el))) * sp
+        n = 22
+        for k in range(n + 1):
+            tt = k / 24.0
+            p_ = slot + v * tt + Vector((0, 0, -4.9 * tt * tt))
+            p_.z = max(p_.z, S.TABLE_TOP + 0.002)
+            o.location = p_
+            o.keyframe_insert('location', frame=imp + k)
+            s_ = 1.0 - (k / n) ** 2
+            o.scale = (s_, s_, s_)
+            o.keyframe_insert('scale', frame=imp + k)
+        key_hide(o, 1, True)
+        key_hide(o, imp, False)
+        key_hide(o, imp + n + 1, True)
+        sparks.append(o)
+    for i in range(26):
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=(0.0012 + 0.001 * rnd.rand()) * FX_D)
+        o = bpy.context.active_object
+        o.name = f'Chispa_texto_{i:02d}'
+        for c in list(o.users_collection):
+            c.objects.unlink(o)
+        coll.objects.link(o)
+        o.data.materials.append(mats[(i + 1) % 2])
+        o.visible_shadow = False
+        o.parent = cam
+        a_ = 2 * math.pi * i / 26 + rnd.rand() * 0.3
+        o.location = (0.18 * FX_D * math.cos(a_) * (0.9 + 0.3 * rnd.rand()),
+                      FX_D * (0.06 + abs(0.075 * math.sin(a_)) * (0.9 + 0.3 * rnd.rand()) *
+                              (1 if math.sin(a_) >= 0 else 0.45)),
+                      -0.43 * FX_D)
+        ph = rnd.randint(0, 6)
+        for f in range(ev['texto'], ev['celebracion'][1] + 31, 3):
+            s_ = 0.4 + 1.1 * abs(math.sin((f + ph) * 0.7))
+            o.scale = (s_, s_, s_)
+            o.keyframe_insert('scale', frame=start + f)
+        key_hide(o, 1, True)
+        key_hide(o, start + ev['texto'] + i % 4, False)
+        key_hide(o, fin + 1, True)
+        sparks.append(o)
+    # destello de luz en el golpe
+    ld = bpy.data.lights.new('Destello_Capicua', 'POINT')
+    ld.color = (1.0, 0.85, 0.55)
+    ld.shadow_soft_size = 0.05
+    lo = bpy.data.objects.new('Destello_Capicua', ld)
+    coll.objects.link(lo)
+    lo.location = slot + Vector((0, 0.02, 0.06))
+    for f, e in ((imp - 1, 0.0), (imp, 18.0), (imp + 2, 8.0), (imp + 6, 0.0)):
+        ld.energy = e
+        ld.keyframe_insert('energy', frame=f)
+    for o in [txt] + sparks:
+        set_constant(o)
 
 
 # ---------------------------------------------------------------------------------------------- render
@@ -420,14 +648,14 @@ def hand_cams():
 
 
 INSET = {
-    'Agarrar_Ficha_Cerca': 'mesa_mano', 'Colocar_Ficha_Cerca': 'mesa_mano', 'Golpe_Ficha': 'mesa_mano',
-    'Pasar': 'mesa_mano', 'Agarrar_Ficha_Lejos': 'mesa_mano_lejos', 'Colocar_Ficha_Lejos': 'mesa_mano_lejos',
+    'Agarrar_Ficha_Cerca': 'mesa_mano', 'Colocar_Der_Cerca': 'mesa_mano', 'Domino_Golpe': 'mesa_mano',
+    'Pasar': 'mesa_mano', 'Agarrar_Ficha_Lejos': 'mesa_mano_lejos', 'Colocar_Izq_Lejos': 'mesa_mano_lejos',
     'Sostener_Fichas': 'mano_izq', 'Barajar_Fichas': 'barajar', 'Idle_Sentado': 'mesa_mano',
 }
 
 # primeros planos grandes de la pinza con la ficha parada (se añaden al final de VIDEO_TODO_EL_CUERPO.mp4)
-CLOSEUPS = ('Agarrar_Ficha_Cerca', 'Colocar_Ficha_Cerca', 'Agarrar_Ficha_Lejos', 'Colocar_Ficha_Lejos',
-            'Golpe_Ficha', 'Sostener_Fichas')
+CLOSEUPS = ('Agarrar_Ficha_Cerca', 'Colocar_Der_Cerca', 'Agarrar_Ficha_Lejos', 'Colocar_Izq_Lejos',
+            'Domino_Golpe', 'Sostener_Fichas')
 
 
 def render_seq(cam, f0, f1, out_dir, res):
@@ -478,7 +706,9 @@ def render(frames_dir, names):
 KEY_FRAMES = {
     'Idle_De_Pie': [48], 'Caminar': [0, 7], 'Sentarse': [26, 46, 100], 'Levantarse': [52, 72],
     'Idle_Sentado': [30], 'Agarrar_Ficha_Cerca': [11, 18], 'Agarrar_Ficha_Lejos': [15, 24],
-    'Colocar_Ficha_Cerca': [7, 10], 'Colocar_Ficha_Lejos': [10, 13], 'Golpe_Ficha': [9, 15], 'Pasar': [8],
+    'Salida_Doble_Seis': [11, 29], 'Colocar_Doble': [12], 'Colocar_Izq_Lejos': [12], 'Colocar_Esquina': [9],
+    'Colocar_Der_Cerca': [9], 'Colocar_Der_Frente': [9], 'Domino_Golpe': [9, 15], 'Capicua_Golpe_Celebrar': [14, 27, 53],
+    'Tranque': [11, 30], 'Pasar': [8],
     'Barajar_Fichas': [12], 'Sostener_Fichas': [0, 30], 'Celebrar_Ganar': [12, 36], 'Perder': [24],
     'Pensar': [30], 'Saludar': [18], 'Senalar': [13], 'Pulgar_Arriba': [14], 'Aplaudir': [12], 'Reir': [20],
     'Enojado': [13, 30], 'Prueba_Rango_Completo': [420, 1160, 1650, 2320],
@@ -523,6 +753,84 @@ def photos(out_dir, names):
         print('FOTOS OK', t['name'])
 
 
+def refx(out_blend):
+    """Rehace solo los efectos de ejemplo de la capicúa en un .blend ya construido."""
+    meta = load_meta()
+    t = next(x for x in meta['timeline'] if x['name'] == CAPI)
+    coll = bpy.data.collections['FX_Capicua_Previsualizacion']
+    for o in list(coll.objects):
+        if o.name.startswith(('Texto_Capicua', 'Chispa', 'Destello_Capicua')):
+            bpy.data.objects.remove(o, do_unlink=True)
+    for d in (bpy.data.curves, bpy.data.lights, bpy.data.meshes):
+        for x in list(d):
+            if x.users == 0:
+                d.remove(x)
+    slot = bpy.data.objects[f'{CAPI}__Ficha']
+    sc = bpy.context.scene
+    sc.frame_set(t['end'])
+    capicua_fx(sc, coll, bpy.data.objects['Camara_Capicua'], t['start'], t['juego']['eventos'],
+               slot.matrix_world.translation.copy())
+    bpy.ops.file.pack_all()
+    bpy.ops.wm.save_as_mainfile(filepath=out_blend, compress=True)
+
+
+# ---------------------------------------------------------------------------------------------- fotos partida
+def _obj_pos(name):
+    ob = bpy.data.objects.get(name)
+    return ob.matrix_world.translation.copy() if ob is not None else None
+
+
+def _bone_pos(bone):
+    arm = bpy.data.objects[C.ARM_NAME]
+    return arm.matrix_world @ arm.pose.bones[bone].head
+
+
+# (archivo, animación, cuadro, cámara): cámara = ('mira', objetivo, desplazamiento, lente) | ('cam', nombre)
+FOTOS_PARTIDA = [
+    ('01_salida_doble_seis_al_centro', 'Salida_Doble_Seis', 34, ('mira', 'ficha', (-0.12, -0.56, 0.50), 30)),
+    ('02_agarra_ficha_parada_en_pinza', 'Agarrar_Ficha_Cerca', 12, ('cam', 'mesa_mano')),
+    ('03_coloca_casando_numero_con_numero', 'Colocar_Der_Cerca', 14, ('mira', 'ficha', (0.02, -0.34, 0.34), 38)),
+    ('04_doble_atravesado_y_esquina', 'Colocar_Esquina', 9, ('mira', (-0.33, -0.60, 0.81), (-0.10, -0.42, 0.52), 34)),
+    ('05_pasa_tocando_la_mesa', 'Pasar', 8, ('mira', 'mano', (-0.06, -0.40, 0.22), 36)),
+    ('06_domino_golpe_final', 'Domino_Golpe', 15, ('mira', 'ficha', (-0.18, -0.38, 0.24), 36)),
+    ('07_capicua_golpe', CAPI, 31, ('cam', 'Camara_Capicua')),
+    ('08_capicua_celebracion', CAPI, 53, ('cam', 'Camara_Capicua')),
+]
+
+
+def fotos_partida(out_dir, only=()):
+    meta = load_meta()
+    sc = bpy.context.scene
+    S.setup_render(sc, 'EEVEE', (1280, 720))
+    sc.eevee.taa_render_samples = 16
+    sc.render.image_settings.file_format = 'JPEG'
+    sc.render.image_settings.quality = 92
+    for m in sc.timeline_markers:
+        m.camera = None
+    os.makedirs(out_dir, exist_ok=True)
+    hc = hand_cams()
+    tl = {t['name']: t for t in meta['timeline']}
+    for fn, an, f, cs in FOTOS_PARTIDA:
+        if only and fn not in only:
+            continue
+        t = tl[an]
+        sc.frame_set(t['start'] + f)
+        if cs[0] == 'cam':
+            cam = hc.get(cs[1]) or bpy.data.objects[cs[1]]
+        else:
+            tgt = cs[1]
+            if tgt == 'ficha':
+                tgt = _obj_pos(f'{an}__Ficha')
+            elif tgt == 'mano':
+                tgt = _bone_pos('hand_r')
+            tgt = Vector(tgt)
+            cam = S.add_camera(sc, 'Cam_foto_partida', tgt + Vector(cs[2]), tgt, cs[3])
+        sc.camera = cam
+        sc.render.filepath = os.path.join(out_dir, fn + '.jpg')
+        bpy.ops.render.render(write_still=True)
+        print('FOTO OK', fn)
+
+
 def main():
     argv = sys.argv[sys.argv.index('--') + 1:]
     mode = argv[0]
@@ -530,6 +838,10 @@ def main():
         build(argv[1])
     elif mode == 'render':
         render(argv[1], [n for a in argv[2:] for n in a.split(',') if n])
+    elif mode == 'refx':
+        refx(argv[1])
+    elif mode == 'fotos_partida':
+        fotos_partida(argv[1], argv[2:])
     elif mode == 'photos':
         photos(argv[1], [n for a in argv[2:] for n in a.split(',') if n])
     elif mode == 'reimport':

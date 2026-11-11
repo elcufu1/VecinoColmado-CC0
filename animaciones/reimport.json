@@ -20,25 +20,41 @@
    0.0,
    28.0
   ],
+  "Capicua_Golpe_Celebrar": [
+   0.0,
+   120.0
+  ],
   "Celebrar_Ganar": [
    0.0,
    72.0
   ],
-  "Colocar_Ficha_Cerca": [
+  "Colocar_Der_Cerca": [
    0.0,
    22.0
   ],
-  "Colocar_Ficha_Lejos": [
+  "Colocar_Der_Frente": [
+   0.0,
+   22.0
+  ],
+  "Colocar_Doble": [
    0.0,
    30.0
+  ],
+  "Colocar_Esquina": [
+   0.0,
+   22.0
+  ],
+  "Colocar_Izq_Lejos": [
+   0.0,
+   30.0
+  ],
+  "Domino_Golpe": [
+   0.0,
+   64.0
   ],
   "Enojado": [
    0.0,
    50.0
-  ],
-  "Golpe_Ficha": [
-   0.0,
-   34.0
   ],
   "Idle_De_Pie": [
    0.0,
@@ -76,6 +92,10 @@
    0.0,
    60.0
   ],
+  "Salida_Doble_Seis": [
+   0.0,
+   46.0
+  ],
   "Saludar": [
    0.0,
    48.0
@@ -91,6 +111,10 @@
   "Sostener_Fichas": [
    0.0,
    72.0
+  ],
+  "Tranque": [
+   0.0,
+   60.0
   ]
  },
  "curvas": {
@@ -114,23 +138,39 @@
    "huesos": 530,
    "morfos": 128
   },
+  "Capicua_Golpe_Celebrar": {
+   "huesos": 530,
+   "morfos": 128
+  },
   "Celebrar_Ganar": {
    "huesos": 530,
    "morfos": 128
   },
-  "Colocar_Ficha_Cerca": {
+  "Colocar_Der_Cerca": {
    "huesos": 530,
    "morfos": 128
   },
-  "Colocar_Ficha_Lejos": {
+  "Colocar_Der_Frente": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Colocar_Doble": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Colocar_Esquina": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Colocar_Izq_Lejos": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Domino_Golpe": {
    "huesos": 530,
    "morfos": 128
   },
   "Enojado": {
-   "huesos": 530,
-   "morfos": 128
-  },
-  "Golpe_Ficha": {
    "huesos": 530,
    "morfos": 128
   },
@@ -170,6 +210,10 @@
    "huesos": 530,
    "morfos": 128
   },
+  "Salida_Doble_Seis": {
+   "huesos": 530,
+   "morfos": 128
+  },
   "Saludar": {
    "huesos": 530,
    "morfos": 128
@@ -183,6 +227,10 @@
    "morfos": 128
   },
   "Sostener_Fichas": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Tranque": {
    "huesos": 530,
    "morfos": 128
   }

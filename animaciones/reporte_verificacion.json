@@ -12,7 +12,8 @@
    "cam": "mesa",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Agarrar_Ficha_Cerca",
@@ -21,12 +22,75 @@
    "frames": 22,
    "loop": false,
    "duracion_s": 0.917,
-   "desc": "Agarra una ficha parada de su fila con pinza limpia pulgar-índice (pulgar en la cara, índice detrás) y la levanta mirándola.",
-   "uso": "Tomar una ficha propia para jugarla.",
+   "desc": "Agarra la ficha parada 1-1 de su fila (hueco 2) con pinza limpia pulgar-índice (pulgar en la cara, índice detrás) y la levanta mirándola.",
+   "uso": "Tomar una ficha propia para jugarla (la fila sigue en su sitio, con el hueco).",
    "cam": "mesa",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {
+    "jugada": 4,
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     }
+    ],
+    "ficha": {
+     "agarre": 11,
+     "suelta": null,
+     "caida": null,
+     "valores": [
+      1,
+      1
+     ],
+     "giro": null
+    }
+   }
   },
   {
    "name": "Agarrar_Ficha_Lejos",
@@ -35,73 +99,2442 @@
    "frames": 28,
    "loop": false,
    "duracion_s": 1.167,
-   "desc": "Agarra una ficha parada del otro extremo de su fila con pinza limpia pulgar-índice (pulgar en la cara, índice detrás) y la levanta mirándola.",
-   "uso": "Tomar una ficha propia para jugarla.",
+   "desc": "Agarra la ficha parada 1-6 del otro extremo de su fila (hueco 6) con pinza limpia pulgar-índice (pulgar en la cara, índice detrás) y la levanta mirándola.",
+   "uso": "Tomar una ficha propia para jugarla (la fila sigue en su sitio, con el hueco).",
    "cam": "mesa",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {
+    "jugada": 8,
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     }
+    ],
+    "ficha": {
+     "agarre": 15,
+     "suelta": null,
+     "caida": null,
+     "valores": [
+      1,
+      6
+     ],
+     "giro": null
+    }
+   }
   },
   {
-   "name": "Colocar_Ficha_Cerca",
+   "name": "Salida_Doble_Seis",
    "start": 234,
-   "end": 256,
-   "frames": 22,
+   "end": 280,
+   "frames": 46,
    "loop": false,
-   "duracion_s": 0.917,
-   "desc": "Lleva la ficha parada, la gira cara arriba mientras avanza y la deja en la mesa; vuelve a la pose sentada.",
-   "uso": "Jugar una ficha cerca del jugador.",
-   "cam": "mesa",
-   "mesa": true,
-   "silla": true,
-   "markers": []
-  },
-  {
-   "name": "Colocar_Ficha_Lejos",
-   "start": 269,
-   "end": 299,
-   "frames": 30,
-   "loop": false,
-   "duracion_s": 1.25,
-   "desc": "Coloca la ficha lejos: la otra mano se apoya firme al lado de su fila, el cuerpo se estira y la ficha llega cara arriba.",
-   "uso": "Jugar una ficha en el extremo lejano de la mesa.",
+   "duracion_s": 1.917,
+   "desc": "Salida: agarra el doble seis parado del centro de su fila con pinza y lo pone atravesado en el centro de la mesa.",
+   "uso": "Primera jugada de la primera mano (quien tiene el doble seis sale).",
    "cam": "mesa_lejos",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {
+    "jugada": 0,
+    "slot": {
+     "c": [
+      0.0,
+      -0.7
+     ],
+     "u": [
+      -0.0,
+      -1.0
+     ],
+     "axis": [
+      0.0,
+      1.0
+     ],
+     "kind": "salida",
+     "side": "C",
+     "lift": 0.0,
+     "suelta": "de_pie"
+    },
+    "mesa": [],
+    "ficha": {
+     "agarre": 11,
+     "suelta": 29,
+     "caida": 5,
+     "valores": [
+      6,
+      6
+     ],
+     "giro": null
+    }
+   }
   },
   {
-   "name": "Golpe_Ficha",
-   "start": 312,
-   "end": 346,
-   "frames": 34,
+   "name": "Colocar_Doble",
+   "start": 293,
+   "end": 323,
+   "frames": 30,
    "loop": false,
-   "duracion_s": 1.417,
-   "desc": "Tranque/capicúa: levanta la ficha, la gira cara arriba en el aire y la planta fuerte en la mesa.",
-   "uso": "Jugada final (tranque o capicúa).",
+   "duracion_s": 1.25,
+   "desc": "Juega 1-1 en el extremo derecho (D) que pedía 1: el 1 toca al 1 de la cadena; el doble va atravesado (perpendicular a la cadena). Lleva la ficha parada, la apoya de pie junto al hueco y cae cara arriba en el hueco exacto.",
+   "uso": "Jugar un doble: siempre atravesado (aquí por el extremo derecho, hueco lejano).",
+   "cam": "mesa_lejos",
+   "mesa": true,
+   "silla": true,
+   "markers": [],
+   "juego": {
+    "jugada": 4,
+    "slot": {
+     "c": [
+      -0.27,
+      -0.7
+     ],
+     "u": [
+      -0.0,
+      -1.0
+     ],
+     "axis": [
+      -0.0,
+      -1.0
+     ],
+     "kind": "doble",
+     "side": "D",
+     "lift": 0.0,
+     "suelta": "de_pie"
+    },
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     }
+    ],
+    "ficha": {
+     "agarre": null,
+     "suelta": 12,
+     "caida": 5,
+     "valores": [
+      1,
+      1
+     ],
+     "giro": null
+    }
+   }
+  },
+  {
+   "name": "Colocar_Izq_Lejos",
+   "start": 336,
+   "end": 366,
+   "frames": 30,
+   "loop": false,
+   "duracion_s": 1.25,
+   "desc": "Juega 1-6 en el extremo izquierdo (I) que pedía 6: el 6 toca al 6 de la cadena. Lleva la ficha parada, la gira 90° entre las yemas mientras la lleva, la apoya apaisada (sobre su canto largo) junto al hueco y cae cara arriba en el hueco exacto.",
+   "uso": "Jugar por el extremo izquierdo, hueco lejano.",
+   "cam": "mesa_lejos",
+   "mesa": true,
+   "silla": true,
+   "markers": [],
+   "juego": {
+    "jugada": 8,
+    "slot": {
+     "c": [
+      0.0675,
+      -0.7
+     ],
+     "u": [
+      1.0,
+      0.0
+     ],
+     "axis": [
+      1.0,
+      0.0
+     ],
+     "kind": "linea",
+     "side": "I",
+     "lift": 0.0,
+     "suelta": "apaisada"
+    },
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     }
+    ],
+    "ficha": {
+     "agarre": null,
+     "suelta": 12,
+     "caida": 5,
+     "valores": [
+      1,
+      6
+     ],
+     "giro": [
+      4,
+      10
+     ]
+    }
+   }
+  },
+  {
+   "name": "Colocar_Esquina",
+   "start": 379,
+   "end": 401,
+   "frames": 22,
+   "loop": false,
+   "duracion_s": 0.917,
+   "desc": "Juega 2-4 en el extremo derecho (D) que pedía 4: el 4 toca al 4 de la cadena; no cabe recta y la cadena dobla la esquina. Lleva la ficha parada, la gira 90° entre las yemas mientras la lleva, la apoya apaisada (sobre su canto largo) junto al hueco y cae cara arriba en el hueco exacto.",
+   "uso": "Jugar cuando la cadena llega al borde y dobla (ficha de esquina, en L).",
    "cam": "mesa",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {
+    "jugada": 12,
+    "slot": {
+     "c": [
+      -0.4725,
+      -0.52
+     ],
+     "u": [
+      -1.0,
+      -0.0
+     ],
+     "axis": [
+      1.0,
+      0.0
+     ],
+     "kind": "esquina",
+     "side": "D",
+     "lift": 0.0,
+     "suelta": "apaisada"
+    },
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       6
+      ],
+      "c": [
+       0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       4
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.5874999999999999
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       1
+      ],
+      "c": [
+       0.15749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       6
+      ],
+      "c": [
+       0.2475,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     }
+    ],
+    "ficha": {
+     "agarre": null,
+     "suelta": 9,
+     "caida": 5,
+     "valores": [
+      4,
+      2
+     ],
+     "giro": [
+      1,
+      7
+     ]
+    }
+   }
+  },
+  {
+   "name": "Colocar_Der_Cerca",
+   "start": 414,
+   "end": 436,
+   "frames": 22,
+   "loop": false,
+   "duracion_s": 0.917,
+   "desc": "Juega 3-5 en el extremo derecho (D) que pedía 3: el 3 toca al 3 de la cadena. Lleva la ficha parada, la gira 90° entre las yemas mientras la lleva, la apoya apaisada (sobre su canto largo) junto al hueco y cae cara arriba en el hueco exacto.",
+   "uso": "Jugar por el extremo derecho, hueco cercano a su derecha.",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": [],
+   "juego": {
+    "jugada": 16,
+    "slot": {
+     "c": [
+      -0.2475,
+      -0.52
+     ],
+     "u": [
+      1.0,
+      0.0
+     ],
+     "axis": [
+      1.0,
+      0.0
+     ],
+     "kind": "linea",
+     "side": "D",
+     "lift": 0.0,
+     "suelta": "apaisada"
+    },
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       6
+      ],
+      "c": [
+       0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       4
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.5874999999999999
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       1
+      ],
+      "c": [
+       0.15749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       6
+      ],
+      "c": [
+       0.2475,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       2,
+       4
+      ],
+      "c": [
+       -0.4724999999999999,
+       -0.52
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       2
+      ],
+      "c": [
+       -0.4049999999999999,
+       -0.52
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       3
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       6
+      ],
+      "c": [
+       0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     }
+    ],
+    "ficha": {
+     "agarre": null,
+     "suelta": 9,
+     "caida": 5,
+     "valores": [
+      5,
+      3
+     ],
+     "giro": [
+      1,
+      7
+     ]
+    }
+   }
+  },
+  {
+   "name": "Colocar_Der_Frente",
+   "start": 449,
+   "end": 471,
+   "frames": 22,
+   "loop": false,
+   "duracion_s": 0.917,
+   "desc": "Juega 4-5 en el extremo derecho (D) que pedía 5: el 5 toca al 5 de la cadena. Lleva la ficha parada, la gira 90° entre las yemas mientras la lleva, la apoya apaisada (sobre su canto largo) junto al hueco y cae cara arriba en el hueco exacto.",
+   "uso": "Jugar por el extremo derecho cuando la cadena ya dio la vuelta y pasa delante de él (hueco cercano, frente a su izquierda).",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": [],
+   "juego": {
+    "jugada": 24,
+    "slot": {
+     "c": [
+      0.1125,
+      -0.52
+     ],
+     "u": [
+      -1.0,
+      -0.0
+     ],
+     "axis": [
+      1.0,
+      0.0
+     ],
+     "kind": "linea",
+     "side": "D",
+     "lift": 0.0,
+     "suelta": "apaisada"
+    },
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       6
+      ],
+      "c": [
+       0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       4
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.5874999999999999
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       1
+      ],
+      "c": [
+       0.15749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       6
+      ],
+      "c": [
+       0.2475,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       2,
+       4
+      ],
+      "c": [
+       -0.4724999999999999,
+       -0.52
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       2
+      ],
+      "c": [
+       -0.4049999999999999,
+       -0.52
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       3
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       6
+      ],
+      "c": [
+       0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       3,
+       5
+      ],
+      "c": [
+       -0.2475,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       5
+      ],
+      "c": [
+       -0.15749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       3
+      ],
+      "c": [
+       0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       2
+      ],
+      "c": [
+       -0.06749999999999999,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       5
+      ],
+      "c": [
+       0.022500000000000006,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       2
+      ],
+      "c": [
+       0.49499999999999994,
+       -0.7224999999999999
+      ],
+      "kind": "esquina",
+      "side": "I"
+     }
+    ],
+    "ficha": {
+     "agarre": null,
+     "suelta": 9,
+     "caida": 5,
+     "valores": [
+      5,
+      4
+     ],
+     "giro": [
+      1,
+      7
+     ]
+    }
+   }
+  },
+  {
+   "name": "Domino_Golpe",
+   "start": 484,
+   "end": 548,
+   "frames": 64,
+   "loop": false,
+   "duracion_s": 2.667,
+   "desc": "Dominó: levanta la última ficha (4-6), la planta de golpe en su hueco exacto y celebra con el puño.",
+   "uso": "Cuando juega su última ficha (se \"domina\"). Al terminar, el juego cuenta los puntos.",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": [],
+   "juego": {
+    "jugada": 28,
+    "slot": {
+     "c": [
+      0.2475,
+      -0.52
+     ],
+     "u": [
+      -1.0,
+      -0.0
+     ],
+     "axis": [
+      1.0,
+      0.0
+     ],
+     "kind": "linea",
+     "side": "D",
+     "lift": 0.0,
+     "suelta": "apaisada"
+    },
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       6
+      ],
+      "c": [
+       0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       4
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.5874999999999999
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       1
+      ],
+      "c": [
+       0.15749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       6
+      ],
+      "c": [
+       0.2475,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       2,
+       4
+      ],
+      "c": [
+       -0.4724999999999999,
+       -0.52
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       2
+      ],
+      "c": [
+       -0.4049999999999999,
+       -0.52
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       3
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       6
+      ],
+      "c": [
+       0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       3,
+       5
+      ],
+      "c": [
+       -0.2475,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       5
+      ],
+      "c": [
+       -0.15749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       3
+      ],
+      "c": [
+       0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       2
+      ],
+      "c": [
+       -0.06749999999999999,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       5
+      ],
+      "c": [
+       0.022500000000000006,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       2
+      ],
+      "c": [
+       0.49499999999999994,
+       -0.7224999999999999
+      ],
+      "kind": "esquina",
+      "side": "I"
+     },
+     {
+      "tile": [
+       4,
+       5
+      ],
+      "c": [
+       0.1125,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       4,
+       4
+      ],
+      "c": [
+       0.18,
+       -0.52
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       6
+      ],
+      "c": [
+       0.49499999999999994,
+       -0.8125
+      ],
+      "kind": "linea",
+      "side": "I"
+     }
+    ],
+    "ficha": {
+     "agarre": null,
+     "suelta": 15,
+     "caida": 4,
+     "valores": [
+      4,
+      6
+     ],
+     "giro": [
+      9,
+      13
+     ]
+    }
+   }
+  },
+  {
+   "name": "Capicua_Golpe_Celebrar",
+   "start": 561,
+   "end": 681,
+   "frames": 120,
+   "loop": false,
+   "duracion_s": 5.0,
+   "desc": "¡CAPICÚA! Su última ficha (4-6) casa en los dos extremos (D pide 4, I pide 6): la levanta alto mostrándola, la sostiene un instante, la planta de un golpe fuerte en su hueco exacto y celebra a lo grande (dos puños arriba, grito, señala la ficha).",
+   "uso": "Ganar dominando con capicúa (momento épico; ver eventos de cámara lenta, texto, partículas y sonido).",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": [],
+   "juego": {
+    "jugada": 28,
+    "slot": {
+     "c": [
+      0.2475,
+      -0.52
+     ],
+     "u": [
+      -1.0,
+      -0.0
+     ],
+     "axis": [
+      1.0,
+      0.0
+     ],
+     "kind": "linea",
+     "side": "D",
+     "lift": 0.0,
+     "suelta": "apaisada"
+    },
+    "eventos": {
+     "slowmo_ini": 12,
+     "impacto": 27,
+     "temblor": [
+      27,
+      33
+     ],
+     "texto": 28,
+     "particulas": 28,
+     "slowmo_fin": 40,
+     "celebracion": [
+      42,
+      64
+     ],
+     "fin": 120
+    },
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       6
+      ],
+      "c": [
+       0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       4
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.5874999999999999
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       1
+      ],
+      "c": [
+       0.15749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       6
+      ],
+      "c": [
+       0.2475,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       2,
+       4
+      ],
+      "c": [
+       -0.4724999999999999,
+       -0.52
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       2
+      ],
+      "c": [
+       -0.4049999999999999,
+       -0.52
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       3
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       6
+      ],
+      "c": [
+       0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       3,
+       5
+      ],
+      "c": [
+       -0.2475,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       5
+      ],
+      "c": [
+       -0.15749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       3
+      ],
+      "c": [
+       0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       2
+      ],
+      "c": [
+       -0.06749999999999999,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       5
+      ],
+      "c": [
+       0.022500000000000006,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       2
+      ],
+      "c": [
+       0.49499999999999994,
+       -0.7224999999999999
+      ],
+      "kind": "esquina",
+      "side": "I"
+     },
+     {
+      "tile": [
+       4,
+       5
+      ],
+      "c": [
+       0.1125,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       4,
+       4
+      ],
+      "c": [
+       0.18,
+       -0.52
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       6
+      ],
+      "c": [
+       0.49499999999999994,
+       -0.8125
+      ],
+      "kind": "linea",
+      "side": "I"
+     }
+    ],
+    "ficha": {
+     "agarre": null,
+     "suelta": 27,
+     "caida": 3,
+     "valores": [
+      4,
+      6
+     ],
+     "giro": [
+      21,
+      25
+     ]
+    }
+   }
   },
   {
    "name": "Pasar",
-   "start": 359,
-   "end": 385,
+   "start": 694,
+   "end": 720,
    "frames": 26,
    "loop": false,
    "duracion_s": 1.083,
-   "desc": "Toca la mesa dos veces con los nudillos al lado de sus fichas (\"paso\").",
-   "uso": "Pasar turno.",
+   "desc": "Pasa: no tiene ficha que case con ningún extremo; toca la mesa dos veces con los nudillos entre su fila y la cadena, sin agarrar nada.",
+   "uso": "Pasar turno (no lleva).",
    "cam": "mesa",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {
+    "jugada": 20,
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       6
+      ],
+      "c": [
+       0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       4
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.5874999999999999
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       1
+      ],
+      "c": [
+       0.15749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       6
+      ],
+      "c": [
+       0.2475,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       2,
+       4
+      ],
+      "c": [
+       -0.4724999999999999,
+       -0.52
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       2
+      ],
+      "c": [
+       -0.4049999999999999,
+       -0.52
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       3
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       6
+      ],
+      "c": [
+       0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       3,
+       5
+      ],
+      "c": [
+       -0.2475,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       5
+      ],
+      "c": [
+       -0.15749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       3
+      ],
+      "c": [
+       0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       2
+      ],
+      "c": [
+       -0.06749999999999999,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     }
+    ]
+   }
+  },
+  {
+   "name": "Tranque",
+   "start": 733,
+   "end": 793,
+   "frames": 60,
+   "loop": false,
+   "duracion_s": 2.5,
+   "desc": "Tranque: nadie puede jugar; toca la mesa dos veces y luego acuesta cara arriba las fichas que le quedan, de una en una con la punta de los dedos, para contar los puntos.",
+   "uso": "Cuando la partida se tranca (ningún jugador lleva). Estado de mesa ilustrativo.",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": [],
+   "juego": {
+    "tranque": [
+     [
+      4,
+      6
+     ],
+     [
+      4,
+      5
+     ]
+    ],
+    "mesa": [
+     {
+      "tile": [
+       6,
+       6
+      ],
+      "c": [
+       0.0,
+       -0.7
+      ],
+      "kind": "salida",
+      "side": "C"
+     },
+     {
+      "tile": [
+       5,
+       6
+      ],
+      "c": [
+       -0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       5,
+       5
+      ],
+      "c": [
+       -0.13499999999999998,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       5
+      ],
+      "c": [
+       -0.20249999999999996,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       1
+      ],
+      "c": [
+       -0.26999999999999996,
+       -0.7
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       4
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       4
+      ],
+      "c": [
+       -0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       3
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.6775
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       6
+      ],
+      "c": [
+       0.0675,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       4
+      ],
+      "c": [
+       -0.49499999999999994,
+       -0.5874999999999999
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       1
+      ],
+      "c": [
+       0.15749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       6
+      ],
+      "c": [
+       0.2475,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       2,
+       4
+      ],
+      "c": [
+       -0.4724999999999999,
+       -0.52
+      ],
+      "kind": "esquina",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       2
+      ],
+      "c": [
+       -0.4049999999999999,
+       -0.52
+      ],
+      "kind": "doble",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       3
+      ],
+      "c": [
+       -0.33749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       3,
+       6
+      ],
+      "c": [
+       0.33749999999999997,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       3,
+       5
+      ],
+      "c": [
+       -0.2475,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       2,
+       5
+      ],
+      "c": [
+       -0.15749999999999997,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       3
+      ],
+      "c": [
+       0.42749999999999994,
+       -0.7
+      ],
+      "kind": "linea",
+      "side": "I"
+     },
+     {
+      "tile": [
+       0,
+       2
+      ],
+      "c": [
+       -0.06749999999999999,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       0,
+       5
+      ],
+      "c": [
+       0.022500000000000006,
+       -0.52
+      ],
+      "kind": "linea",
+      "side": "D"
+     },
+     {
+      "tile": [
+       1,
+       2
+      ],
+      "c": [
+       0.49499999999999994,
+       -0.7224999999999999
+      ],
+      "kind": "esquina",
+      "side": "I"
+     }
+    ],
+    "acuesta_fila": [
+     [
+      "Fila1",
+      27
+     ],
+     [
+      "Fila6",
+      35
+     ]
+    ]
+   }
   },
   {
    "name": "Barajar_Fichas",
-   "start": 398,
-   "end": 446,
+   "start": 806,
+   "end": 854,
    "frames": 48,
    "loop": true,
    "duracion_s": 2.0,
@@ -110,12 +2543,13 @@
    "cam": "mesa",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Sostener_Fichas",
-   "start": 459,
-   "end": 531,
+   "start": 867,
+   "end": 939,
    "frames": 72,
    "loop": true,
    "duracion_s": 3.0,
@@ -124,12 +2558,13 @@
    "cam": "mesa",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Celebrar_Ganar",
-   "start": 544,
-   "end": 616,
+   "start": 952,
+   "end": 1024,
    "frames": 72,
    "loop": false,
    "duracion_s": 3.0,
@@ -138,12 +2573,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Perder",
-   "start": 629,
-   "end": 705,
+   "start": 1037,
+   "end": 1113,
    "frames": 76,
    "loop": false,
    "duracion_s": 3.167,
@@ -152,12 +2588,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Pensar",
-   "start": 718,
-   "end": 814,
+   "start": 1126,
+   "end": 1222,
    "frames": 96,
    "loop": true,
    "duracion_s": 4.0,
@@ -166,12 +2603,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Saludar",
-   "start": 827,
-   "end": 875,
+   "start": 1235,
+   "end": 1283,
    "frames": 48,
    "loop": false,
    "duracion_s": 2.0,
@@ -180,12 +2618,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Senalar",
-   "start": 888,
-   "end": 928,
+   "start": 1296,
+   "end": 1336,
    "frames": 40,
    "loop": false,
    "duracion_s": 1.667,
@@ -194,12 +2633,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Pulgar_Arriba",
-   "start": 941,
-   "end": 981,
+   "start": 1349,
+   "end": 1389,
    "frames": 40,
    "loop": false,
    "duracion_s": 1.667,
@@ -208,12 +2648,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Aplaudir",
-   "start": 994,
-   "end": 1042,
+   "start": 1402,
+   "end": 1450,
    "frames": 48,
    "loop": false,
    "duracion_s": 2.0,
@@ -222,12 +2663,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Reir",
-   "start": 1055,
-   "end": 1115,
+   "start": 1463,
+   "end": 1523,
    "frames": 60,
    "loop": false,
    "duracion_s": 2.5,
@@ -236,12 +2678,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Enojado",
-   "start": 1128,
-   "end": 1178,
+   "start": 1536,
+   "end": 1586,
    "frames": 50,
    "loop": false,
    "duracion_s": 2.083,
@@ -250,12 +2693,13 @@
    "cam": "mesa_frente",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Idle_De_Pie",
-   "start": 1191,
-   "end": 1383,
+   "start": 1599,
+   "end": 1791,
    "frames": 192,
    "loop": true,
    "duracion_s": 8.0,
@@ -264,12 +2708,13 @@
    "cam": "pie",
    "mesa": false,
    "silla": false,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Caminar",
-   "start": 1396,
-   "end": 1424,
+   "start": 1804,
+   "end": 1832,
    "frames": 28,
    "loop": true,
    "duracion_s": 1.167,
@@ -278,12 +2723,13 @@
    "cam": "pie",
    "mesa": false,
    "silla": false,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Sentarse",
-   "start": 1437,
-   "end": 1537,
+   "start": 1845,
+   "end": 1945,
    "frames": 100,
    "loop": false,
    "duracion_s": 4.167,
@@ -292,12 +2738,13 @@
    "cam": "lado",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Levantarse",
-   "start": 1550,
-   "end": 1640,
+   "start": 1958,
+   "end": 2048,
    "frames": 90,
    "loop": false,
    "duracion_s": 3.75,
@@ -306,12 +2753,13 @@
    "cam": "lado",
    "mesa": true,
    "silla": true,
-   "markers": []
+   "markers": [],
+   "juego": {}
   },
   {
    "name": "Prueba_Rango_Completo",
-   "start": 1653,
-   "end": 4035,
+   "start": 2061,
+   "end": 4443,
    "frames": 2382,
    "loop": false,
    "duracion_s": 99.25,
@@ -322,78 +2770,79 @@
    "silla": false,
    "markers": [
     [
-     1665,
+     2073,
      "Cuello_Cabeza"
     ],
     [
-     1877,
+     2285,
      "Hombros"
     ],
     [
-     1997,
+     2405,
      "Brazos"
     ],
     [
-     2203,
+     2611,
      "Codos"
     ],
     [
-     2319,
+     2727,
      "Munecas"
     ],
     [
-     2485,
+     2893,
      "Dedos"
     ],
     [
-     2601,
+     3009,
      "Dedo_thumb"
     ],
     [
-     2629,
+     3037,
      "Dedo_index"
     ],
     [
-     2657,
+     3065,
      "Dedo_middle"
     ],
     [
-     2685,
+     3093,
      "Dedo_ring"
     ],
     [
-     2713,
+     3121,
      "Dedo_pinky"
     ],
     [
-     2739,
+     3147,
      "Contar"
     ],
     [
-     2891,
+     3299,
      "Columna"
     ],
     [
-     3089,
+     3497,
      "Cadera"
     ],
     [
-     3241,
+     3649,
      "Rodillas"
     ],
     [
-     3459,
+     3867,
      "Tobillos_DedosPie"
     ],
     [
-     3673,
+     4081,
      "Cara"
     ],
     [
-     3923,
+     4331,
      "Todo_Junto"
     ]
-   ]
+   ],
+   "juego": {}
   }
  ],
  "report": {
@@ -538,7 +2987,195 @@
     "frame": 4
    }
   },
-  "Colocar_Ficha_Cerca": {
+  "Salida_Doble_Seis": {
+   "_hueco_asiento": {
+    "min": 0.0084,
+    "max": 0.083
+   },
+   "boxer": {
+    "prof_mm": 6.7,
+    "region": "tronco",
+    "cuadros": 47,
+    "rango": [
+     0,
+     46
+    ]
+   },
+   "_wrist_l": {
+    "max": 25.3,
+    "frame": 33
+   },
+   "_elbow_l": {
+    "max": 107.3,
+    "frame": 29
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 7.2,
+    "frame": 46
+   },
+   "_wrist_r": {
+    "max": 25.3,
+    "frame": 18
+   },
+   "_elbow_r": {
+    "max": 112.8,
+    "frame": 18
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 42
+   },
+   "_twist_r": {
+    "max": 19.6,
+    "frame": 41
+   }
+  },
+  "Colocar_Doble": {
+   "_hueco_asiento": {
+    "min": 0.0084,
+    "max": 0.083
+   },
+   "boxer": {
+    "prof_mm": 6.7,
+    "region": "tronco",
+    "cuadros": 31,
+    "rango": [
+     0,
+     30
+    ]
+   },
+   "_wrist_l": {
+    "max": 25.1,
+    "frame": 7
+   },
+   "_elbow_l": {
+    "max": 105.9,
+    "frame": 12
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 25
+   },
+   "_twist_l": {
+    "max": 7.9,
+    "frame": 12
+   },
+   "_wrist_r": {
+    "max": 44.6,
+    "frame": 12
+   },
+   "_elbow_r": {
+    "max": 124.5,
+    "frame": 4
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 24
+   },
+   "_twist_r": {
+    "max": 28.1,
+    "frame": 5
+   }
+  },
+  "Colocar_Izq_Lejos": {
+   "_hueco_asiento": {
+    "min": 0.0084,
+    "max": 0.083
+   },
+   "boxer": {
+    "prof_mm": 6.7,
+    "region": "tronco",
+    "cuadros": 31,
+    "rango": [
+     0,
+     30
+    ]
+   },
+   "_wrist_l": {
+    "max": 25.1,
+    "frame": 7
+   },
+   "_elbow_l": {
+    "max": 105.9,
+    "frame": 12
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 25
+   },
+   "_twist_l": {
+    "max": 7.9,
+    "frame": 12
+   },
+   "_wrist_r": {
+    "max": 31.8,
+    "frame": 6
+   },
+   "_elbow_r": {
+    "max": 122.9,
+    "frame": 4
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 24
+   },
+   "_twist_r": {
+    "max": 21.0,
+    "frame": 25
+   }
+  },
+  "Colocar_Esquina": {
+   "_hueco_asiento": {
+    "min": 0.0084,
+    "max": 0.0192
+   },
+   "boxer": {
+    "prof_mm": 5.8,
+    "region": "tronco",
+    "cuadros": 23,
+    "rango": [
+     0,
+     22
+    ]
+   },
+   "_wrist_l": {
+    "max": 12.6,
+    "frame": 9
+   },
+   "_elbow_l": {
+    "max": 89.6,
+    "frame": 4
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 22
+   },
+   "_twist_l": {
+    "max": 7.2,
+    "frame": 4
+   },
+   "_wrist_r": {
+    "max": 48.9,
+    "frame": 9
+   },
+   "_elbow_r": {
+    "max": 121.1,
+    "frame": 2
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 19
+   },
+   "_twist_r": {
+    "max": 51.2,
+    "frame": 4
+   }
+  },
+  "Colocar_Der_Cerca": {
    "_hueco_asiento": {
     "min": 0.0086,
     "max": 0.0086
@@ -569,70 +3206,23 @@
     "frame": 21
    },
    "_wrist_r": {
-    "max": 16.9,
-    "frame": 15
+    "max": 45.0,
+    "frame": 9
    },
    "_elbow_r": {
     "max": 113.3,
     "frame": 0
    },
    "_reach_r": {
-    "max": 1.0,
+    "max": 0.9,
     "frame": 9
    },
    "_twist_r": {
-    "max": 26.4,
-    "frame": 10
+    "max": 19.8,
+    "frame": 4
    }
   },
-  "Colocar_Ficha_Lejos": {
-   "_hueco_asiento": {
-    "min": 0.0084,
-    "max": 0.083
-   },
-   "boxer": {
-    "prof_mm": 6.7,
-    "region": "tronco",
-    "cuadros": 31,
-    "rango": [
-     0,
-     30
-    ]
-   },
-   "_wrist_l": {
-    "max": 27.0,
-    "frame": 21
-   },
-   "_elbow_l": {
-    "max": 81.2,
-    "frame": 7
-   },
-   "_reach_l": {
-    "max": 1.0,
-    "frame": 21
-   },
-   "_twist_l": {
-    "max": 9.5,
-    "frame": 20
-   },
-   "_wrist_r": {
-    "max": 28.6,
-    "frame": 18
-   },
-   "_elbow_r": {
-    "max": 118.5,
-    "frame": 3
-   },
-   "_reach_r": {
-    "max": 1.0,
-    "frame": 12
-   },
-   "_twist_r": {
-    "max": 20.7,
-    "frame": 13
-   }
-  },
-  "Golpe_Ficha": {
+  "Colocar_Der_Frente": {
    "_hueco_asiento": {
     "min": 0.0086,
     "max": 0.0086
@@ -640,31 +3230,31 @@
    "boxer": {
     "prof_mm": 5.8,
     "region": "tronco",
-    "cuadros": 35,
+    "cuadros": 23,
     "rango": [
      0,
-     34
+     22
     ]
    },
    "_wrist_l": {
-    "max": 18.2,
-    "frame": 9
+    "max": 13.7,
+    "frame": 12
    },
    "_elbow_l": {
-    "max": 87.7,
-    "frame": 16
+    "max": 75.3,
+    "frame": 4
    },
    "_reach_l": {
     "max": 0.9,
-    "frame": 9
+    "frame": 22
    },
    "_twist_l": {
-    "max": 7.2,
-    "frame": 16
+    "max": 5.3,
+    "frame": 21
    },
    "_wrist_r": {
-    "max": 25.2,
-    "frame": 9
+    "max": 23.1,
+    "frame": 3
    },
    "_elbow_r": {
     "max": 113.3,
@@ -672,11 +3262,105 @@
    },
    "_reach_r": {
     "max": 1.0,
-    "frame": 10
+    "frame": 9
    },
    "_twist_r": {
-    "max": 19.5,
-    "frame": 13
+    "max": 21.4,
+    "frame": 16
+   }
+  },
+  "Domino_Golpe": {
+   "_hueco_asiento": {
+    "min": 0.0086,
+    "max": 0.0086
+   },
+   "boxer": {
+    "prof_mm": 5.8,
+    "region": "tronco",
+    "cuadros": 65,
+    "rango": [
+     0,
+     64
+    ]
+   },
+   "_wrist_l": {
+    "max": 19.8,
+    "frame": 30
+   },
+   "_elbow_l": {
+    "max": 82.4,
+    "frame": 16
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 30
+   },
+   "_twist_l": {
+    "max": 4.9,
+    "frame": 0
+   },
+   "_wrist_r": {
+    "max": 58.4,
+    "frame": 52
+   },
+   "_elbow_r": {
+    "max": 144.6,
+    "frame": 50
+   },
+   "_reach_r": {
+    "max": 1.1,
+    "frame": 22
+   },
+   "_twist_r": {
+    "max": 60.0,
+    "frame": 36
+   }
+  },
+  "Capicua_Golpe_Celebrar": {
+   "_hueco_asiento": {
+    "min": 0.0086,
+    "max": 0.0086
+   },
+   "boxer": {
+    "prof_mm": 5.8,
+    "region": "tronco",
+    "cuadros": 121,
+    "rango": [
+     0,
+     120
+    ]
+   },
+   "_wrist_l": {
+    "max": 33.4,
+    "frame": 84
+   },
+   "_elbow_l": {
+    "max": 140.0,
+    "frame": 33
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 1
+   },
+   "_twist_l": {
+    "max": 174.5,
+    "frame": 7
+   },
+   "_wrist_r": {
+    "max": 43.0,
+    "frame": 38
+   },
+   "_elbow_r": {
+    "max": 136.5,
+    "frame": 48
+   },
+   "_reach_r": {
+    "max": 1.1,
+    "frame": 34
+   },
+   "_twist_r": {
+    "max": 69.1,
+    "frame": 63
    }
   },
   "Pasar": {
@@ -710,20 +3394,67 @@
     "frame": 0
    },
    "_wrist_r": {
-    "max": 31.0,
+    "max": 32.2,
     "frame": 8
    },
    "_elbow_r": {
-    "max": 57.0,
-    "frame": 0
+    "max": 58.8,
+    "frame": 1
    },
    "_reach_r": {
-    "max": 1.0,
+    "max": 0.9,
     "frame": 17
    },
    "_twist_r": {
-    "max": 11.1,
+    "max": 26.7,
     "frame": 6
+   }
+  },
+  "Tranque": {
+   "_hueco_asiento": {
+    "min": 0.0086,
+    "max": 0.0086
+   },
+   "boxer": {
+    "prof_mm": 5.8,
+    "region": "tronco",
+    "cuadros": 61,
+    "rango": [
+     0,
+     60
+    ]
+   },
+   "_wrist_l": {
+    "max": 12.2,
+    "frame": 43
+   },
+   "_elbow_l": {
+    "max": 68.6,
+    "frame": 14
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 5.1,
+    "frame": 0
+   },
+   "_wrist_r": {
+    "max": 46.8,
+    "frame": 47
+   },
+   "_elbow_r": {
+    "max": 97.4,
+    "frame": 24
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 7
+   },
+   "_twist_r": {
+    "max": 64.0,
+    "frame": 47
    }
   },
   "Barajar_Fichas": {
@@ -1479,38 +4210,190 @@
     "alpha": 15.0
    }
   },
-  "Colocar_Ficha_Cerca": {
-   "suelta": {
-    "wrist": 13.7,
-    "reach": 0.953,
+  "Partida": {
+   "jugada_0": {
+    "wrist": 6.9,
+    "reach": 0.798,
     "dz": 0.0,
-    "twist": -22.4,
-    "elbow": 35.3,
-    "yaw": -47.0
-   }
-  },
-  "Colocar_Ficha_Lejos": {
-   "suelta": {
-    "wrist": 13.2,
-    "reach": 0.963,
+    "twist": -7.7,
+    "elbow": 74.1,
+    "ux": -0.0,
+    "uy": -1.0,
+    "lift": 0.0,
+    "roll": 0.0,
+    "cx": 0.0,
+    "cy": -0.7
+   },
+   "jugada_4": {
+    "wrist": 44.3,
+    "reach": 0.847,
     "dz": 0.0,
-    "twist": -16.5,
-    "elbow": 31.3,
-    "yaw": -47.0
-   }
-  },
-  "Golpe_Ficha": {
-   "golpe": {
-    "wrist": 8.5,
+    "twist": 6.1,
+    "elbow": 64.2,
+    "ux": -0.0,
+    "uy": -1.0,
+    "lift": 0.0,
+    "roll": 0.0,
+    "cx": -0.27,
+    "cy": -0.7
+   },
+   "jugada_8": {
+    "wrist": 13.1,
+    "reach": 0.944,
+    "dz": 0.002,
+    "twist": 18.5,
+    "elbow": 38.7,
+    "ux": 1.0,
+    "uy": 0.0,
+    "lift": 0.0,
+    "roll": 90.0,
+    "cx": 0.068,
+    "cy": -0.7
+   },
+   "jugada_12": {
+    "wrist": 48.9,
+    "reach": 0.84,
+    "dz": 0.011,
+    "twist": 38.1,
+    "elbow": 65.7,
+    "ux": -1.0,
+    "uy": -0.0,
+    "lift": 0.0,
+    "roll": -90.0,
+    "cx": -0.472,
+    "cy": -0.52
+   },
+   "jugada_16": {
+    "wrist": 44.4,
     "reach": 0.932,
     "dz": 0.0,
-    "twist": -17.9,
-    "elbow": 42.6
+    "twist": 8.0,
+    "elbow": 42.4,
+    "ux": 1.0,
+    "uy": 0.0,
+    "lift": 0.0,
+    "roll": 90.0,
+    "cx": -0.247,
+    "cy": -0.52
+   },
+   "jugada_24": {
+    "wrist": 20.3,
+    "reach": 0.958,
+    "dz": 0.002,
+    "twist": 55.1,
+    "elbow": 33.5,
+    "ux": -1.0,
+    "uy": -0.0,
+    "lift": 0.0,
+    "roll": -90.0,
+    "cx": 0.113,
+    "cy": -0.52
+   },
+   "jugada_28": {
+    "wrist": 15.2,
+    "reach": 1.074,
+    "dz": 0.0,
+    "twist": 55.9,
+    "elbow": 6.3,
+    "ux": -1.0,
+    "uy": -0.0,
+    "lift": 0.0,
+    "roll": -90.0,
+    "cx": 0.247,
+    "cy": -0.52
+   }
+  },
+  "Salida_Doble_Seis": {
+   "suelta": {
+    "wrist": 6.8,
+    "reach": 0.798,
+    "dz": 0.0,
+    "twist": -9.2,
+    "elbow": 74.1,
+    "lift": 0.0,
+    "roll": 0.0
+   }
+  },
+  "Colocar_Doble": {
+   "suelta": {
+    "wrist": 44.2,
+    "reach": 0.847,
+    "dz": 0.0,
+    "twist": 6.8,
+    "elbow": 64.2,
+    "lift": 0.0,
+    "roll": 0.0
+   }
+  },
+  "Colocar_Izq_Lejos": {
+   "suelta": {
+    "wrist": 13.1,
+    "reach": 0.944,
+    "dz": 0.002,
+    "twist": 18.1,
+    "elbow": 38.7,
+    "lift": 0.0,
+    "roll": 90.0
+   }
+  },
+  "Colocar_Esquina": {
+   "suelta": {
+    "wrist": 48.9,
+    "reach": 0.84,
+    "dz": 0.01,
+    "twist": 37.9,
+    "elbow": 65.7,
+    "lift": 0.0,
+    "roll": -90.0
+   }
+  },
+  "Colocar_Der_Cerca": {
+   "suelta": {
+    "wrist": 43.7,
+    "reach": 0.932,
+    "dz": 0.0,
+    "twist": 12.4,
+    "elbow": 42.4,
+    "lift": 0.0,
+    "roll": 90.0
+   }
+  },
+  "Colocar_Der_Frente": {
+   "suelta": {
+    "wrist": 13.8,
+    "reach": 0.958,
+    "dz": 0.002,
+    "twist": -6.1,
+    "elbow": 33.5,
+    "lift": 0.0,
+    "roll": -90.0
+   }
+  },
+  "Domino_Golpe": {
+   "suelta": {
+    "wrist": 13.6,
+    "reach": 1.074,
+    "dz": 0.0,
+    "twist": -17.5,
+    "elbow": 6.3,
+    "lift": 0.0,
+    "roll": -90.0
+   }
+  },
+  "Capicua_Golpe_Celebrar": {
+   "suelta": {
+    "wrist": 13.6,
+    "reach": 1.074,
+    "dz": 0.0,
+    "twist": -17.5,
+    "elbow": 6.3,
+    "lift": 0.0,
+    "roll": -90.0
    }
   }
  },
  "glb": {
-  "tamano_MB": 14.61,
+  "tamano_MB": 15.08,
   "animaciones": {
    "Idle_Sentado": {
     "canales": {
@@ -1542,17 +4425,17 @@
     "duracion_s": 1.167,
     "esperado_s": 1.167
    },
-   "Colocar_Ficha_Cerca": {
+   "Salida_Doble_Seis": {
     "canales": {
      "translation": 53,
      "rotation": 53,
      "scale": 53,
      "weights": 6
     },
-    "duracion_s": 0.917,
-    "esperado_s": 0.917
+    "duracion_s": 1.917,
+    "esperado_s": 1.917
    },
-   "Colocar_Ficha_Lejos": {
+   "Colocar_Doble": {
     "canales": {
      "translation": 53,
      "rotation": 53,
@@ -1562,15 +4445,65 @@
     "duracion_s": 1.25,
     "esperado_s": 1.25
    },
-   "Golpe_Ficha": {
+   "Colocar_Izq_Lejos": {
     "canales": {
      "translation": 53,
      "rotation": 53,
      "scale": 53,
      "weights": 6
     },
-    "duracion_s": 1.417,
-    "esperado_s": 1.417
+    "duracion_s": 1.25,
+    "esperado_s": 1.25
+   },
+   "Colocar_Esquina": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 0.917,
+    "esperado_s": 0.917
+   },
+   "Colocar_Der_Cerca": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 0.917,
+    "esperado_s": 0.917
+   },
+   "Colocar_Der_Frente": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 0.917,
+    "esperado_s": 0.917
+   },
+   "Domino_Golpe": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 2.667,
+    "esperado_s": 2.667
+   },
+   "Capicua_Golpe_Celebrar": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 5,
+    "esperado_s": 5.0
    },
    "Pasar": {
     "canales": {
@@ -1581,6 +4514,16 @@
     },
     "duracion_s": 1.083,
     "esperado_s": 1.083
+   },
+   "Tranque": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 2.5,
+    "esperado_s": 2.5
    },
    "Barajar_Fichas": {
     "canales": {
@@ -1751,10 +4694,16 @@
    "Idle_Sentado": 0.0,
    "Agarrar_Ficha_Cerca": 0.0,
    "Agarrar_Ficha_Lejos": 0.0,
-   "Colocar_Ficha_Cerca": 0.0,
-   "Colocar_Ficha_Lejos": 0.0,
-   "Golpe_Ficha": 0.0,
+   "Salida_Doble_Seis": 0.0,
+   "Colocar_Doble": 0.0,
+   "Colocar_Izq_Lejos": 0.0,
+   "Colocar_Esquina": 0.0,
+   "Colocar_Der_Cerca": 0.0,
+   "Colocar_Der_Frente": 0.0,
+   "Domino_Golpe": 0.0,
+   "Capicua_Golpe_Celebrar": 0.0,
    "Pasar": 0.0,
+   "Tranque": 0.0,
    "Barajar_Fichas": 0.0,
    "Sostener_Fichas": 0.0,
    "Celebrar_Ganar": 0.0,
@@ -1773,7 +4722,7 @@
    "Prueba_Rango_Completo": 0.0001
   },
   "verificacion": {
-   "cuadros": 3771,
+   "cuadros": 4107,
    "constraints": 53,
    "dif_max_grados": 0.0,
    "anim": null,
@@ -1806,63 +4755,125 @@
     "prof_antes_mm": 4.4
    }
   },
-  "Colocar_Ficha_Cerca": {
+  "Salida_Doble_Seis": {
    "thumb_r": {
-    "cuadros": 12,
+    "cuadros": 29,
     "cambio_max": 0.08,
     "prof_antes_mm": 2.5
    },
    "index_r": {
-    "cuadros": 12,
+    "cuadros": 24,
     "cambio_max": 0.16,
     "prof_antes_mm": 4.4
+   }
+  },
+  "Colocar_Doble": {
+   "thumb_r": {
+    "cuadros": 15,
+    "cambio_max": 0.08,
+    "prof_antes_mm": 2.5
    },
-   "middle_r": {
-    "cuadros": 5,
+   "index_r": {
+    "cuadros": 15,
+    "cambio_max": 0.16,
+    "prof_antes_mm": 4.4
+   }
+  },
+  "Colocar_Izq_Lejos": {
+   "thumb_r": {
+    "cuadros": 15,
+    "cambio_max": 0.08,
+    "prof_antes_mm": 2.9
+   },
+   "index_r": {
+    "cuadros": 15,
+    "cambio_max": 0.28,
+    "prof_antes_mm": 5.1
+   }
+  },
+  "Colocar_Esquina": {
+   "thumb_r": {
+    "cuadros": 12,
+    "cambio_max": 0.08,
+    "prof_antes_mm": 2.9
+   },
+   "index_r": {
+    "cuadros": 12,
     "cambio_max": 0.2,
-    "prof_antes_mm": 5.6
+    "prof_antes_mm": 5.1
+   }
+  },
+  "Colocar_Der_Cerca": {
+   "thumb_r": {
+    "cuadros": 12,
+    "cambio_max": 0.08,
+    "prof_antes_mm": 2.9
    },
-   "ring_r": {
+   "index_r": {
+    "cuadros": 12,
+    "cambio_max": 0.16,
+    "prof_antes_mm": 5.0
+   },
+   "pinky_r": {
+    "cuadros": 4,
+    "cambio_max": 0.16,
+    "prof_antes_mm": 0.9
+   }
+  },
+  "Colocar_Der_Frente": {
+   "thumb_l": {
     "cuadros": 5,
     "cambio_max": 0.04,
-    "prof_antes_mm": 1.2
-   }
-  },
-  "Colocar_Ficha_Lejos": {
+    "prof_antes_mm": 0.3
+   },
    "thumb_r": {
-    "cuadros": 15,
+    "cuadros": 12,
     "cambio_max": 0.08,
-    "prof_antes_mm": 2.5
+    "prof_antes_mm": 2.8
    },
    "index_r": {
-    "cuadros": 15,
+    "cuadros": 12,
     "cambio_max": 0.16,
-    "prof_antes_mm": 4.4
+    "prof_antes_mm": 5.0
    }
   },
-  "Golpe_Ficha": {
+  "Domino_Golpe": {
    "thumb_r": {
     "cuadros": 18,
     "cambio_max": 0.08,
-    "prof_antes_mm": 2.5
+    "prof_antes_mm": 2.9
    },
    "index_r": {
-    "cuadros": 19,
-    "cambio_max": 0.24,
-    "prof_antes_mm": 6.1
+    "cuadros": 18,
+    "cambio_max": 0.16,
+    "prof_antes_mm": 5.0
+   }
+  },
+  "Capicua_Golpe_Celebrar": {
+   "thumb_r": {
+    "cuadros": 30,
+    "cambio_max": 0.08,
+    "prof_antes_mm": 2.9
    },
-   "middle_r": {
-    "cuadros": 10,
-    "cambio_max": 0.4,
-    "prof_antes_mm": 6.9
-   },
-   "ring_r": {
-    "cuadros": 12,
-    "cambio_max": 0.24,
-    "prof_antes_mm": 6.7
+   "index_r": {
+    "cuadros": 30,
+    "cambio_max": 0.16,
+    "prof_antes_mm": 5.0
    }
   },
   "Pasar": {},
+  "Tranque": {
+   "index_r": {
+    "cuadros": 5,
+    "cambio_max": 0.28,
+    "prof_antes_mm": 6.6
+   },
+   "middle_r": {
+    "cuadros": 5,
+    "cambio_max": 0.08,
+    "prof_antes_mm": 2.8
+   }
+  },
   "Barajar_Fichas": {},
   "Sostener_Fichas": {},
   "Celebrar_Ganar": {},

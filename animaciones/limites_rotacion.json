@@ -1,13 +1,19 @@
 {
- "muestras_hueso_cuadro": 199863,
+ "muestras_hueso_cuadro": 217671,
  "excesos_max_grados": {
   "Idle_Sentado": 0.0,
   "Agarrar_Ficha_Cerca": 0.0,
   "Agarrar_Ficha_Lejos": 0.0,
-  "Colocar_Ficha_Cerca": 0.0,
-  "Colocar_Ficha_Lejos": 0.0,
-  "Golpe_Ficha": 0.0,
+  "Salida_Doble_Seis": 0.0,
+  "Colocar_Doble": 0.0,
+  "Colocar_Izq_Lejos": 0.0,
+  "Colocar_Esquina": 0.0,
+  "Colocar_Der_Cerca": 0.0,
+  "Colocar_Der_Frente": 0.0,
+  "Domino_Golpe": 0.0,
+  "Capicua_Golpe_Celebrar": 0.0,
   "Pasar": 0.0,
+  "Tranque": 0.0,
   "Barajar_Fichas": 0.0,
   "Sostener_Fichas": 0.0,
   "Celebrar_Ganar": 0.0,
@@ -449,32 +455,32 @@
  ],
  "recortes_al_hornear": {
   "hand_r": {
-   "cuadros": 3298,
-   "max_grados": 68.51
-  },
-  "hand_l": {
-   "cuadros": 1975,
-   "max_grados": 56.14
-  },
-  "lowerarm_r": {
-   "cuadros": 1851,
-   "max_grados": 66.63
+   "cuadros": 3526,
+   "max_grados": 101.38
   },
   "upperarm_r": {
-   "cuadros": 305,
-   "max_grados": 60.67
+   "cuadros": 549,
+   "max_grados": 73.47
+  },
+  "lowerarm_r": {
+   "cuadros": 1877,
+   "max_grados": 90.16
+  },
+  "hand_l": {
+   "cuadros": 2357,
+   "max_grados": 63.85
   },
   "lowerarm_l": {
-   "cuadros": 635,
-   "max_grados": 62.89
+   "cuadros": 984,
+   "max_grados": 69.38
   },
   "upperarm_l": {
    "cuadros": 299,
    "max_grados": 60.67
   },
   "index_01_r": {
-   "cuadros": 133,
-   "max_grados": 6.01
+   "cuadros": 288,
+   "max_grados": 16.85
   },
   "foot_l": {
    "cuadros": 8,
@@ -482,24 +488,24 @@
   }
  },
  "peores": {
-  "hand_l": [
-   0.0,
-   "Sostener_Fichas"
-  ],
   "hand_r": [
    0.0,
    "Prueba_Rango_Completo"
+  ],
+  "upperarm_r": [
+   0.0,
+   "Capicua_Golpe_Celebrar"
   ],
   "lowerarm_l": [
    0.0,
    "Prueba_Rango_Completo"
   ],
+  "hand_l": [
+   0.0,
+   "Sostener_Fichas"
+  ],
   "lowerarm_r": [
    0.0001,
-   "Prueba_Rango_Completo"
-  ],
-  "upperarm_r": [
-   0.0,
    "Prueba_Rango_Completo"
   ],
   "upperarm_l": [
@@ -1309,7 +1315,7 @@
   }
  },
  "constraints_verificacion": {
-  "cuadros": 3771,
+  "cuadros": 4107,
   "constraints": 53,
   "dif_max_grados": 0.0,
   "anim": null,

@@ -1,4 +1,4 @@
-"""Definición de las 23 animaciones de VecinoColmado (24 fps)."""
+"""Definición de las animaciones de VecinoColmado (24 fps)."""
 import math
 import numpy as np
 from mathutils import Vector, Matrix
@@ -7,6 +7,7 @@ import vc_core as C
 import vc_pose as VP
 import vc_lib as L
 import vc_scene as S
+import vc_domino as DOM
 from vc_core import rot_pyr
 
 F = VP.F
@@ -103,14 +104,17 @@ def build(ctx):
     A.proc(VP.blink_proc([12, 70, 122]))
     A.props['cam'] = 'mesa'
 
-    # ---------------------------------------------------------------- 6/7. Agarrar (fichas paradas)
+    # ---------------------------------------------------------------- PARTIDA (dominó dominicano, por parejas)
     NH = lambda base, side, **kw: VP.natural_hand(ev, base, side, **kw)  # noqa: E731
-    I_CERCA, I_LEJOS = 2, 6
+    EST = DOM.partida()
+    SLOT = {t: i for i, t in enumerate(DOM.FILA)}
+    MOVES_V = [s for s in EST if s['player'] == 0]
+    M_CERCA, M_LEJOS = 4, 8
+    I_CERCA, I_LEJOS = SLOT[EST[M_CERCA]['tile']], SLOT[EST[M_LEJOS]['tile']]
     TOP_Z = S.TABLE_TOP + S.TILE[1] / 2
     T_cerca = VP.stand_matrix(VP.ROW_X[I_CERCA], VP.ROW_Y)
     T_lejos = VP.stand_matrix(VP.ROW_X[I_LEJOS], VP.ROW_Y)
     th = L.seated(spine=(20, -2, 0), clavR=(4, 8), **look(-6, 10))
-    T_hold = VP.stand_matrix(-0.10, -0.31, TOP_Z + 0.085, tip=-14, yaw=-10)
     tb_c = L.seated(spine=(24, -5, 0), clavR=(4, 10), **look(-8, 14))
     tb_l = L.seated(hips=(0, 0.125, -0.405), spine=(28, 4, 0), clavR=(4, 14), clavL=(2, 2), **look(12, 16))
     for d_ in (tb_c, tb_l, th):
@@ -141,17 +145,116 @@ def build(ctx):
     HOLD, _ = with_elbow(ev, th, HOLD, 'r')
     ctx.HOLD, ctx.HOLD_T, ctx.OFF = HOLD, th, OFF
 
-    def add_row(A, skip=()):
+    # torsos para soltar: cerca (sin inclinarse) y lejos (cadera adelante, la izquierda apoyada)
+    tb_n = L.seated(spine=(27, -4, 0), clavR=(4, 12), **look(-6, 16))
+    tb_f = L.seated(hips=(0, 0.11, -0.31), hips_rot=(8, 0, 0), spine=(44, -5, 0), clavR=(3, 18), clavL=(8, 4),
+                    **look(-4, 0))
+    tb_n['poleR'] = (-0.7, 0.4, -0.6)
+    tb_f['poleR'] = (-0.8, 0.3, -0.5)
+    tb_n['autoR'] = tb_f['autoR'] = 0.6
+    tmid_f = L.seated(hips=(0, 0.12, -0.38), hips_rot=(4, 0, 0), spine=(36, -3, 0), clavR=(3, 14), **look(-4, 8))
+    supL = dict(armL=(0.30, -0.45, 0.85), elbowL=(0.40, -0.22, 0.90), hdirL=(-0.25, -1, 0.1), hpalmL=(-0.1, 0, -1),
+                fingL=F['flat'], tableL=1.0)
+
+    # torsos que se inclinan hacia su derecha (huecos del extremo derecho junto al borde del paño)
+    TB_R = []
+    for hx_, pitch in ((-0.06, 40), (-0.08, 45)):
+        for bend in (-10, -15):
+            t_ = L.seated(hips=(hx_, 0.12, -0.39), spine=(pitch, 0, bend), clavR=(4, 18), **look(-14, 14))
+            t_['poleR'] = (-0.8, 0.3, -0.5)
+            t_['autoR'] = 0.6
+            TB_R.append(t_)
+
+    def chain_u(pl):
+        return pl['axis'] if pl['kind'] in ('doble', 'salida') else pl['d']
+
+    def chain_rects(mesa):
+        return [VP.chain_obstacle(p['c'], p['axis']) for p in mesa.placed]
+
+    def is_far(rp):
+        return rp[1] < -0.60
+
+    # Cómo se suelta cada ficha del Vecino:
+    #  - doble / salida (eje largo en Y): de pie sobre su canto corto, cae hacia el fondo (sin girar la muñeca);
+    #  - ficha a lo largo de X: la gira 90° entre las yemas mientras la lleva, la apoya APAISADA sobre su canto
+    #    largo, cara hacia él, y cae hacia el fondo. Así la muñeca nunca gira 90° para alinear la ficha.
+    # Se elige el sentido u (y el giro en la pinza) con la muñeca más cómoda; la cara siempre queda arriba.
+    U, REL = {}, {}
+    for st in MOVES_V:
+        if st['placed'] is None:
+            continue
+        pl = st['placed']
+        rects = chain_rects(st['before'])
+        land = abs(pl['axis'][0]) > 0.5
+        best = None
+        for sg in (1, -1):
+            u = (sg * chain_u(pl)[0], sg * chain_u(pl)[1])
+            for opt in ((0, 1) if land else (None,)):
+                pen = 0.0
+                for lift in (0.0, S.TILE[2] + 0.0008):
+                    if land:
+                        Mr, Mf, piv = VP.land_release(pl['c'], u, lift=lift)
+                        sc_, th_, Pp_ = VP.land_grip(rig, OFF, piv)[opt]
+                        roll = (th_, Pp_)
+                        # agarrar por el extremo del lado del meñique: posible, pero la ficha roza los dedos
+                        pen = 0.0 if sc_ > 0 else 40.0
+                        Tv = Mr @ VP.roll_Q(*roll).inverted()
+                    else:
+                        Mr, Mf, piv = VP.slot_release(pl['c'], u, lift=lift), None, None
+                        Tv, roll = Mr, None
+                    if not VP.standing_hits(Mr, rects):
+                        break
+                rp = (Mr.translation.x, Mr.translation.y)
+                tb0 = tb_f if is_far(rp) else tb_n
+                for tb in [tb0] + (TB_R if rp[0] < -0.30 else []):
+                    c, info, _ = VP.grip_cost(ev, tb, 'r', HT(Tv), VP.row_obstacles() + rects)
+                    c += pen + (0.0 if tb is tb0 else 3.0)
+                    if best is None or c < best[0]:
+                        best = (c, u, dict(M=Mr, Tv=Tv, lift=lift, land=(Mf, piv) if land else None, roll=roll,
+                                           tb=tb), info)
+        U[st['i']] = best[1]
+        REL[st['i']] = best[2]
+        rl = best[2]['roll']
+        ctx.log('Partida', f'jugada_{st["i"]}', dict(best[3], ux=best[1][0], uy=best[1][1], lift=best[2]['lift'],
+                                                     roll=rl[0] if rl else 0, cx=pl['c'][0], cy=pl['c'][1]))
+    ROWVALS = {}
+    for st in MOVES_V:
+        if st['placed'] is not None:
+            ROWVALS[f'Fila{SLOT[st["tile"]] + 1}'] = DOM.tile_halves(st['placed'], U[st['i']])
+
+    def chain_u_final(k, pl):
+        for st in MOVES_V:
+            if st['placed'] is pl or (st['placed'] is not None and st['placed']['tile'] == pl['tile']):
+                return U[st['i']]
+        return chain_u(pl)
+
+    def vals_of(A):
+        return A.props.setdefault('vals', {})
+
+    def add_row(A, skip=(), mesa=None):
+        """Fila del Vecino (fichas paradas que le quedan) + cadena de la mesa (estado antes de su jugada)."""
         for i, M in VP.row_tiles(skip):
-            A.tiles.append(dict(name=f'Fila{i + 1}', side='r', start=('table', M)))
+            n = f'Fila{i + 1}'
+            A.tiles.append(dict(name=n, side='r', start=('table', M)))
+            vals_of(A)[n] = ROWVALS.get(n)
         o = VP.row_obstacles(skip)
+        if mesa is not None:
+            for k, pl in enumerate(mesa.placed):
+                n = f'Cadena{k + 1:02d}'
+                u = chain_u_final(k, pl)
+                A.tiles.append(dict(name=n, side='r', start=('table', VP.chain_matrix(pl['c'], u))))
+                vals_of(A)[n] = DOM.tile_halves(pl, u)
+            o = o + chain_rects(mesa)
+            A.props['mesa'] = [dict(tile=p['tile'], c=p['c'], kind=p['kind'], side=p['side']) for p in mesa.placed]
         A.obstacles = lambda f, o=o: o
 
-    def agarrar(name, idx, T, tb, frames, f_hover, f_grab, far=False):
-        A = new(name, frames, False,
-                f'Agarra una ficha parada {"del otro extremo de su fila" if far else "de su fila"} con pinza '
-                'limpia pulgar-índice (pulgar en la cara, índice detrás) y la levanta mirándola.',
-                'Tomar una ficha propia para jugarla.')
+    def played_before(i):
+        return tuple(SLOT[s['tile']] for s in MOVES_V if s['i'] < i and s['tile'] is not None)
+
+    def ficha(A):
+        return next(t for t in A.tiles if t['name'] == 'Ficha')
+
+    def grab_keys(A, T, tb, f_hover, f_grab, far=False, f_end=None):
         ch = HT(T)
         ch, _ = with_elbow(ev, tb, ch, 'r')
         chh = HT(moved(T, dz=0.035), 'pinch_v_open')
@@ -167,27 +270,33 @@ def build(ctx):
             # la mano izquierda se aparta hacia fuera para dejar pasar el brazo derecho
             A.key(f_hover - 2, armL=(0.33, -0.40, 0.85), elbowL=(0.42, -0.16, 0.88), hdirL=(-0.2, -1, 0.1),
                   hpalmL=(-0.2, 0, -1), fingL=F['table_rest'], tableL=1.0)
-            A.key(frames - 4, armL=(0.33, -0.40, 0.85), elbowL=(0.42, -0.16, 0.88))
-            A.key(frames, armL=SB['armL'], elbowL=SB['elbowL'], hdirL=SB['hdirL'], hpalmL=SB['hpalmL'])
+            A.key(f_end - 4, armL=(0.33, -0.40, 0.85), elbowL=(0.42, -0.16, 0.88))
+            A.key(f_end, armL=SB['armL'], elbowL=SB['elbowL'], hdirL=SB['hdirL'], hpalmL=SB['hpalmL'])
         A.key(f_hover, torso(tb), **chh)
         A.key(f_grab, torso(tb), **ch, **VP.face(('focus', 1.0)))
         A.key(f_grab + 1, **ch)
         A.key(f_grab + 4, **lift)
-        A.key(frames, torso(th), **HOLD, **look(-6, 10), eyes=(-3, 12), **NEUT())
         A.tiles.append(dict(name='Ficha', side='r', start=('table', T), grab=f_grab))
-        add_row(A, (idx,))
+
+    def agarrar(name, move_i, T, tb, frames, f_hover, f_grab, far=False):
+        st = EST[move_i]
+        idx = SLOT[st['tile']]
+        A = new(name, frames, False,
+                f'Agarra la ficha parada {st["tile"][0]}-{st["tile"][1]} '
+                f'{"del otro extremo de su fila (hueco " + str(idx) + ")" if far else "de su fila (hueco " + str(idx) + ")"} '
+                'con pinza limpia pulgar-índice (pulgar en la cara, índice detrás) y la levanta mirándola.',
+                'Tomar una ficha propia para jugarla (la fila sigue en su sitio, con el hueco).')
+        grab_keys(A, T, tb, f_hover, f_grab, far, frames)
+        A.key(frames, torso(th), **HOLD, **look(-6, 10), eyes=(-3, 12), **NEUT())
+        vals_of(A)['Ficha'] = ROWVALS[f'Fila{idx + 1}']
+        add_row(A, played_before(move_i) + (idx,), st['before'])
         A.proc(L.breathe(48, 0.5))
         A.props['cam'] = 'mesa'
+        A.props['jugada'] = move_i
         return A
 
-    agarrar('Agarrar_Ficha_Cerca', I_CERCA, T_cerca, tb_c, 22, 7, 11)
-    agarrar('Agarrar_Ficha_Lejos', I_LEJOS, T_lejos, tb_l, 28, 10, 15, far=True)
-
-    def held_start(A):
-        A.key(0, ctx.HOLD_T, **ctx.HOLD, eyes=(-3, 12), **NEUT())
-        A.tiles.append(dict(name='Ficha', side='r', start=('hand', OFF), release=None))
-        add_row(A, (I_CERCA,))
-        return ctx.HOLD_T, ctx.HOLD
+    agarrar('Agarrar_Ficha_Cerca', M_CERCA, T_cerca, tb_c, 22, 7, 11)
+    agarrar('Agarrar_Ficha_Lejos', M_LEJOS, T_lejos, tb_l, 28, 10, 15, far=True)
 
     def blend_T(Ta, Tb, k, pos):
         q = Ta.to_quaternion().slerp(Tb.to_quaternion(), k)
@@ -195,129 +304,287 @@ def build(ctx):
         M.translation = Vector(pos)
         return M
 
-    def best_yaw(tb, x, y, tip):
-        best = None
-        for yw in range(-75, 31, 7):
-            c, info, _ = VP.grip_cost(ev, tb, 'r', HT(VP.rest_on_felt(x, y, tip, yw)), VP.row_obstacles((I_CERCA,)))
-            if best is None or c < best[0]:
-                best = (c, yw)
-        return best[1]
-
-    def place_keys(A, tb, x, y, f_mid, f_pre, f_rel, mid_xyz, tip_rel=12, tin=None, fall=5):
-        """Lleva la ficha parada (misma orientación natural del agarre), la apoya de pie en el paño algo inclinada
-        hacia delante, la suelta y la ficha cae cara arriba mientras la mano se retira."""
-        yw = best_yaw(tb, x, y, tip_rel)
-        Tr = VP.rest_on_felt(x, y, tip_rel, yw)
-        Tp = moved(VP.rest_on_felt(x, y, 4, yw), dy=0.01, dz=0.03)
-        Tm = blend_T(T_hold, Tp, 0.5, mid_xyz)
+    def place_keys(A, move_i, T_from, f_mid, f_pre, f_rel, tin=None, fall=5, rise=0.06):
+        """Lleva la ficha parada sobre su hueco exacto, la apoya de pie inclinada hacia u (sobre el paño o sobre el
+        borde de la ficha anterior), la suelta y cae cara arriba justo en el hueco: el número que casa toca el igual."""
+        R_ = REL[move_i]
+        Tr, lift = R_['Tv'], R_['lift']
+        tb = R_['tb']
+        u = U[move_i]
+        Tp = moved(Tr, dy=0.004, dz=0.03)
+        mid = (Vector(T_from.translation) + Vector(Tp.translation)) / 2 + Vector((0, 0, rise))
+        Tm = blend_T(T_from, Tp, 0.5, mid)
         chm, chp, chr_ = HT(Tm), HT(Tp), HT(Tr)
         chr_, _ = with_elbow(ev, tb, chr_, 'r')
-        c, info, _ = VP.grip_cost(ev, tb, 'r', chr_, VP.row_obstacles((I_CERCA,)))
-        ctx.log(A.name, 'suelta', dict(info, yaw=yw))
+        ctx.log(A.name, 'suelta', dict(VP.grip_cost(ev, tb, 'r', chr_, A.obstacles(0))[1],
+                                       lift=lift, roll=R_['roll'][0] if R_['roll'] else 0))
         chp['elbowR'] = tuple((Vector(chr_['elbowR']) + Vector((0, 0.01, 0.02)))[:])
         chm['elbowR'] = tuple((Vector(chr_['elbowR']) + Vector((0, 0.05, 0.05)))[:])
-        A.key(f_mid, torso(tb), **chm)
+        far = tb is tb_f
+        if far:
+            A.key(max(1, f_mid - 2), torso(tmid_f), **supL, eyes=(-4, 6))
+            A.key(f_mid, **chm)
+        else:
+            A.key(f_mid, torso(tb), **chm)
         A.key(f_pre, **chp)
         kw = dict(tin=tin) if tin else {}
         A.key(f_rel, torso(tb), **chr_, **kw)
         A.key(f_rel + 1, armR=Vector(chr_['armR']) + Vector((0, 0.008, 0.03)), fingR=F['pinch_v_open'])
-        A.tiles[-1 - 6]['release'] = f_rel
-        A.tiles[-1 - 6]['fall'] = fall
-        return chr_
+        if far:
+            A.key(f_rel, **supL, **VP.face(('determined', 0.8)))
+        t = ficha(A)
+        t['release'] = f_rel
+        t['fall'] = fall
+        if R_['land'] is not None:
+            t['land'] = R_['land']
+            t['roll'] = (max(1, f_mid - 3), f_pre) + tuple(R_['roll'])
+        A.props['slot'] = dict(c=[round(v, 4) for v in EST[move_i]['placed']['c']], u=list(u),
+                               axis=list(EST[move_i]['placed']['axis']), kind=EST[move_i]['placed']['kind'],
+                               side=EST[move_i]['side'], lift=lift,
+                               suelta='apaisada' if R_['land'] is not None else 'de_pie')
+        return chr_, far
 
-    # ---------------------------------------------------------------- 8. Colocar cerca
-    A = new('Colocar_Ficha_Cerca', 22, False,
-            'Lleva la ficha parada, la gira cara arriba mientras avanza y la deja en la mesa; vuelve a la pose sentada.',
-            'Jugar una ficha cerca del jugador.')
-    held_start(A)
-    tb = L.seated(spine=(27, -4, 0), clavR=(4, 12), **look(-6, 16))
-    tb['poleR'] = (-0.7, 0.4, -0.6)
-    tb['autoR'] = 0.6
-    chr_ = place_keys(A, tb, -0.235, -0.62, 4, 7, 9, (-0.21, -0.47, TOP_Z + 0.08))
-    A.key(13, armR=Vector(chr_['armR']) + Vector((0.01, 0.05, 0.06)),
-          fingR=VP.finger_mix(('pinch_v_open', 0.5), ('relax', 0.5)), **VP.face(('determined', 0.6)))
-    A.key(22, SB, **look(0, 4), eyes=(0, 10), **NEUT())
+    def retreat(A, chr_, far, f0, frames):
+        if far:
+            A.key(f0 + 5, torso(tmid_f), armR=Vector(chr_['armR']) + Vector((0.0, 0.12, 0.07)),
+                  fingR=VP.finger_mix(('pinch_v_open', 0.5), ('relax', 0.5)),
+                  elbowR=Vector(chr_['elbowR']) + Vector((0, 0.08, 0.03)))
+            A.key(f0 + 8, **supL)
+            A.key(f0 + 13, torso(SB), armL=SB['armL'], elbowL=SB['elbowL'], hdirL=SB['hdirL'], hpalmL=SB['hpalmL'],
+                  fingL=SB['fingL'], **NEUT())
+        else:
+            A.key(f0 + 4, armR=Vector(chr_['armR']) + Vector((0.01, 0.05, 0.06)),
+                  fingR=VP.finger_mix(('pinch_v_open', 0.5), ('relax', 0.5)), **VP.face(('determined', 0.6)))
+        # al volver, el antebrazo pasa por encima de las fichas paradas que le quedan
+        fa = frames - 6 if far else f0 + 4 + max(2, (frames - f0 - 4) // 2)
+        pa = (Vector(chr_['armR']) + Vector(SB['armR'])) / 2 + Vector((0, 0, 0.13))
+        A.key(fa, armR=tuple(pa[:]), elbowR=tuple((Vector(SB['elbowR']) + Vector((0, -0.02, 0.10)))[:]),
+              tableR=0.0)
+        A.key(frames, SB, **look(0, 4), eyes=(0, 10), **NEUT())
+
+    def jugar(name, move_i, desc, use, frames=None):
+        st = EST[move_i]
+        idx = SLOT[st['tile']]
+        far = is_far(tuple(REL[move_i]['M'].translation.xy))
+        A = new(name, frames or (30 if far else 22), False, desc, use)
+        A.key(0, ctx.HOLD_T, **ctx.HOLD, eyes=(-3, 12), **NEUT())
+        A.tiles.append(dict(name='Ficha', side='r', start=('hand', OFF), release=None))
+        vals_of(A)['Ficha'] = ROWVALS[f'Fila{idx + 1}']
+        add_row(A, played_before(move_i) + (idx,), st['before'])
+        f_mid, f_pre, f_rel = (7, 10, 12) if far else (4, 7, 9)
+        chr_, far = place_keys(A, move_i, T_hold, f_mid, f_pre, f_rel)
+        retreat(A, chr_, far, f_rel, A.frames)
+        A.proc(L.breathe(48, 0.5))
+        A.props['cam'] = 'mesa_lejos' if far else 'mesa'
+        A.props['jugada'] = move_i
+        return A
+
+    def lado(st):
+        return 'derecho (D)' if st['side'] == 'D' else 'izquierdo (I)'
+
+    def desc_jugada(i, extra=''):
+        st = EST[i]
+        pl = st['placed']
+        b = st['before'].ends
+        e = b['D'] if st['side'] == 'D' else b['I']
+        como = ('la gira 90° entre las yemas mientras la lleva, la apoya apaisada (sobre su canto largo) junto al '
+                'hueco y cae cara arriba en el hueco exacto.' if REL[i]['land'] is not None else
+                'la apoya de pie junto al hueco y cae cara arriba en el hueco exacto.')
+        return (f'Juega {st["tile"][0]}-{st["tile"][1]} en el extremo {lado(st)} que pedía {e}: '
+                f'el {pl["match"]} toca al {pl["match"]} de la cadena{extra}. Lleva la ficha parada, {como}')
+
+    # ---------------------------------------------------------------- Salida
+    A = new('Salida_Doble_Seis', 46, False,
+            'Salida: agarra el doble seis parado del centro de su fila con pinza y lo pone atravesado en el centro '
+            'de la mesa.', 'Primera jugada de la primera mano (quien tiene el doble seis sale).')
+    st = EST[0]
+    T_s = VP.stand_matrix(VP.ROW_X[SLOT[(6, 6)]], VP.ROW_Y)
+    grab_keys(A, T_s, tb_c, 7, 11, False, 46)
+    vals_of(A)['Ficha'] = ROWVALS[f'Fila{SLOT[(6, 6)] + 1}']
+    add_row(A, (SLOT[(6, 6)],), st['before'])
+    chr_, far = place_keys(A, 0, moved(T_s, dy=0.01, dz=0.05), 22, 26, 29, rise=0.04)
+    retreat(A, chr_, far, 29, 46)
     A.proc(L.breathe(48, 0.5))
-    A.props['cam'] = 'mesa'
-
-    # ---------------------------------------------------------------- 9. Colocar lejos
-    A = new('Colocar_Ficha_Lejos', 30, False,
-            'Coloca la ficha lejos: la otra mano se apoya firme al lado de su fila, el cuerpo se estira y '
-            'la ficha llega cara arriba.',
-            'Jugar una ficha en el extremo lejano de la mesa.')
-    held_start(A)
-    tb = L.seated(hips=(0, 0.11, -0.31), hips_rot=(8, 0, 0), spine=(44, -5, 0), clavR=(3, 18), clavL=(8, 4),
-                  **look(-4, 0))
-    tb['poleR'] = (-0.8, 0.3, -0.5)
-    tb['autoR'] = 0.6
-    tmid = L.seated(hips=(0, 0.12, -0.38), hips_rot=(4, 0, 0), spine=(36, -3, 0), clavR=(3, 14), **look(-4, 8))
-    supL = dict(armL=(0.27, -0.56, 0.85), elbowL=(0.38, -0.30, 0.90), hdirL=(-0.25, -1, 0.1), hpalmL=(-0.1, 0, -1),
-                fingL=F['flat'], tableL=1.0)
-    A.key(5, torso(tmid), **supL, eyes=(-4, 6))
-    chr_ = place_keys(A, tb, -0.22, -0.80, 7, 10, 12, (-0.20, -0.56, TOP_Z + 0.10))
-    A.key(12, **supL, **VP.face(('determined', 0.8)))
-    A.key(17, torso(tmid), armR=Vector(chr_['armR']) + Vector((0.0, 0.12, 0.07)),
-          fingR=VP.finger_mix(('pinch_v_open', 0.5), ('relax', 0.5)),
-          elbowR=Vector(chr_['elbowR']) + Vector((0, 0.08, 0.03)))
-    A.key(20, **supL)
-    A.key(25, torso(SB), armL=SB['armL'], elbowL=SB['elbowL'], hdirL=SB['hdirL'], hpalmL=SB['hpalmL'],
-          fingL=SB['fingL'], **NEUT())
-    A.key(30, SB, **look(0, 4), eyes=(0, 10))
     A.props['cam'] = 'mesa_lejos'
+    A.props['jugada'] = 0
 
-    # ---------------------------------------------------------------- 10. Golpe
-    A = new('Golpe_Ficha', 34, False,
-            'Tranque/capicúa: levanta la ficha, la gira cara arriba en el aire y la planta fuerte en la mesa.',
-            'Jugada final (tranque o capicúa).')
-    held_start(A)
-    tb = L.seated(spine=(32, -4, 0), clavR=(2, 12), **look(-6, 14))
-    tb['poleR'] = (-0.7, 0.4, -0.6)
-    tb['autoR'] = 0.6
+    # ---------------------------------------------------------------- Colocar (variantes por extremo y distancia)
+    jugar('Colocar_Doble', 4, desc_jugada(4, '; el doble va atravesado (perpendicular a la cadena)'),
+          'Jugar un doble: siempre atravesado (aquí por el extremo derecho, hueco lejano).')
+    jugar('Colocar_Izq_Lejos', 8, desc_jugada(8), 'Jugar por el extremo izquierdo, hueco lejano.')
+    jugar('Colocar_Esquina', 12, desc_jugada(12, '; no cabe recta y la cadena dobla la esquina'),
+          'Jugar cuando la cadena llega al borde y dobla (ficha de esquina, en L).')
+    jugar('Colocar_Der_Cerca', 16, desc_jugada(16), 'Jugar por el extremo derecho, hueco cercano a su derecha.')
+    jugar('Colocar_Der_Frente', 24, desc_jugada(24), 'Jugar por el extremo derecho cuando la cadena ya dio la '
+          'vuelta y pasa delante de él (hueco cercano, frente a su izquierda).')
+
+    # ---------------------------------------------------------------- Dominó (golpe + celebración)
+    A = new('Domino_Golpe', 64, False,
+            f'Dominó: levanta la última ficha ({EST[28]["tile"][0]}-{EST[28]["tile"][1]}), la planta de golpe en su '
+            'hueco exacto y celebra con el puño.',
+            'Cuando juega su última ficha (se "domina"). Al terminar, el juego cuenta los puntos.')
+    st = EST[28]
+    A.key(0, ctx.HOLD_T, **ctx.HOLD, eyes=(-3, 12), **NEUT())
+    A.tiles.append(dict(name='Ficha', side='r', start=('hand', OFF), release=None))
+    vals_of(A)['Ficha'] = ROWVALS[f'Fila{SLOT[st["tile"]] + 1}']
+    add_row(A, played_before(28) + (SLOT[st['tile']],), st['before'])
     tup = L.seated(spine=(10, -8, 0), clavR=(10, 4), **look(-4, -4))
     tup['poleR'] = (-0.7, 0.4, -0.6)
-    Tr = VP.rest_on_felt(-0.235, -0.62, 10, best_yaw(tb, -0.235, -0.62, 10))
-    Tu = blend_T(T_hold, Tr, 0.6, (-0.22, -0.46, 1.12))
+    Tr = REL[28]['Tv']
+    # la mano izquierda descansa justo donde cae la última ficha: se aparta a un lado del paño antes del golpe
+    asideL = dict(armL=(0.40, -0.35, 0.85), elbowL=(0.47, -0.11, 0.88), hdirL=(-0.12, -1, 0.05),
+                  hpalmL=(-0.15, 0, -1), fingL=F['table_rest'], tableL=1.0)
+    A.key(6, **asideL)
+    Tu = blend_T(T_hold, Tr, 0.6, (Tr.translation.x + 0.02, Tr.translation.y + 0.16, 1.12))
     chU = HT(Tu)
     chU['elbowR'] = (-0.36, -0.10, 1.00)
     A.key(9, torso(tup), **chU, **VP.face(('determined', 1.0)), eyes=(-4, 12))
     A.key(11, armR=Vector(chU['armR']) + Vector((0, -0.01, 0.02)))
-    chr_ = HT(Tr)
-    chr_, _ = with_elbow(ev, tb, chr_, 'r')
-    ctx.log(A.name, 'golpe', VP.grip_cost(ev, tb, 'r', chr_, VP.row_obstacles((I_CERCA,)))[1])
-    A.key(15, torso(tb), **chr_, tin=1.6)
-    A.key(16, **VP.face(('shout', 1.0)), spine=(34, -4, 0))
-    A.key(17, armR=Vector(chr_['armR']) + Vector((0, 0.004, 0.016)), fingR=F['pinch_v_open'])
-    A.key(22, armR=Vector(chr_['armR']) + Vector((0, 0.006, 0.02)))
-    A.key(26, armR=Vector(chr_['armR']) + Vector((0.01, 0.03, 0.05)), **VP.face(('determined', 0.6)),
-          fingR=VP.finger_mix(('pinch_v_open', 0.5), ('relax', 0.5)))
-    A.key(34, SB, **look(0, 4), eyes=(0, 10), **NEUT())
-    A.tiles[-7]['release'] = 15
-    A.tiles[-7]['fall'] = 4
+    chr_, _ = place_keys(A, 28, Tu, 12, 13, 15, tin=1.6, fall=4, rise=0.0)
+    A.key(16, **VP.face(('shout', 1.0)), spine=(30, -4, 0))
+    A.key(22, armR=Vector(chr_['armR']) + Vector((0, 0.006, 0.02)), fingR=F['pinch_v_open'])
+    tback = L.seated(spine=(10, -6, 0), clavR=(10, 2), clavL=(4, 4), **look(-4, -10))
+    fistup = NH(tback, 'r', arm=('chest', (-0.20, -0.06, 1.86)), elbow=('chest', (-0.40, -0.02, 1.60)),
+                palm=('chest', (0.7, -0.6, 0)), flex=5)
+    fistmid = NH(tback, 'r', arm=('chest', (-0.27, -0.20, 1.52)), elbow=('chest', (-0.34, -0.10, 1.22)),
+                 palm=('chest', (0.7, -0.6, 0)), flex=5)
+    A.key(30, torso(tback), **fistmid, fingR=VP.finger_mix(('fist', 0.6), ('relax', 0.4)),
+          **FACE(('laugh', 1.0)))
+    A.key(36, **fistup, fingR=F['fist'])
+    A.key(41, **fistmid)
+    A.key(46, **fistup, **VP.face(('smile', 0.9)))
+    A.key(64, SB, **asideL, **look(0, 4), eyes=(0, 10), **NEUT())
+    A.proc(VP.blink_proc([52]))
     A.props['cam'] = 'mesa'
+    A.props['jugada'] = 28
 
-    # ---------------------------------------------------------------- 11. Pasar
-    A = new('Pasar', 26, False, 'Toca la mesa dos veces con los nudillos al lado de sus fichas ("paso").',
-            'Pasar turno.')
-    pos = Vector((-0.245, -0.50, 0.0))
+    # ---------------------------------------------------------------- Capicúa (cinemática)
+    st = EST[28]
+    assert st['capicua'], 'la última jugada del Vecino debe ser capicúa'
+    A = new('Capicua_Golpe_Celebrar', 120, False,
+            f'¡CAPICÚA! Su última ficha ({st["tile"][0]}-{st["tile"][1]}) casa en los dos extremos '
+            f'(D pide {st["before"].ends["D"]}, I pide {st["before"].ends["I"]}): la levanta alto mostrándola, '
+            'la sostiene un instante, la planta de un golpe fuerte en su hueco exacto y celebra a lo grande '
+            '(dos puños arriba, grito, señala la ficha).',
+            'Ganar dominando con capicúa (momento épico; ver eventos de cámara lenta, texto, partículas y sonido).')
+    A.key(0, ctx.HOLD_T, **ctx.HOLD, eyes=(-3, 12), **NEUT())
+    A.tiles.append(dict(name='Ficha', side='r', start=('hand', OFF), release=None))
+    vals_of(A)['Ficha'] = ROWVALS[f'Fila{SLOT[st["tile"]] + 1}']
+    add_row(A, played_before(28) + (SLOT[st['tile']],), st['before'])
+    Tr = REL[28]['Tv']
+    tshow = L.seated(spine=(8, -10, 0), clavR=(12, 4), **look(-10, -8))
+    tshow['poleR'] = (-0.7, 0.4, -0.6)
+    Tshow = blend_T(T_hold, Tr, 0.3, (Tr.translation.x - 0.04, Tr.translation.y + 0.20, 1.27))
+    chS = HT(Tshow)
+    chS['elbowR'] = (-0.38, -0.12, 1.12)
+    Tup = blend_T(T_hold, Tr, 0.65, (Tr.translation.x + 0.01, Tr.translation.y + 0.15, 1.20))
+    chU = HT(Tup)
+    chU['elbowR'] = (-0.36, -0.08, 1.04)
+    fistL0 = NH(L.seated(), 'l', arm=('chest', (0.16, -0.30, 1.30)), elbow=('chest', (0.34, -0.10, 1.14)),
+                palm=('chest', (-0.7, -0.6, 0)), flex=5)
+    fistL0['fingL'] = F['fist']
+    A.key(4, armL=tuple((Vector(SB['armL']) + Vector((0, 0.03, 0.07)))[:]),
+          elbowL=tuple((Vector(SB['elbowL']) + Vector((0, 0.0, 0.05)))[:]), tableL=0.0)
+    A.key(6, torso(tshow), **chS, **VP.face(('determined', 0.8), ('smile', 0.3)), eyes=(-6, -4))
+    A.key(10, **fistL0)
+    A.key(14, **chS, **VP.face(('determined', 1.0)), eyes=(-2, 6))
+    A.key(21, torso(tup), **chU, eyes=(-4, 14))
+    A.key(23, armR=Vector(chU['armR']) + Vector((0, -0.005, 0.03)))
+    chr_, _ = place_keys(A, 28, Tup, 24, 25, 27, tin=1.9, fall=3, rise=0.0)
+    A.key(27, **fistL0)
+    A.key(28, **VP.face(('shout', 1.0)), spine=(34, -6, 0))
+    A.key(31, armR=Vector(chr_['armR']) + Vector((0, 0.004, 0.012)), fingR=F['pinch_v_open'])
+    A.key(35, armR=Vector(chr_['armR']) + Vector((0.01, 0.04, 0.06)),
+          fingR=VP.finger_mix(('pinch_v_open', 0.4), ('fist', 0.6)))
+    tback = L.seated(spine=(4, -2, 0), clavR=(14, 2), clavL=(14, 2), **look(0, -14))
+    upR = NH(tback, 'r', arm=('chest', (-0.22, -0.04, 1.88)), elbow=('chest', (-0.42, 0.0, 1.60)),
+             palm=('chest', (0.7, -0.6, 0)), flex=5)
+    upL = NH(tback, 'l', arm=('chest', (0.22, -0.04, 1.88)), elbow=('chest', (0.42, 0.0, 1.60)),
+             palm=('chest', (-0.7, -0.6, 0)), flex=5)
+    midR = NH(tback, 'r', arm=('chest', (-0.29, -0.16, 1.58)), elbow=('chest', (-0.38, -0.06, 1.28)),
+              palm=('chest', (0.7, -0.6, 0)), flex=5)
+    midL = NH(tback, 'l', arm=('chest', (0.29, -0.16, 1.58)), elbow=('chest', (0.38, -0.06, 1.28)),
+              palm=('chest', (-0.7, -0.6, 0)), flex=5)
+    for d_, s_ in ((upR, 'R'), (upL, 'L'), (midR, 'R'), (midL, 'L')):
+        d_['fing' + s_] = F['fist']
+    A.key(42, torso(tback), **upR, **upL, **FACE(('shout', 0.6), ('laugh', 0.6)))
+    A.key(48, **midR, **midL, spine=(10, 0, 0))
+    A.key(53, **upR, **upL, spine=(2, -2, 0), **FACE(('laugh', 1.0)))
+    A.key(59, **midR, **midL, spine=(10, 2, 0))
+    A.key(64, **upR, **upL, spine=(2, 0, 0))
+    tp = L.seated(spine=(20, -4, 0), **look(-6, 12))
+    point = NH(tp, 'r', arm=(Tr.translation.x - 0.06, Tr.translation.y + 0.20, 1.04),
+               elbow=(-0.22, -0.20, 1.02), palm=(0.25, 0.1, -1), flex=-8)
+    point['fingR'] = F['point']
+    restL = asideL
+    A.key(76, torso(tp), **point, **midL, **VP.face(('smile', 1.0)), eyes=(-4, 14))
+    A.key(82, armL=(0.42, -0.30, 1.00), elbowL=(0.50, -0.06, 1.00), tableL=0.0)
+    A.key(88, **point, **restL, **look(4, 2), eyes=(0, 0), **VP.face(('laugh', 0.8)))
+    A.key(120, SB, **asideL, **look(0, 4), eyes=(0, 10), **NEUT())
+    A.proc(VP.blink_proc([70, 100]))
+    A.props['cam'] = 'mesa'
+    A.props['jugada'] = 28
+    A.props['eventos'] = dict(slowmo_ini=12, impacto=27, temblor=(27, 33), texto=28, particulas=28,
+                              slowmo_fin=40, celebracion=(42, 64), fin=120)
+
+    # ---------------------------------------------------------------- Pasar
+    A = new('Pasar', 26, False, 'Pasa: no tiene ficha que case con ningún extremo; toca la mesa dos veces con los '
+            'nudillos entre su fila y la cadena, sin agarrar nada.', 'Pasar turno (no lleva).')
+    pos = Vector((-0.28, -0.445, 0.0))
     kb = L.seated(spine=(23, -3, 0), **look(-4, 10))
+    add_row(A, played_before(20), EST[20]['before'])
 
     def knock(z, tab):
-        d = NH(kb, 'r', arm=tuple((pos + Vector((0, 0, z)))[:]), elbow=(-0.36, -0.26, 0.90), palm=(0.25, 0.7, -0.6),
+        d = NH(kb, 'r', arm=tuple((pos + Vector((0, 0, z)))[:]), elbow=(-0.38, -0.22, 0.90), palm=(0.25, 0.7, -0.6),
                flex=28)
         d['fingR'] = F['knock']
         d['tableR'] = tab
         return d
     up1, dn, up2 = knock(0.95, 0.0), knock(0.87, 1.0), knock(0.92, 0.0)
+
+    def knock_keys(A, f0):
+        A.key(f0 + 5, torso(kb), **up1, **VP.face(mouthPressLeft=0.4, mouthPressRight=0.4))
+        A.key(f0 + 8, **dn, tin=1.5)
+        A.key(f0 + 11, **up2)
+        A.key(f0 + 14, **dn, tin=1.5)
+        A.key(f0 + 18, **up2, **look(-3, 6))
     A.key(0, SB, **look(0, 4), **NEUT())
-    A.key(5, torso(kb), **up1, **VP.face(mouthPressLeft=0.4, mouthPressRight=0.4))
-    A.key(8, **dn, tin=1.5)
-    A.key(11, **up2)
-    A.key(14, **dn, tin=1.5)
-    A.key(18, **up2, **look(-3, 6))
+    knock_keys(A, 0)
     A.key(26, SB, **look(0, 4), **NEUT())
     A.proc(VP.blink_proc([20]))
-    add_row(A)
     A.props['cam'] = 'mesa'
+    A.props['jugada'] = 20
+
+    # ---------------------------------------------------------------- Tranque
+    A = new('Tranque', 60, False,
+            'Tranque: nadie puede jugar; toca la mesa dos veces y luego acuesta cara arriba las fichas que le '
+            'quedan, de una en una con la punta de los dedos, para contar los puntos.',
+            'Cuando la partida se tranca (ningún jugador lleva). Estado de mesa ilustrativo.')
+    sk = played_before(24)
+    add_row(A, sk, EST[24]['before'])
+    A.key(0, SB, **look(0, 4), **NEUT())
+    knock_keys(A, 0)
+    tt = L.seated(spine=(24, -2, 0), clavR=(4, 10), **look(0, 18))
+    tt['poleR'] = (-0.7, 0.4, -0.6)
+    tt['autoR'] = 0.6
+    left = [i for i in range(7) if i not in sk]
+    f = 24
+    for i in left:
+        x = VP.ROW_X[i]
+        T_push = VP.stand_matrix(x, VP.ROW_Y + 0.008, TOP_Z + S.TILE[1] / 2 + 0.03)
+        chp = HT(T_push, 'pinch_v_open')
+        chp, _ = with_elbow(ev, tt, chp, 'r')
+        A.key(f, torso(tt), **chp)
+        A.key(f + 3, armR=Vector(chp['armR']) + Vector((0, -0.03, -0.012)))
+        for t in A.tiles:
+            if t['name'] == f'Fila{i + 1}':
+                t['release'] = f + 3
+                t['fall'] = 6
+        f += 8
+    A.key(f + 2, **VP.face(('focus', 0.4)), **look(4, 14))
+    A.key(60, SB, **look(0, 4), **NEUT())
+    A.props['cam'] = 'mesa'
+    A.props['tranque'] = [DOM.FILA[i] for i in left]
 
     # ---------------------------------------------------------------- 12. Barajar
     A = new('Barajar_Fichas', 48, True, 'Ambas manos revuelven fichas boca abajo en círculos sobre la mesa '

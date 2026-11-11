@@ -108,19 +108,34 @@ def build_chair(scene):
     return objs
 
 
-def make_tile(scene, name='Ficha'):
+PIPS = {0: [], 1: [(0, 0)], 2: [(-1, -1), (1, 1)], 3: [(-1, -1), (0, 0), (1, 1)],
+        4: [(-1, -1), (-1, 1), (1, -1), (1, 1)], 5: [(-1, -1), (-1, 1), (0, 0), (1, -1), (1, 1)],
+        6: [(-1, -1), (-1, 0), (-1, 1), (1, -1), (1, 0), (1, 1)]}
+
+
+def make_tile(scene, name='Ficha', vals=None):
+    """Ficha 0.045 x 0.090 x 0.014 m, cara con puntos en +Z local. vals=(a, b): a = mitad +Y, b = mitad -Y.
+    Sin vals se usa un dibujo genérico."""
     coll = preview_collection(scene)
     ivory = _mat('Ficha_marfil', (0.92, 0.90, 0.84, 1), 0.3)
     dot = _mat('Ficha_punto', (0.05, 0.05, 0.05, 1), 0.4)
     ob = _box(name, TILE, (0, 0, 0), ivory, coll)
-    # línea central y puntos (para leer orientación de la ficha en el video)
     me = ob.data
     me.materials.append(dot)
-    sub = _box(name + '_marcas', (TILE[0] * 0.8, 0.003, 0.0012), (0, 0, TILE[2] / 2 + 0.0004), dot, coll)
+    zt = TILE[2] / 2 + 0.0004
+    sub = _box(name + '_marcas', (TILE[0] * 0.8, 0.0025, 0.0012), (0, 0, zt), dot, coll)
     sub.parent = ob
-    for k, (px, py) in enumerate([(0, 0.022), (0, -0.022), (0.012, 0.034), (-0.012, -0.034)]):
-        d = _box(f'{name}_p{k}', (0.007, 0.007, 0.0012), (px, py, TILE[2] / 2 + 0.0004), dot, coll)
+    if vals is None:
+        pts = [(0, 0.022), (0, -0.022), (0.012, 0.034), (-0.012, -0.034)]
+    else:
+        g = 0.0115
+        hc = TILE[1] / 4
+        pts = [(gx * g, hc + gy * g) for gx, gy in PIPS[int(vals[0])]] + \
+              [(gx * g, -hc + gy * g) for gx, gy in PIPS[int(vals[1])]]
+    for k, (px, py) in enumerate(pts):
+        d = _box(f'{name}_p{k}', (0.0065, 0.0065, 0.0012), (px, py, zt), dot, coll)
         d.parent = ob
+    ob['valores'] = list(vals) if vals is not None else []
     return ob
 
 

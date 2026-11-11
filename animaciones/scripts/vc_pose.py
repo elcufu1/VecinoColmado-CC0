@@ -718,16 +718,26 @@ def compute_tiles(anim, poses):
             if grab is not None and f == grab and offset is None:
                 offset = hp.inverted() @ M
             attached = offset is not None and (grab is None or f >= grab) and (rel is None or f < rel)
+            if offset is not None and t.get('roll'):
+                f0, f1, theta, Pp = t['roll']
+                k = min(1.0, max(0.0, (f - f0) / float(f1 - f0)))
+                k = k * k * (3 - 2 * k)
+                offset_f = offset @ roll_Q(theta, Pp, k)
+            else:
+                offset_f = offset
             if attached:
-                Mf = hp @ offset
+                Mf = hp @ offset_f
                 if t.get('flat'):
                     Mf = flat_tile(Mf)
                 mats.append(Mf)
             else:
-                if rel is not None and f == rel and offset is not None:
-                    Mrel = hp @ offset
+                if rel is not None and f == rel and (offset is not None or (kind == 'table' and t.get('fall'))):
+                    Mrel = hp @ offset_f if offset is not None else M.copy()
                     M = flat_tile(Mrel)
-                    if t.get('fall'):
+                    if t.get('fall') and t.get('land'):
+                        seq = land_seq(Mrel, t['land'][0], t['land'][1], t['fall'])
+                        M = seq[-1]
+                    elif t.get('fall'):
                         seq = fall_seq(Mrel, t['fall'])
                         M = seq[-1]
                 if rel is not None and t.get('fall') and rel <= f < rel + t['fall']:
@@ -1081,3 +1091,133 @@ def best_place(ev, base, side, x, y, off, tip=78, obst=(), yaws=range(-180, 180,
         if best is None or c < best[0]:
             best = (c, yw, T, ch, info)
     return best
+
+
+# --------------------------------------------------------------------------------------
+# Cadena del dominó: huecos exactos
+# --------------------------------------------------------------------------------------
+def chain_matrix(c, u):
+    """Ficha acostada cara arriba en el hueco: centro c=(x,y), eje largo (Y local) según u."""
+    y = Vector((u[0], u[1], 0)).normalized()
+    z = Vector((0, 0, 1))
+    x = y.cross(z).normalized()
+    M = Matrix((x, y, z)).transposed().to_4x4()
+    M.translation = Vector((c[0], c[1], S.TABLE_TOP + S.TILE[2] / 2 + 0.0003))
+    return M
+
+
+def chain_obstacle(c, axis):
+    top = S.TABLE_TOP + S.TILE[2]
+    hl, hw = S.TILE[1] / 2, S.TILE[0] / 2
+    if abs(axis[0]) > 0.5:
+        return (c[0], c[1], 1.0, 0.0, hl, hw, top)
+    return (c[0], c[1], 1.0, 0.0, hw, hl, top)
+
+
+def slot_release(c, u, tip=12.0, lift=0.0, n=5):
+    """Pose de la ficha parada (inclinada 'tip' hacia u) tal que, al soltarla y caer cara arriba sobre su arista
+    inferior, termina EXACTAMENTE en el hueco (centro c, eje largo según u). lift: altura extra de la arista de
+    apoyo (si apoya sobre la ficha anterior de la cadena)."""
+    yaw = math.degrees(math.atan2(u[0], -u[1]))
+    M = rest_on_felt(0.0, 0.0, tip, yaw)
+    M.translation.z += lift
+    last = fall_seq(M, n)[-1]
+    tgt = chain_matrix(c, u)
+    M.translation.x += tgt.translation.x - last.translation.x
+    M.translation.y += tgt.translation.y - last.translation.y
+    return M
+
+
+def footprint_hits(M, rects, steps=5):
+    """¿La base de la ficha parada M pisa alguna ficha acostada? rects: obstáculos chain_obstacle."""
+    hx, hy, hz = (v / 2 for v in S.TILE)
+    for i in range(steps):
+        for j in range(3):
+            q = M @ Vector((-hx + 2 * hx * i / (steps - 1), -hy, -hz + hz * j))
+            for cx, cy, cs, sn, a, b, top in rects:
+                if abs(q.x - cx) < a + 0.001 and abs(q.y - cy) < b + 0.001:
+                    return True
+    return False
+
+
+def pinch_local():
+    """Punto de la pinza en coordenadas de la ficha (entre las caras, a STAND_E del borde superior)."""
+    return Vector((0.0, S.TILE[1] / 2 - STAND_E, 0.0))
+
+
+def roll_Q(deg, Pp=None, k=1.0):
+    """Giro de la ficha entre las yemas (alrededor del eje de la pinza, normal a la cara). Pp: punto de la ficha
+    (coordenadas locales) que queda en la pinza al terminar (la ficha se desliza un poco entre los dedos)."""
+    P = pinch_local()
+    Pk = P if Pp is None else P.lerp(Vector(Pp), k)
+    return Matrix.Translation(P) @ Matrix.Rotation(math.radians(deg * k), 4, 'Z') @ Matrix.Translation(-Pk)
+
+
+def land_grip(rig, off, piv, side='r'):
+    """Opciones (mejor primero) de giro y punto de agarre para soltar apaisada: la pinza toma la esquina superior del canto largo (los dedos no
+    llegan al paño) y el cuerpo de la ficha queda del lado del pulgar (no atraviesa medio/anular/meñique)."""
+    hx, hy, hz = (v / 2 for v in S.TILE)
+    sx = 1.0 if piv.x > 0 else -1.0
+    theta = -90.0 * sx
+    Hr = rig.rest['hand_' + side].inverted()
+    pk = Hr @ rig.head['pinky_01_' + side]
+    th = Hr @ rig.head['thumb_01_' + side]
+    out = []
+    for e in (1.0, -1.0):
+        Pp = Vector((-sx * (hx - 0.012), e * (hy - 0.020), 0.0))
+        c = off @ roll_Q(theta, Pp).translation
+        out.append(((c - pk).length - (c - th).length, theta, Pp))
+    out.sort(key=lambda x: -x[0])
+    return out
+
+
+def land_release(c, u, tip=12.0, lift=0.0):
+    """Ficha de pie sobre su canto LARGO (apaisada), cara hacia el jugador, que al soltarla cae hacia delante
+    (lejos del jugador) y queda acostada cara arriba en el hueco (centro c, eje largo según u, u horizontal en X).
+    Devuelve (M_suelta, M_final, pivote_local)."""
+    hx, hy, hz = (v / 2 for v in S.TILE)
+    Mf = chain_matrix(c, u)
+    R3 = Mf.to_3x3()
+    sx = 1.0 if R3.col[0].y > 0 else -1.0
+    piv = Vector((sx * hx, 0.0, -hz))
+    p = Mf @ piv
+    ax = R3.col[1].normalized()
+    best = None
+    for sg in (1, -1):
+        Rr = Matrix.Translation(p) @ Matrix.Rotation(sg * math.radians(90.0 - tip), 4, ax) @ Matrix.Translation(-p)
+        M = Rr @ Mf
+        if best is None or M.translation.z > best.translation.z:
+            best = M
+    best.translation.z += lift
+    return best, Mf, piv
+
+
+def land_seq(Mrel, Mfinal, piv, n):
+    """Caída girando sobre el canto largo inferior: de Mrel a Mfinal con aceleración (k^2), pivote fijo."""
+    p0, p1 = Mrel @ piv, Mfinal @ piv
+    q0, q1 = Mrel.to_quaternion(), Mfinal.to_quaternion()
+    out = []
+    for k in range(n + 1):
+        a = (k / n) ** 2
+        R3 = q0.slerp(q1, a).to_matrix()
+        M = R3.to_4x4()
+        M.translation = p0.lerp(p1, a) - R3 @ piv
+        out.append(M)
+    out[-1] = Mfinal.copy()
+    return out
+
+
+def standing_hits(M, rects):
+    """¿La ficha de pie M (cualquier canto apoyado) pisa alguna ficha acostada de la cadena?"""
+    hx, hy, hz = (v / 2 for v in S.TILE)
+    low = S.TABLE_TOP + S.TILE[2] + 0.0005
+    for sx in (-1, -0.5, 0, 0.5, 1):
+        for sy in (-1, -0.5, 0, 0.5, 1):
+            for sz in (-1, 1):
+                q = M @ Vector((sx * hx, sy * hy, sz * hz))
+                if q.z > low:
+                    continue
+                for cx, cy, cs, sn, a, b, top in rects:
+                    if abs(q.x - cx) < a - 0.0005 and abs(q.y - cy) < b - 0.0005:
+                        return True
+    return False
