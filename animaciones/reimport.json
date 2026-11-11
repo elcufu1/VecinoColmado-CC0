@@ -1,0 +1,204 @@
+{
+ "acciones": {
+  "Agarrar_Ficha_Cerca": [
+   0.0,
+   20.0
+  ],
+  "Agarrar_Ficha_Lejos": [
+   0.0,
+   26.0
+  ],
+  "Aplaudir": [
+   0.0,
+   48.0
+  ],
+  "Barajar_Fichas": [
+   0.0,
+   48.0
+  ],
+  "Caminar": [
+   0.0,
+   28.0
+  ],
+  "Celebrar_Ganar": [
+   0.0,
+   72.0
+  ],
+  "Colocar_Ficha_Cerca": [
+   0.0,
+   20.0
+  ],
+  "Colocar_Ficha_Lejos": [
+   0.0,
+   30.0
+  ],
+  "Enojado": [
+   0.0,
+   50.0
+  ],
+  "Golpe_Ficha": [
+   0.0,
+   34.0
+  ],
+  "Idle_De_Pie": [
+   0.0,
+   192.0
+  ],
+  "Idle_Sentado": [
+   0.0,
+   144.0
+  ],
+  "Levantarse": [
+   0.0,
+   90.0
+  ],
+  "Pasar": [
+   0.0,
+   26.0
+  ],
+  "Pensar": [
+   0.0,
+   96.0
+  ],
+  "Perder": [
+   0.0,
+   76.0
+  ],
+  "Prueba_Rango_Completo": [
+   0.0,
+   2382.0
+  ],
+  "Pulgar_Arriba": [
+   0.0,
+   40.0
+  ],
+  "Reir": [
+   0.0,
+   60.0
+  ],
+  "Saludar": [
+   0.0,
+   48.0
+  ],
+  "Senalar": [
+   0.0,
+   40.0
+  ],
+  "Sentarse": [
+   0.0,
+   100.0
+  ],
+  "Sostener_Fichas": [
+   0.0,
+   72.0
+  ]
+ },
+ "curvas": {
+  "Agarrar_Ficha_Cerca": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Agarrar_Ficha_Lejos": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Aplaudir": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Barajar_Fichas": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Caminar": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Celebrar_Ganar": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Colocar_Ficha_Cerca": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Colocar_Ficha_Lejos": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Enojado": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Golpe_Ficha": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Idle_De_Pie": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Idle_Sentado": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Levantarse": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Pasar": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Pensar": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Perder": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Prueba_Rango_Completo": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Pulgar_Arriba": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Reir": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Saludar": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Senalar": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Sentarse": {
+   "huesos": 530,
+   "morfos": 128
+  },
+  "Sostener_Fichas": {
+   "huesos": 530,
+   "morfos": 128
+  }
+ },
+ "armaduras": [
+  "VecinoColmado_CC0"
+ ],
+ "mallas": [
+  "base",
+  "Boxer_CC0",
+  "eyebrow002",
+  "eyelashes01",
+  "Icosphere",
+  "low-poly",
+  "teeth_base",
+  "tongue01"
+ ],
+ "faltan": []
+}

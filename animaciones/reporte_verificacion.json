@@ -1,0 +1,1890 @@
+{
+ "timeline": [
+  {
+   "name": "Idle_Sentado",
+   "start": 1,
+   "end": 145,
+   "frames": 144,
+   "loop": true,
+   "duracion_s": 6.0,
+   "desc": "Sentado a la mesa: respira, mira las fichas, tamborilea los dedos.",
+   "uso": "Espera de turno (bucle).",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Agarrar_Ficha_Cerca",
+   "start": 158,
+   "end": 178,
+   "frames": 20,
+   "loop": false,
+   "duracion_s": 0.833,
+   "desc": "Agarra una ficha cercana con pinza pulgar-índice y la levanta.",
+   "uso": "Tomar ficha de la mesa (pozo o propias).",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Agarrar_Ficha_Lejos",
+   "start": 191,
+   "end": 217,
+   "frames": 26,
+   "loop": false,
+   "duracion_s": 1.083,
+   "desc": "Agarra una ficha lejana con pinza pulgar-índice y la levanta.",
+   "uso": "Tomar ficha de la mesa (pozo o propias).",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Colocar_Ficha_Cerca",
+   "start": 230,
+   "end": 250,
+   "frames": 20,
+   "loop": false,
+   "duracion_s": 0.833,
+   "desc": "Lleva la ficha rápido y decidido a la mesa, la suelta y vuelve a la pose sentada.",
+   "uso": "Jugar una ficha cerca del jugador.",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Colocar_Ficha_Lejos",
+   "start": 263,
+   "end": 293,
+   "frames": 30,
+   "loop": false,
+   "duracion_s": 1.25,
+   "desc": "Coloca la ficha lejos: la otra mano se apoya firme, el cuerpo se levanta un poco y todo se mueve a la vez.",
+   "uso": "Jugar una ficha en el extremo lejano de la mesa.",
+   "cam": "mesa_lejos",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Golpe_Ficha",
+   "start": 306,
+   "end": 340,
+   "frames": 34,
+   "loop": false,
+   "duracion_s": 1.417,
+   "desc": "Tranque/capicúa: levanta la ficha y la golpea fuerte contra la mesa.",
+   "uso": "Jugada final (tranque o capicúa).",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Pasar",
+   "start": 353,
+   "end": 379,
+   "frames": 26,
+   "loop": false,
+   "duracion_s": 1.083,
+   "desc": "Toca la mesa dos veces con los nudillos (\"paso\").",
+   "uso": "Pasar turno.",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Barajar_Fichas",
+   "start": 392,
+   "end": 440,
+   "frames": 48,
+   "loop": true,
+   "duracion_s": 2.0,
+   "desc": "Ambas manos revuelven fichas boca abajo en círculos sobre la mesa.",
+   "uso": "Revolver fichas al inicio de la mano (bucle).",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Sostener_Fichas",
+   "start": 453,
+   "end": 525,
+   "frames": 72,
+   "loop": true,
+   "duracion_s": 3.0,
+   "desc": "Sostiene un grupo de fichas en la mano izquierda, las mira y mueve los dedos (bucle).",
+   "uso": "Mirar las fichas propias (bucle).",
+   "cam": "mesa",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Celebrar_Ganar",
+   "start": 538,
+   "end": 610,
+   "frames": 72,
+   "loop": false,
+   "duracion_s": 3.0,
+   "desc": "Celebra: puño arriba dos veces y aplaude.",
+   "uso": "Ganar la mano/partida.",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Perder",
+   "start": 623,
+   "end": 699,
+   "frames": 76,
+   "loop": false,
+   "duracion_s": 3.167,
+   "desc": "Pierde: se lleva las manos a la cabeza y se echa atrás en la silla.",
+   "uso": "Perder la mano/partida.",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Pensar",
+   "start": 712,
+   "end": 808,
+   "frames": 96,
+   "loop": true,
+   "duracion_s": 4.0,
+   "desc": "Piensa: mano en la barbilla, tamborilea con la otra mano (bucle).",
+   "uso": "Pensar la jugada (bucle).",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Saludar",
+   "start": 821,
+   "end": 869,
+   "frames": 48,
+   "loop": false,
+   "duracion_s": 2.0,
+   "desc": "Saluda con la mano abierta.",
+   "uso": "Saludo al entrar/llegar jugadores.",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Senalar",
+   "start": 882,
+   "end": 922,
+   "frames": 40,
+   "loop": false,
+   "duracion_s": 1.667,
+   "desc": "Señala con el índice hacia el centro/otro jugador.",
+   "uso": "Indicar jugada o jugador.",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Pulgar_Arriba",
+   "start": 935,
+   "end": 975,
+   "frames": 40,
+   "loop": false,
+   "duracion_s": 1.667,
+   "desc": "Pulgar arriba con sonrisa y asentimiento.",
+   "uso": "Aprobar jugada del compañero.",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Aplaudir",
+   "start": 988,
+   "end": 1036,
+   "frames": 48,
+   "loop": false,
+   "duracion_s": 2.0,
+   "desc": "Aplaude cuatro veces.",
+   "uso": "Felicitar a otro jugador.",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Reir",
+   "start": 1049,
+   "end": 1109,
+   "frames": 60,
+   "loop": false,
+   "duracion_s": 2.5,
+   "desc": "Se ríe: hombros y cabeza rebotan, cara de risa.",
+   "uso": "Reacción a una buena jugada/chiste.",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Enojado",
+   "start": 1122,
+   "end": 1172,
+   "frames": 50,
+   "loop": false,
+   "duracion_s": 2.083,
+   "desc": "Enojado: golpe con la palma abierta en la mesa y cara de enojo.",
+   "uso": "Perder una jugada clave / protestar.",
+   "cam": "mesa_frente",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Idle_De_Pie",
+   "start": 1185,
+   "end": 1377,
+   "frames": 192,
+   "loop": true,
+   "duracion_s": 8.0,
+   "desc": "De pie: respira, cambia el peso de pierna, dedos relajados.",
+   "uso": "Espera de pie / lobby (bucle).",
+   "cam": "pie",
+   "mesa": false,
+   "silla": false,
+   "markers": []
+  },
+  {
+   "name": "Caminar",
+   "start": 1390,
+   "end": 1418,
+   "frames": 28,
+   "loop": true,
+   "duracion_s": 1.167,
+   "desc": "Ciclo de caminar en el sitio (in place), 0.83 m/s.",
+   "uso": "Desplazamiento (el juego mueve el personaje).",
+   "cam": "pie",
+   "mesa": false,
+   "silla": false,
+   "markers": []
+  },
+  {
+   "name": "Sentarse",
+   "start": 1431,
+   "end": 1531,
+   "frames": 100,
+   "loop": false,
+   "duracion_s": 4.167,
+   "desc": "De pie frente a la silla: se sienta y se arrima a la mesa con la silla.",
+   "uso": "Llegar a la mesa.",
+   "cam": "lado",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Levantarse",
+   "start": 1544,
+   "end": 1634,
+   "frames": 90,
+   "loop": false,
+   "duracion_s": 3.75,
+   "desc": "Se separa de la mesa con la silla y se levanta.",
+   "uso": "Salir de la mesa.",
+   "cam": "lado",
+   "mesa": true,
+   "silla": true,
+   "markers": []
+  },
+  {
+   "name": "Prueba_Rango_Completo",
+   "start": 1647,
+   "end": 4029,
+   "frames": 2382,
+   "loop": false,
+   "duracion_s": 99.25,
+   "desc": "Demostración: mueve cada parte una por una y luego todo junto.",
+   "uso": "Solo pruebas de rig (no usar en juego).",
+   "cam": "pie",
+   "mesa": false,
+   "silla": false,
+   "markers": [
+    [
+     1659,
+     "Cuello_Cabeza"
+    ],
+    [
+     1871,
+     "Hombros"
+    ],
+    [
+     1991,
+     "Brazos"
+    ],
+    [
+     2197,
+     "Codos"
+    ],
+    [
+     2313,
+     "Munecas"
+    ],
+    [
+     2479,
+     "Dedos"
+    ],
+    [
+     2595,
+     "Dedo_thumb"
+    ],
+    [
+     2623,
+     "Dedo_index"
+    ],
+    [
+     2651,
+     "Dedo_middle"
+    ],
+    [
+     2679,
+     "Dedo_ring"
+    ],
+    [
+     2707,
+     "Dedo_pinky"
+    ],
+    [
+     2733,
+     "Contar"
+    ],
+    [
+     2885,
+     "Columna"
+    ],
+    [
+     3083,
+     "Cadera"
+    ],
+    [
+     3235,
+     "Rodillas"
+    ],
+    [
+     3453,
+     "Tobillos_DedosPie"
+    ],
+    [
+     3667,
+     "Cara"
+    ],
+    [
+     3917,
+     "Todo_Junto"
+    ]
+   ]
+  }
+ ],
+ "report": {
+  "Idle_Sentado": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 145,
+    "rango": [
+     0,
+     144
+    ]
+   },
+   "_wrist_l": {
+    "max": 27.0,
+    "frame": 42
+   },
+   "_elbow_l": {
+    "max": 43.5,
+    "frame": 55
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 19
+   },
+   "_twist_l": {
+    "max": 11.9,
+    "frame": 16
+   },
+   "_wrist_r": {
+    "max": 26.5,
+    "frame": 143
+   },
+   "_elbow_r": {
+    "max": 44.5,
+    "frame": 129
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 19
+   },
+   "_twist_r": {
+    "max": 16.9,
+    "frame": 20
+   }
+  },
+  "Agarrar_Ficha_Cerca": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 21,
+    "rango": [
+     0,
+     20
+    ]
+   },
+   "_wrist_l": {
+    "max": 29.5,
+    "frame": 6
+   },
+   "_elbow_l": {
+    "max": 59.2,
+    "frame": 6
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 8.1,
+    "frame": 5
+   },
+   "_wrist_r": {
+    "max": 38.7,
+    "frame": 6
+   },
+   "_elbow_r": {
+    "max": 100.7,
+    "frame": 6
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_r": {
+    "max": 14.7,
+    "frame": 10
+   },
+   "riel_cerca": {
+    "prof_mm": 4.3,
+    "region": "antebrazo",
+    "cuadros": 1,
+    "rango": [
+     5,
+     5
+    ]
+   },
+   "ficha:Ficha": {
+    "prof_mm": 1.0,
+    "region": "thumb_03_r",
+    "cuadros": 11,
+    "rango": [
+     10,
+     20
+    ]
+   }
+  },
+  "Agarrar_Ficha_Lejos": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0101
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 27,
+    "rango": [
+     0,
+     26
+    ]
+   },
+   "_wrist_l": {
+    "max": 27.1,
+    "frame": 24
+   },
+   "_elbow_l": {
+    "max": 68.8,
+    "frame": 9
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 8.2,
+    "frame": 4
+   },
+   "_wrist_r": {
+    "max": 25.9,
+    "frame": 0
+   },
+   "_elbow_r": {
+    "max": 84.0,
+    "frame": 26
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 16
+   },
+   "_twist_r": {
+    "max": 11.0,
+    "frame": 21
+   },
+   "ficha:Ficha": {
+    "prof_mm": 1.5,
+    "region": "ring_03_r",
+    "cuadros": 14,
+    "rango": [
+     2,
+     26
+    ]
+   },
+   "riel_cerca": {
+    "prof_mm": 3.8,
+    "region": "brazo",
+    "cuadros": 11,
+    "rango": [
+     7,
+     17
+    ]
+   }
+  },
+  "Colocar_Ficha_Cerca": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "ficha:Ficha": {
+    "prof_mm": 2.2,
+    "region": "ring_03_r",
+    "cuadros": 11,
+    "rango": [
+     0,
+     13
+    ]
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 21,
+    "rango": [
+     0,
+     20
+    ]
+   },
+   "_wrist_l": {
+    "max": 29.4,
+    "frame": 5
+   },
+   "_elbow_l": {
+    "max": 60.3,
+    "frame": 5
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 20
+   },
+   "_twist_l": {
+    "max": 8.0,
+    "frame": 3
+   },
+   "_wrist_r": {
+    "max": 26.3,
+    "frame": 20
+   },
+   "_elbow_r": {
+    "max": 83.7,
+    "frame": 0
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 20
+   },
+   "_twist_r": {
+    "max": 17.9,
+    "frame": 7
+   }
+  },
+  "Colocar_Ficha_Lejos": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.083
+   },
+   "ficha:Ficha": {
+    "prof_mm": 3.7,
+    "region": "middle_03_r",
+    "cuadros": 15,
+    "rango": [
+     0,
+     14
+    ]
+   },
+   "boxer": {
+    "prof_mm": 6.7,
+    "region": "tronco",
+    "cuadros": 31,
+    "rango": [
+     0,
+     30
+    ]
+   },
+   "_wrist_l": {
+    "max": 37.7,
+    "frame": 15
+   },
+   "_elbow_l": {
+    "max": 108.8,
+    "frame": 9
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 24
+   },
+   "_twist_l": {
+    "max": 14.0,
+    "frame": 9
+   },
+   "_wrist_r": {
+    "max": 25.9,
+    "frame": 30
+   },
+   "_elbow_r": {
+    "max": 90.7,
+    "frame": 3
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 13
+   },
+   "_twist_r": {
+    "max": 18.1,
+    "frame": 6
+   }
+  },
+  "Golpe_Ficha": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "ficha:Ficha": {
+    "prof_mm": 4.2,
+    "region": "ring_03_r",
+    "cuadros": 25,
+    "rango": [
+     0,
+     26
+    ]
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 35,
+    "rango": [
+     0,
+     34
+    ]
+   },
+   "_wrist_l": {
+    "max": 37.3,
+    "frame": 9
+   },
+   "_elbow_l": {
+    "max": 77.3,
+    "frame": 16
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 9
+   },
+   "_twist_l": {
+    "max": 11.2,
+    "frame": 11
+   },
+   "_wrist_r": {
+    "max": 25.9,
+    "frame": 34
+   },
+   "_elbow_r": {
+    "max": 83.7,
+    "frame": 0
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 34
+   },
+   "_twist_r": {
+    "max": 21.3,
+    "frame": 16
+   }
+  },
+  "Pasar": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 27,
+    "rango": [
+     0,
+     26
+    ]
+   },
+   "_wrist_l": {
+    "max": 28.0,
+    "frame": 5
+   },
+   "_elbow_l": {
+    "max": 52.6,
+    "frame": 5
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 6.1,
+    "frame": 11
+   },
+   "_wrist_r": {
+    "max": 29.2,
+    "frame": 14
+   },
+   "_elbow_r": {
+    "max": 50.0,
+    "frame": 5
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_r": {
+    "max": 34.7,
+    "frame": 7
+   }
+  },
+  "Barajar_Fichas": {
+   "_hueco_asiento": {
+    "min": 0.0146,
+    "max": 0.0146
+   },
+   "boxer": {
+    "prof_mm": 5.6,
+    "region": "tronco",
+    "cuadros": 49,
+    "rango": [
+     0,
+     48
+    ]
+   },
+   "_wrist_l": {
+    "max": 43.9,
+    "frame": 26
+   },
+   "_elbow_l": {
+    "max": 87.3,
+    "frame": 29
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 17
+   },
+   "_twist_l": {
+    "max": 21.3,
+    "frame": 42
+   },
+   "_wrist_r": {
+    "max": 45.5,
+    "frame": 28
+   },
+   "_elbow_r": {
+    "max": 88.4,
+    "frame": 30
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 18
+   },
+   "_twist_r": {
+    "max": 20.9,
+    "frame": 43
+   }
+  },
+  "Sostener_Fichas": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 73,
+    "rango": [
+     0,
+     72
+    ]
+   },
+   "_wrist_l": {
+    "max": 8.3,
+    "frame": 9
+   },
+   "_elbow_l": {
+    "max": 72.5,
+    "frame": 27
+   },
+   "_reach_l": {
+    "max": 0.8,
+    "frame": 9
+   },
+   "_twist_l": {
+    "max": 77.7,
+    "frame": 27
+   },
+   "_wrist_r": {
+    "max": 17.1,
+    "frame": 44
+   },
+   "_elbow_r": {
+    "max": 60.1,
+    "frame": 63
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 44
+   },
+   "_twist_r": {
+    "max": 3.8,
+    "frame": 38
+   }
+  },
+  "Celebrar_Ganar": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 73,
+    "rango": [
+     0,
+     72
+    ]
+   },
+   "_wrist_l": {
+    "max": 50.4,
+    "frame": 36
+   },
+   "_elbow_l": {
+    "max": 98.4,
+    "frame": 39
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 5
+   },
+   "_twist_l": {
+    "max": 62.4,
+    "frame": 32
+   },
+   "_wrist_r": {
+    "max": 51.9,
+    "frame": 48
+   },
+   "_elbow_r": {
+    "max": 138.3,
+    "frame": 25
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 2
+   },
+   "_twist_r": {
+    "max": 64.1,
+    "frame": 21
+   }
+  },
+  "Perder": {
+   "_hueco_asiento": {
+    "min": -0.0012,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 77,
+    "rango": [
+     0,
+     76
+    ]
+   },
+   "_wrist_l": {
+    "max": 58.0,
+    "frame": 8
+   },
+   "_elbow_l": {
+    "max": 130.6,
+    "frame": 58
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 80.4,
+    "frame": 16
+   },
+   "_wrist_r": {
+    "max": 58.0,
+    "frame": 8
+   },
+   "_elbow_r": {
+    "max": 130.1,
+    "frame": 58
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_r": {
+    "max": 80.4,
+    "frame": 16
+   },
+   "silla_asiento": {
+    "prof_mm": 1.2,
+    "region": "muslo",
+    "cuadros": 13,
+    "rango": [
+     13,
+     25
+    ]
+   },
+   "riel_cerca": {
+    "prof_mm": 2.3,
+    "region": "antebrazo",
+    "cuadros": 1,
+    "rango": [
+     62,
+     62
+    ]
+   }
+  },
+  "Pensar": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 97,
+    "rango": [
+     0,
+     96
+    ]
+   },
+   "_wrist_l": {
+    "max": 30.3,
+    "frame": 14
+   },
+   "_elbow_l": {
+    "max": 72.5,
+    "frame": 36
+   },
+   "_reach_l": {
+    "max": 0.8,
+    "frame": 14
+   },
+   "_twist_l": {
+    "max": 9.0,
+    "frame": 14
+   },
+   "_wrist_r": {
+    "max": 26.9,
+    "frame": 60
+   },
+   "_elbow_r": {
+    "max": 142.3,
+    "frame": 60
+   },
+   "_reach_r": {
+    "max": 0.4,
+    "frame": 31
+   },
+   "_twist_r": {
+    "max": 135.1,
+    "frame": 35
+   }
+  },
+  "Saludar": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 49,
+    "rango": [
+     0,
+     48
+    ]
+   },
+   "_wrist_l": {
+    "max": 26.5,
+    "frame": 40
+   },
+   "_elbow_l": {
+    "max": 46.7,
+    "frame": 8
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 8.0,
+    "frame": 8
+   },
+   "_wrist_r": {
+    "max": 58.4,
+    "frame": 13
+   },
+   "_elbow_r": {
+    "max": 141.1,
+    "frame": 33
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 1
+   },
+   "_twist_r": {
+    "max": 40.3,
+    "frame": 33
+   },
+   "riel_cerca": {
+    "prof_mm": 4.4,
+    "region": "antebrazo",
+    "cuadros": 6,
+    "rango": [
+     8,
+     40
+    ]
+   }
+  },
+  "Senalar": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 41,
+    "rango": [
+     0,
+     40
+    ]
+   },
+   "_wrist_l": {
+    "max": 33.6,
+    "frame": 8
+   },
+   "_elbow_l": {
+    "max": 37.7,
+    "frame": 0
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 9
+   },
+   "_twist_l": {
+    "max": 13.7,
+    "frame": 24
+   },
+   "_wrist_r": {
+    "max": 30.7,
+    "frame": 33
+   },
+   "_elbow_r": {
+    "max": 54.8,
+    "frame": 8
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 33
+   },
+   "_twist_r": {
+    "max": 13.8,
+    "frame": 31
+   }
+  },
+  "Pulgar_Arriba": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 41,
+    "rango": [
+     0,
+     40
+    ]
+   },
+   "_wrist_l": {
+    "max": 26.3,
+    "frame": 26
+   },
+   "_elbow_l": {
+    "max": 37.7,
+    "frame": 0
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 9
+   },
+   "_twist_l": {
+    "max": 6.6,
+    "frame": 13
+   },
+   "_wrist_r": {
+    "max": 32.7,
+    "frame": 28
+   },
+   "_elbow_r": {
+    "max": 98.7,
+    "frame": 27
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_r": {
+    "max": 51.2,
+    "frame": 9
+   },
+   "riel_cerca": {
+    "prof_mm": 3.4,
+    "region": "antebrazo",
+    "cuadros": 1,
+    "rango": [
+     31,
+     31
+    ]
+   }
+  },
+  "Aplaudir": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 49,
+    "rango": [
+     0,
+     48
+    ]
+   },
+   "_wrist_l": {
+    "max": 50.8,
+    "frame": 12
+   },
+   "_elbow_l": {
+    "max": 98.4,
+    "frame": 8
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 62.4,
+    "frame": 8
+   },
+   "_wrist_r": {
+    "max": 51.7,
+    "frame": 30
+   },
+   "_elbow_r": {
+    "max": 98.4,
+    "frame": 27
+   },
+   "_reach_r": {
+    "max": 0.9,
+    "frame": 1
+   },
+   "_twist_r": {
+    "max": 62.4,
+    "frame": 8
+   }
+  },
+  "Reir": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 61,
+    "rango": [
+     0,
+     60
+    ]
+   },
+   "_wrist_l": {
+    "max": 27.7,
+    "frame": 25
+   },
+   "_elbow_l": {
+    "max": 48.1,
+    "frame": 31
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 10
+   },
+   "_twist_l": {
+    "max": 12.2,
+    "frame": 13
+   },
+   "_wrist_r": {
+    "max": 27.7,
+    "frame": 25
+   },
+   "_elbow_r": {
+    "max": 48.1,
+    "frame": 31
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 10
+   },
+   "_twist_r": {
+    "max": 12.2,
+    "frame": 13
+   },
+   "riel_cerca": {
+    "prof_mm": 2.2,
+    "region": "antebrazo",
+    "cuadros": 15,
+    "rango": [
+     5,
+     49
+    ]
+   }
+  },
+  "Enojado": {
+   "_hueco_asiento": {
+    "min": 0.0057,
+    "max": 0.0057
+   },
+   "boxer": {
+    "prof_mm": 5.9,
+    "region": "tronco",
+    "cuadros": 51,
+    "rango": [
+     0,
+     50
+    ]
+   },
+   "_wrist_l": {
+    "max": 31.0,
+    "frame": 21
+   },
+   "_elbow_l": {
+    "max": 68.6,
+    "frame": 13
+   },
+   "_reach_l": {
+    "max": 0.9,
+    "frame": 0
+   },
+   "_twist_l": {
+    "max": 10.4,
+    "frame": 21
+   },
+   "_wrist_r": {
+    "max": 28.2,
+    "frame": 4
+   },
+   "_elbow_r": {
+    "max": 59.0,
+    "frame": 16
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 4
+   },
+   "_twist_r": {
+    "max": 16.8,
+    "frame": 5
+   },
+   "riel_cerca": {
+    "prof_mm": 1.6,
+    "region": "antebrazo",
+    "cuadros": 2,
+    "rango": [
+     8,
+     9
+    ]
+   }
+  },
+  "Idle_De_Pie": {
+   "_wrist_l": {
+    "max": 16.7,
+    "frame": 72
+   },
+   "_elbow_l": {
+    "max": 34.6,
+    "frame": 72
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 24
+   },
+   "_twist_l": {
+    "max": 35.9,
+    "frame": 168
+   },
+   "_wrist_r": {
+    "max": 16.7,
+    "frame": 168
+   },
+   "_elbow_r": {
+    "max": 34.6,
+    "frame": 168
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 120
+   },
+   "_twist_r": {
+    "max": 35.9,
+    "frame": 72
+   }
+  },
+  "Caminar": {
+   "_wrist_l": {
+    "max": 38.9,
+    "frame": 14
+   },
+   "_elbow_l": {
+    "max": 84.3,
+    "frame": 14
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 21
+   },
+   "_twist_l": {
+    "max": 38.3,
+    "frame": 7
+   },
+   "_wrist_r": {
+    "max": 38.9,
+    "frame": 0
+   },
+   "_elbow_r": {
+    "max": 84.3,
+    "frame": 0
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 7
+   },
+   "_twist_r": {
+    "max": 38.3,
+    "frame": 21
+   },
+   "suelo": {
+    "prof_mm": 6.3,
+    "region": "pie",
+    "cuadros": 4,
+    "rango": [
+     1,
+     16
+    ]
+   }
+  },
+  "Sentarse": {
+   "_hueco_asiento": {
+    "min": -0.4547,
+    "max": 0.406
+   },
+   "_wrist_l": {
+    "max": 66.6,
+    "frame": 33
+   },
+   "_elbow_l": {
+    "max": 151.8,
+    "frame": 80
+   },
+   "_reach_l": {
+    "max": 1.0,
+    "frame": 65
+   },
+   "_twist_l": {
+    "max": 120.5,
+    "frame": 34
+   },
+   "_wrist_r": {
+    "max": 66.6,
+    "frame": 33
+   },
+   "_elbow_r": {
+    "max": 151.8,
+    "frame": 80
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 65
+   },
+   "_twist_r": {
+    "max": 120.5,
+    "frame": 34
+   },
+   "boxer": {
+    "prof_mm": 7.4,
+    "region": "tronco",
+    "cuadros": 75,
+    "rango": [
+     26,
+     100
+    ]
+   },
+   "silla_asiento": {
+    "prof_mm": 1.0,
+    "region": "muslo",
+    "cuadros": 12,
+    "rango": [
+     41,
+     52
+    ]
+   }
+  },
+  "Levantarse": {
+   "_hueco_asiento": {
+    "min": -0.458,
+    "max": 0.4053
+   },
+   "boxer": {
+    "prof_mm": 7.0,
+    "region": "tronco",
+    "cuadros": 62,
+    "rango": [
+     0,
+     61
+    ]
+   },
+   "_wrist_l": {
+    "max": 112.2,
+    "frame": 54
+   },
+   "_elbow_l": {
+    "max": 174.7,
+    "frame": 55
+   },
+   "_reach_l": {
+    "max": 1.1,
+    "frame": 69
+   },
+   "_twist_l": {
+    "max": 74.5,
+    "frame": 52
+   },
+   "_wrist_r": {
+    "max": 112.2,
+    "frame": 54
+   },
+   "_elbow_r": {
+    "max": 174.7,
+    "frame": 55
+   },
+   "_reach_r": {
+    "max": 1.1,
+    "frame": 69
+   },
+   "_twist_r": {
+    "max": 74.5,
+    "frame": 52
+   },
+   "silla_asiento": {
+    "prof_mm": 6.1,
+    "region": "muslo",
+    "cuadros": 7,
+    "rango": [
+     27,
+     33
+    ]
+   }
+  },
+  "Prueba_Rango_Completo": {
+   "_wrist_l": {
+    "max": 78.0,
+    "frame": 1612
+   },
+   "_elbow_l": {
+    "max": 147.6,
+    "frame": 592
+   },
+   "_reach_l": {
+    "max": 1.1,
+    "frame": 460
+   },
+   "_twist_l": {
+    "max": 146.5,
+    "frame": 2331
+   },
+   "_wrist_r": {
+    "max": 78.0,
+    "frame": 1612
+   },
+   "_elbow_r": {
+    "max": 173.4,
+    "frame": 2283
+   },
+   "_reach_r": {
+    "max": 1.0,
+    "frame": 242
+   },
+   "_twist_r": {
+    "max": 148.0,
+    "frame": 2331
+   },
+   "boxer": {
+    "prof_mm": 5.6,
+    "region": "tronco",
+    "cuadros": 64,
+    "rango": [
+     1603,
+     2348
+    ]
+   }
+  }
+ },
+ "log": {
+  "Agarrar_Ficha_Cerca": {
+   "agarre": {
+    "wrist": 32.441,
+    "reach": 0.694,
+    "dz": 0.003,
+    "twist": 15.173,
+    "elbow": 92.189
+   }
+  },
+  "Agarrar_Ficha_Lejos": {
+   "agarre": {
+    "wrist": 8.719,
+    "reach": 0.962,
+    "dz": 0.003,
+    "twist": 1.191,
+    "elbow": 31.723
+   }
+  },
+  "Colocar_Ficha_Cerca": {
+   "suelta": {
+    "wrist": 8.489,
+    "reach": 0.878,
+    "dz": 0.003,
+    "twist": 18.529,
+    "elbow": 57.225
+   }
+  },
+  "Colocar_Ficha_Lejos": {
+   "suelta": {
+    "wrist": 6.955,
+    "reach": 0.972,
+    "dz": 0.003,
+    "twist": 6.142,
+    "elbow": 27.015
+   }
+  },
+  "Golpe_Ficha": {
+   "golpe": {
+    "wrist": 7.026,
+    "reach": 0.884,
+    "dz": 0.003,
+    "twist": 17.676,
+    "elbow": 55.656
+   }
+  },
+  "Sostener_Fichas": {
+   "mano": {
+    "reach": 0.817,
+    "wrist": 8.044,
+    "twist": -76.99,
+    "elbow": 70.403,
+    "theta": -0.131,
+    "contact_dz": 0.0
+   }
+  }
+ },
+ "glb": {
+  "tamano_MB": 14.58,
+  "animaciones": {
+   "Idle_Sentado": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 6,
+    "esperado_s": 6.0
+   },
+   "Agarrar_Ficha_Cerca": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 0.833,
+    "esperado_s": 0.833
+   },
+   "Agarrar_Ficha_Lejos": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 1.083,
+    "esperado_s": 1.083
+   },
+   "Colocar_Ficha_Cerca": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 0.833,
+    "esperado_s": 0.833
+   },
+   "Colocar_Ficha_Lejos": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 1.25,
+    "esperado_s": 1.25
+   },
+   "Golpe_Ficha": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 1.417,
+    "esperado_s": 1.417
+   },
+   "Pasar": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 1.083,
+    "esperado_s": 1.083
+   },
+   "Barajar_Fichas": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 2,
+    "esperado_s": 2.0
+   },
+   "Sostener_Fichas": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 3,
+    "esperado_s": 3.0
+   },
+   "Celebrar_Ganar": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 3,
+    "esperado_s": 3.0
+   },
+   "Perder": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 3.167,
+    "esperado_s": 3.167
+   },
+   "Pensar": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 4,
+    "esperado_s": 4.0
+   },
+   "Saludar": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 2,
+    "esperado_s": 2.0
+   },
+   "Senalar": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 1.667,
+    "esperado_s": 1.667
+   },
+   "Pulgar_Arriba": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 1.667,
+    "esperado_s": 1.667
+   },
+   "Aplaudir": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 2,
+    "esperado_s": 2.0
+   },
+   "Reir": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 2.5,
+    "esperado_s": 2.5
+   },
+   "Enojado": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 2.083,
+    "esperado_s": 2.083
+   },
+   "Idle_De_Pie": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 8,
+    "esperado_s": 8.0
+   },
+   "Caminar": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 1.167,
+    "esperado_s": 1.167
+   },
+   "Sentarse": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 4.167,
+    "esperado_s": 4.167
+   },
+   "Levantarse": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 3.75,
+    "esperado_s": 3.75
+   },
+   "Prueba_Rango_Completo": {
+    "canales": {
+     "translation": 53,
+     "rotation": 53,
+     "scale": 53,
+     "weights": 6
+    },
+    "duracion_s": 99.25,
+    "esperado_s": 99.25
+   }
+  },
+  "faltan": [],
+  "extra": []
+ }
+}
