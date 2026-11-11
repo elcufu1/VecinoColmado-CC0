@@ -1,0 +1,1318 @@
+{
+ "muestras_hueso_cuadro": 199863,
+ "excesos_max_grados": {
+  "Idle_Sentado": 0.0,
+  "Agarrar_Ficha_Cerca": 0.0,
+  "Agarrar_Ficha_Lejos": 0.0,
+  "Colocar_Ficha_Cerca": 0.0,
+  "Colocar_Ficha_Lejos": 0.0,
+  "Golpe_Ficha": 0.0,
+  "Pasar": 0.0,
+  "Barajar_Fichas": 0.0,
+  "Sostener_Fichas": 0.0,
+  "Celebrar_Ganar": 0.0,
+  "Perder": 0.0,
+  "Pensar": 0.0,
+  "Saludar": 0.0,
+  "Senalar": 0.0,
+  "Pulgar_Arriba": 0.0,
+  "Aplaudir": 0.0,
+  "Reir": 0.0,
+  "Enojado": 0.0,
+  "Idle_De_Pie": 0.0,
+  "Caminar": 0.0,
+  "Sentarse": 0.0,
+  "Levantarse": 0.0,
+  "Prueba_Rango_Completo": 0.0001
+ },
+ "rangos": [
+  {
+   "clave": "pelvis",
+   "nombre": "Pelvis",
+   "modo": "euler",
+   "orden": "XZY",
+   "x": [
+    -35,
+    45
+   ],
+   "y": [
+    -35,
+    35
+   ],
+   "z": [
+    -25,
+    25
+   ],
+   "eje_x": "flexión adelante / atrás",
+   "eje_y": "giro",
+   "eje_z": "inclinación lateral"
+  },
+  {
+   "clave": "spine_01",
+   "nombre": "Columna lumbar (spine_01)",
+   "modo": "euler",
+   "orden": "XZY",
+   "x": [
+    -15,
+    30
+   ],
+   "y": [
+    -20,
+    20
+   ],
+   "z": [
+    -15,
+    15
+   ],
+   "eje_x": "flexión / extensión",
+   "eje_y": "giro",
+   "eje_z": "inclinación lateral"
+  },
+  {
+   "clave": "spine_02",
+   "nombre": "Columna torácica (spine_02)",
+   "modo": "euler",
+   "orden": "XZY",
+   "x": [
+    -15,
+    30
+   ],
+   "y": [
+    -20,
+    20
+   ],
+   "z": [
+    -15,
+    15
+   ],
+   "eje_x": "flexión / extensión",
+   "eje_y": "giro",
+   "eje_z": "inclinación lateral"
+  },
+  {
+   "clave": "spine_03",
+   "nombre": "Columna alta (spine_03)",
+   "modo": "euler",
+   "orden": "XZY",
+   "x": [
+    -15,
+    30
+   ],
+   "y": [
+    -20,
+    20
+   ],
+   "z": [
+    -15,
+    15
+   ],
+   "eje_x": "flexión / extensión",
+   "eje_y": "giro",
+   "eje_z": "inclinación lateral"
+  },
+  {
+   "clave": "neck_01",
+   "nombre": "Cuello",
+   "modo": "euler",
+   "orden": "XZY",
+   "x": [
+    -30,
+    35
+   ],
+   "y": [
+    -35,
+    35
+   ],
+   "z": [
+    -20,
+    20
+   ],
+   "eje_x": "flexión / extensión",
+   "eje_y": "giro",
+   "eje_z": "inclinación lateral"
+  },
+  {
+   "clave": "head",
+   "nombre": "Cabeza",
+   "modo": "euler",
+   "orden": "XZY",
+   "x": [
+    -35,
+    30
+   ],
+   "y": [
+    -45,
+    45
+   ],
+   "z": [
+    -20,
+    20
+   ],
+   "eje_x": "flexión / extensión",
+   "eje_y": "giro",
+   "eje_z": "inclinación lateral"
+  },
+  {
+   "clave": "clavicle",
+   "nombre": "Clavícula (hombro)",
+   "modo": "euler",
+   "orden": "XYZ",
+   "x": [
+    -20,
+    25
+   ],
+   "y": [
+    -10,
+    10
+   ],
+   "z": [
+    -20,
+    25
+   ],
+   "eje_x": "protracción / retracción",
+   "eje_y": "giro",
+   "eje_z": "elevación / depresión"
+  },
+  {
+   "clave": "upperarm",
+   "nombre": "Hombro (upperarm)",
+   "modo": "st",
+   "orden": "XZY",
+   "x": [
+    -90,
+    130
+   ],
+   "y": [
+    -105,
+    105
+   ],
+   "z": [
+    -80,
+    110
+   ],
+   "eje_x": "balanceo adelante / atrás",
+   "eje_y": "rotación interna / externa",
+   "eje_z": "balanceo lateral"
+  },
+  {
+   "clave": "lowerarm",
+   "nombre": "Codo (lowerarm)",
+   "modo": "st",
+   "orden": "YXZ",
+   "x": [
+    -48,
+    100
+   ],
+   "y": [
+    -85,
+    85
+   ],
+   "z": [
+    -12,
+    12
+   ],
+   "eje_x": "flexión (desde reposo 45.5°)",
+   "eje_y": "pronación / supinación",
+   "eje_z": "desvío lateral"
+  },
+  {
+   "clave": "hand",
+   "nombre": "Muñeca (hand)",
+   "modo": "st",
+   "orden": "XZY",
+   "x": [
+    -70,
+    80
+   ],
+   "y": [
+    -28,
+    28
+   ],
+   "z": [
+    -35,
+    22
+   ],
+   "eje_x": "flexión palmar / extensión",
+   "eje_y": "giro residual",
+   "eje_z": "desviación radial / cubital"
+  },
+  {
+   "clave": "thigh",
+   "nombre": "Cadera (thigh)",
+   "modo": "st",
+   "orden": "XZY",
+   "x": [
+    -125,
+    30
+   ],
+   "y": [
+    -40,
+    40
+   ],
+   "z": [
+    -45,
+    35
+   ],
+   "eje_x": "extensión / flexión",
+   "eje_y": "rotación interna / externa",
+   "eje_z": "abducción / aducción"
+  },
+  {
+   "clave": "calf",
+   "nombre": "Rodilla (calf)",
+   "modo": "euler",
+   "orden": "XYZ",
+   "x": [
+    -2,
+    150
+   ],
+   "y": [
+    -12,
+    12
+   ],
+   "z": [
+    -4,
+    4
+   ],
+   "eje_x": "flexión",
+   "eje_y": "rotación tibial",
+   "eje_z": "varo / valgo"
+  },
+  {
+   "clave": "foot",
+   "nombre": "Tobillo (foot)",
+   "modo": "euler",
+   "orden": "XZY",
+   "x": [
+    -32,
+    50
+   ],
+   "y": [
+    -18,
+    18
+   ],
+   "z": [
+    -25,
+    30
+   ],
+   "eje_x": "flexión plantar / dorsal",
+   "eje_y": "giro",
+   "eje_z": "inversión / eversión"
+  },
+  {
+   "clave": "ball",
+   "nombre": "Dedos del pie (ball)",
+   "modo": "st",
+   "orden": "XZY",
+   "x": [
+    -55,
+    40
+   ],
+   "y": [
+    -8,
+    8
+   ],
+   "z": [
+    -8,
+    8
+   ],
+   "eje_x": "flexión / extensión",
+   "eje_y": "giro",
+   "eje_z": "desvío"
+  },
+  {
+   "clave": "thumb_01",
+   "nombre": "Pulgar falange 1 (thumb_01)",
+   "modo": "euler",
+   "orden": "YXZ",
+   "x": [
+    -25,
+    50
+   ],
+   "y": [
+    -35,
+    40
+   ],
+   "z": [
+    -25,
+    60
+   ],
+   "eje_x": "flexión",
+   "eje_y": "giro",
+   "eje_z": "oposición / separación"
+  },
+  {
+   "clave": "thumb_02",
+   "nombre": "Pulgar falange 2 (thumb_02)",
+   "modo": "euler",
+   "orden": "YXZ",
+   "x": [
+    -12,
+    60
+   ],
+   "y": [
+    -6,
+    6
+   ],
+   "z": [
+    -6,
+    6
+   ],
+   "eje_x": "flexión",
+   "eje_y": "giro",
+   "eje_z": "desvío"
+  },
+  {
+   "clave": "thumb_03",
+   "nombre": "Pulgar falange 3 (thumb_03)",
+   "modo": "euler",
+   "orden": "YXZ",
+   "x": [
+    -20,
+    80
+   ],
+   "y": [
+    -6,
+    6
+   ],
+   "z": [
+    -6,
+    6
+   ],
+   "eje_x": "flexión",
+   "eje_y": "giro",
+   "eje_z": "desvío"
+  },
+  {
+   "clave": "f_01",
+   "nombre": "Dedos falange 1 (index/middle/ring/pinky _01)",
+   "modo": "euler",
+   "orden": "YXZ",
+   "x": [
+    -25,
+    92
+   ],
+   "y": [
+    -6,
+    6
+   ],
+   "z": [
+    -25,
+    25
+   ],
+   "eje_x": "flexión",
+   "eje_y": "giro",
+   "eje_z": "separación"
+  },
+  {
+   "clave": "f_02",
+   "nombre": "Dedos falange 2 (_02)",
+   "modo": "euler",
+   "orden": "YXZ",
+   "x": [
+    -6,
+    108
+   ],
+   "y": [
+    -6,
+    6
+   ],
+   "z": [
+    -6,
+    6
+   ],
+   "eje_x": "flexión",
+   "eje_y": "giro",
+   "eje_z": "desvío"
+  },
+  {
+   "clave": "f_03",
+   "nombre": "Dedos falange 3 (_03)",
+   "modo": "euler",
+   "orden": "YXZ",
+   "x": [
+    -6,
+    82
+   ],
+   "y": [
+    -6,
+    6
+   ],
+   "z": [
+    -6,
+    6
+   ],
+   "eje_x": "flexión",
+   "eje_y": "giro",
+   "eje_z": "desvío"
+  }
+ ],
+ "recortes_al_hornear": {
+  "hand_r": {
+   "cuadros": 3298,
+   "max_grados": 68.51
+  },
+  "hand_l": {
+   "cuadros": 1975,
+   "max_grados": 56.14
+  },
+  "lowerarm_r": {
+   "cuadros": 1851,
+   "max_grados": 66.63
+  },
+  "upperarm_r": {
+   "cuadros": 305,
+   "max_grados": 60.67
+  },
+  "lowerarm_l": {
+   "cuadros": 635,
+   "max_grados": 62.89
+  },
+  "upperarm_l": {
+   "cuadros": 299,
+   "max_grados": 60.67
+  },
+  "index_01_r": {
+   "cuadros": 133,
+   "max_grados": 6.01
+  },
+  "foot_l": {
+   "cuadros": 8,
+   "max_grados": 6.07
+  }
+ },
+ "peores": {
+  "hand_l": [
+   0.0,
+   "Sostener_Fichas"
+  ],
+  "hand_r": [
+   0.0,
+   "Prueba_Rango_Completo"
+  ],
+  "lowerarm_l": [
+   0.0,
+   "Prueba_Rango_Completo"
+  ],
+  "lowerarm_r": [
+   0.0001,
+   "Prueba_Rango_Completo"
+  ],
+  "upperarm_r": [
+   0.0,
+   "Prueba_Rango_Completo"
+  ],
+  "upperarm_l": [
+   0.0,
+   "Prueba_Rango_Completo"
+  ],
+  "foot_l": [
+   0.0,
+   "Prueba_Rango_Completo"
+  ]
+ },
+ "constraints": {
+  "Root": {
+   "orden": "XYZ",
+   "x": [
+    0.0,
+    0.0
+   ],
+   "y": [
+    0.0,
+    0.0
+   ],
+   "z": [
+    0.0,
+    0.0
+   ]
+  },
+  "pelvis": {
+   "orden": "XZY",
+   "x": [
+    -35.0,
+    45.0
+   ],
+   "y": [
+    -35.0,
+    35.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "spine_01": {
+   "orden": "XZY",
+   "x": [
+    -15.0,
+    30.0
+   ],
+   "y": [
+    -20.0,
+    20.0
+   ],
+   "z": [
+    -15.0,
+    15.0
+   ]
+  },
+  "spine_02": {
+   "orden": "XZY",
+   "x": [
+    -15.0,
+    30.0
+   ],
+   "y": [
+    -20.0,
+    20.0
+   ],
+   "z": [
+    -15.0,
+    15.0
+   ]
+  },
+  "spine_03": {
+   "orden": "XZY",
+   "x": [
+    -15.0,
+    30.0
+   ],
+   "y": [
+    -20.0,
+    20.0
+   ],
+   "z": [
+    -15.0,
+    15.0
+   ]
+  },
+  "clavicle_l": {
+   "orden": "XYZ",
+   "x": [
+    -20.0,
+    25.0
+   ],
+   "y": [
+    -10.0,
+    10.0
+   ],
+   "z": [
+    -20.0,
+    25.0
+   ]
+  },
+  "upperarm_l": {
+   "orden": "XYZ",
+   "x": [
+    -158.1,
+    173.6
+   ],
+   "y": [
+    -129.7,
+    130.4
+   ],
+   "z": [
+    -162.4,
+    175.5
+   ]
+  },
+  "lowerarm_l": {
+   "orden": "YZX",
+   "x": [
+    -49.6,
+    101.8
+   ],
+   "y": [
+    -94.1,
+    94.1
+   ],
+   "z": [
+    -13.0,
+    13.0
+   ]
+  },
+  "hand_l": {
+   "orden": "YXZ",
+   "x": [
+    -64.4,
+    55.2
+   ],
+   "y": [
+    -34.7,
+    73.9
+   ],
+   "z": [
+    -88.2,
+    73.2
+   ]
+  },
+  "index_01_l": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    92.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "index_02_l": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    108.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "index_03_l": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    82.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "middle_01_l": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    92.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "middle_02_l": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    108.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "middle_03_l": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    82.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "pinky_01_l": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    92.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "pinky_02_l": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    108.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "pinky_03_l": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    82.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "ring_01_l": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    92.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "ring_02_l": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    108.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "ring_03_l": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    82.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "thumb_01_l": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    50.0
+   ],
+   "y": [
+    -35.0,
+    40.0
+   ],
+   "z": [
+    -25.0,
+    60.0
+   ]
+  },
+  "thumb_02_l": {
+   "orden": "YXZ",
+   "x": [
+    -12.0,
+    60.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "thumb_03_l": {
+   "orden": "YXZ",
+   "x": [
+    -20.0,
+    80.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "clavicle_r": {
+   "orden": "XYZ",
+   "x": [
+    -20.0,
+    25.0
+   ],
+   "y": [
+    -10.0,
+    10.0
+   ],
+   "z": [
+    -25.0,
+    20.0
+   ]
+  },
+  "upperarm_r": {
+   "orden": "XYZ",
+   "x": [
+    -158.1,
+    173.6
+   ],
+   "y": [
+    -130.4,
+    129.7
+   ],
+   "z": [
+    -175.5,
+    162.4
+   ]
+  },
+  "lowerarm_r": {
+   "orden": "YZX",
+   "x": [
+    -49.6,
+    101.8
+   ],
+   "y": [
+    -94.1,
+    94.1
+   ],
+   "z": [
+    -13.0,
+    13.0
+   ]
+  },
+  "hand_r": {
+   "orden": "YXZ",
+   "x": [
+    -64.4,
+    55.2
+   ],
+   "y": [
+    -73.9,
+    34.7
+   ],
+   "z": [
+    -73.2,
+    88.2
+   ]
+  },
+  "index_01_r": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    92.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "index_02_r": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    108.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "index_03_r": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    82.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "middle_01_r": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    92.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "middle_02_r": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    108.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "middle_03_r": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    82.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "pinky_01_r": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    92.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "pinky_02_r": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    108.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "pinky_03_r": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    82.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "ring_01_r": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    92.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -25.0,
+    25.0
+   ]
+  },
+  "ring_02_r": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    108.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "ring_03_r": {
+   "orden": "YXZ",
+   "x": [
+    -6.0,
+    82.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "thumb_01_r": {
+   "orden": "YXZ",
+   "x": [
+    -25.0,
+    50.0
+   ],
+   "y": [
+    -40.0,
+    35.0
+   ],
+   "z": [
+    -60.0,
+    25.0
+   ]
+  },
+  "thumb_02_r": {
+   "orden": "YXZ",
+   "x": [
+    -12.0,
+    60.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "thumb_03_r": {
+   "orden": "YXZ",
+   "x": [
+    -20.0,
+    80.0
+   ],
+   "y": [
+    -6.0,
+    6.0
+   ],
+   "z": [
+    -6.0,
+    6.0
+   ]
+  },
+  "neck_01": {
+   "orden": "XZY",
+   "x": [
+    -30.0,
+    35.0
+   ],
+   "y": [
+    -35.0,
+    35.0
+   ],
+   "z": [
+    -20.0,
+    20.0
+   ]
+  },
+  "head": {
+   "orden": "XZY",
+   "x": [
+    -35.0,
+    30.0
+   ],
+   "y": [
+    -45.0,
+    45.0
+   ],
+   "z": [
+    -20.0,
+    20.0
+   ]
+  },
+  "thigh_l": {
+   "orden": "YZX",
+   "x": [
+    -135.6,
+    38.4
+   ],
+   "y": [
+    -66.8,
+    74.6
+   ],
+   "z": [
+    -45.8,
+    35.8
+   ]
+  },
+  "calf_l": {
+   "orden": "XYZ",
+   "x": [
+    -2.0,
+    150.0
+   ],
+   "y": [
+    -12.0,
+    12.0
+   ],
+   "z": [
+    -4.0,
+    4.0
+   ]
+  },
+  "foot_l": {
+   "orden": "XZY",
+   "x": [
+    -32.0,
+    50.0
+   ],
+   "y": [
+    -18.0,
+    18.0
+   ],
+   "z": [
+    -25.0,
+    30.0
+   ]
+  },
+  "ball_l": {
+   "orden": "ZYX",
+   "x": [
+    -53.3,
+    40.5
+   ],
+   "y": [
+    -20.0,
+    9.3
+   ],
+   "z": [
+    -28.9,
+    36.0
+   ]
+  },
+  "thigh_r": {
+   "orden": "YZX",
+   "x": [
+    -135.6,
+    38.4
+   ],
+   "y": [
+    -74.6,
+    66.8
+   ],
+   "z": [
+    -35.8,
+    45.8
+   ]
+  },
+  "calf_r": {
+   "orden": "XYZ",
+   "x": [
+    -2.0,
+    150.0
+   ],
+   "y": [
+    -12.0,
+    12.0
+   ],
+   "z": [
+    -4.0,
+    4.0
+   ]
+  },
+  "foot_r": {
+   "orden": "XZY",
+   "x": [
+    -32.0,
+    50.0
+   ],
+   "y": [
+    -18.0,
+    18.0
+   ],
+   "z": [
+    -30.0,
+    25.0
+   ]
+  },
+  "ball_r": {
+   "orden": "ZYX",
+   "x": [
+    -53.3,
+    40.5
+   ],
+   "y": [
+    -9.3,
+    20.0
+   ],
+   "z": [
+    -36.0,
+    28.9
+   ]
+  }
+ },
+ "constraints_verificacion": {
+  "cuadros": 3771,
+  "constraints": 53,
+  "dif_max_grados": 0.0,
+  "anim": null,
+  "hueso": null
+ }
+}

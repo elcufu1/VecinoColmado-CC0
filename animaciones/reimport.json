@@ -2,11 +2,11 @@
  "acciones": {
   "Agarrar_Ficha_Cerca": [
    0.0,
-   20.0
+   22.0
   ],
   "Agarrar_Ficha_Lejos": [
    0.0,
-   26.0
+   28.0
   ],
   "Aplaudir": [
    0.0,
@@ -26,7 +26,7 @@
   ],
   "Colocar_Ficha_Cerca": [
    0.0,
-   20.0
+   22.0
   ],
   "Colocar_Ficha_Lejos": [
    0.0,
