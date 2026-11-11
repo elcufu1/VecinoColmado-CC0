@@ -17,6 +17,7 @@ ARM_NAME = 'VecinoColmado_CC0'
 FPS = 24
 FACE_MESHES = ['Cuerpo_CC0', 'VecinoColmado_CC0.eyebrow002', 'VecinoColmado_CC0.eyelashes01',
                'VecinoColmado_CC0.low-poly', 'VecinoColmado_CC0.teeth_base', 'VecinoColmado_CC0.tongue01']
+HAND_TWIST_MAX = 24.0
 FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky']
 FBONES = [f'{f}_0{i}' for f in FINGERS for i in (1, 2, 3)]  # 15 por mano
 
@@ -210,6 +211,9 @@ class PoseBuilder:
         return P @ rig.rest_rel[n]
 
     def set_local(self, n, M):
+        lim = getattr(self.rig, 'limits', None)
+        if lim is not None:
+            M = lim.clamp_local(n, M)
         self.local[n] = M
         self.pose[n] = self.parent_base(n) @ M
 
@@ -250,7 +254,8 @@ class PoseBuilder:
         return self.world_rot(b) @ self.rig.rest3[b].inverted() @ Vector(d)
 
     # ---------------- IK de brazo -----------------
-    def solve_arm(self, s, W, pole, hdir, hpalm, auto=0.0, twist_split=0.5, prev_theta=None, seg_cost=None):
+    def solve_arm(self, s, W, pole, hdir, hpalm, auto=0.0, twist_split=0.5, prev_theta=None, seg_cost=None,
+                  theta_override=None):
         rig = self.rig
         up, lo, ha = 'upperarm_' + s, 'lowerarm_' + s, 'hand_' + s
         S = self.parent_base(up).translation
@@ -301,7 +306,9 @@ class PoseBuilder:
             return S + ax * a + dirp * h
 
         theta = 0.0
-        if auto > 0:
+        if theta_override is not None:
+            theta = theta_override
+        elif auto > 0:
             best = None
             for k in range(-36, 37):
                 th = math.radians(k * 2.5)
@@ -316,6 +323,9 @@ class PoseBuilder:
             theta = best[1]
         Ru, Rl, d2, swa, twa, E = build(theta)
         self.set_world_rot(up, Ru @ rig.rest3[up])
+        if abs(twa) > 1e-6:
+            # la muñeca casi no gira: el exceso de giro va al antebrazo (pronación/supinación)
+            twist_split = max(twist_split, 1.0 - math.radians(HAND_TWIST_MAX) / abs(twa))
         Rtw = Matrix.Rotation(twa * twist_split, 3, d2)
         self.set_world_rot(lo, Rtw @ Rl @ rig.rest3[lo])
         self.set_world_rot(ha, hand_world)
